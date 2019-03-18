@@ -27,7 +27,5 @@ fun convertBooleanArrayToNumber(range: IntRange = 0..31, converter: (Int) -> Boo
     return result
 }
 
-fun convertNumberToBooleanArray(value: Long, range: IntRange = 0..31, converter: (Int, Boolean) -> Unit) {
+fun convertNumberToBooleanArray(value: Long, range: IntRange = 0..31, converter: (Int, Boolean) -> Unit) =
     range.forEach { converter(it, value[it].toBool()) }
-//    interruptTable[ord * 32 + k].pending = value[k].toBool()
-}
