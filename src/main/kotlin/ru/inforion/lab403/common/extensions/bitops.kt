@@ -5,7 +5,11 @@ package ru.inforion.lab403.common.extensions
 import kotlin.experimental.and
 import kotlin.experimental.xor
 
-inline fun bitMask(size: Int) = -1L ushr (64 - size)
+inline fun bitMask(size: Int): Long {
+    if(size !in 1..64)
+        throw IllegalArgumentException("Size must be in range 1..64")
+    return -1L ushr (64 - size)
+}
 
 inline fun bitMask(range: IntRange): Long = if (range.last == 0) bitMask(range.first + 1) else
     bitMask(range.first + 1) and bitMask(range.last).inv()
