@@ -421,3 +421,51 @@ fun Int.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
         ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
 fun Long.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
         ByteArray(size).also { it.putInt(0, this, size, order) }
+
+inline fun ByteArray.sumByLong(selector: (Byte) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun ShortArray.sumByLong(selector: (Short) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun IntArray.sumByLong(selector: (Int) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun LongArray.sumByLong(selector: (Long) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun <T> Array<T>.sumByLong(selector: (T) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
+    var sum: Long = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
