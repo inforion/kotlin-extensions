@@ -20,7 +20,7 @@ plugins {
 }
 
 group 'ru.inforion.lab403.common'
-version '0.2.0'
+version '0.2.1'
 
 repositories {
     mavenCentral()
