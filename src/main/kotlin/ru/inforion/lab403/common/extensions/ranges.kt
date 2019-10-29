@@ -1,8 +1,5 @@
-package ru.inforion.lab403.kopycat.proposal
+package ru.inforion.lab403.common.extensions
 
-import ru.inforion.lab403.common.extensions.hex2
-import ru.inforion.lab403.common.extensions.hex4
-import ru.inforion.lab403.common.extensions.hex8
 import kotlin.math.max
 import kotlin.math.min
 
