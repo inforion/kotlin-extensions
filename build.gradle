@@ -1,48 +1,39 @@
-buildscript {
-    ext.kotlin_version = '1.3.21'
-    ext.kotlinx_version = '1.0.1'
-
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
-    }
-}
-
 plugins {
     id 'maven'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
 }
 
-group 'ru.inforion.lab403.common'
-version '0.2.2'
+group 'com.github.inforion'
+version '0.3.0'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test'
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.3.9'
 
-    compile("org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}")
-    compile("org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_version")
+    implementation group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
+    implementation group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
 
-    compile("net.sourceforge.argparse4j:argparse4j:0.7.0")
-    compile("net.sf.trove4j:trove4j:3.0.3")
-    compile("org.jblas:jblas:1.2.4")
+    implementation group: 'org.jblas', name: 'jblas', version: '1.2.4'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.16.1'
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 // To specify a license in the pom:
@@ -56,6 +47,24 @@ install {
                     distribution 'repo'
                 }
             }
+        }
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'kotlin-extensions'
+            version = version
+
+            from components.kotlin
+            artifact tasks.sourcesJar
         }
     }
 }

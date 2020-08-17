@@ -3,14 +3,6 @@ package ru.inforion.lab403.common.extensions
 import kotlin.math.max
 import kotlin.math.min
 
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-val ULongRange.length get() = last - first + 1U
-
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-val UIntRange.length get() = last - first + 1U
-
 val LongRange.length get() = last - first + 1
 val IntRange.length get() = last - first + 1
 
