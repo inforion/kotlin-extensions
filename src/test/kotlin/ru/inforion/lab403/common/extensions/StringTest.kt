@@ -1,9 +1,8 @@
 package ru.inforion.lab403.common.extensions
 
-//import junit.framework.Assert.assertEquals
-import org.junit.Assert
-import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.test.assertEquals
+
 
 /**
  * Created by davydov_vn on 22/04/19.
@@ -15,7 +14,7 @@ class StringTest {
     private val xs = "DE AD BE EF"
     private val b = byteArrayOf(0xDE.toByte(), 0xAD.toByte(), 0xBE.toByte(), 0xEF.toByte())
 
-    @Test fun unhexlifyTest() = Assert.assertArrayEquals(b, x.unhexlify())
+    @Test fun unhexlifyTest() = assertEquals(b.toList(), x.unhexlify().toList())
     @Test fun hexlifyTest() = assertEquals(x, b.hexlify())
     @Test fun hexlifySeparatorTest() = assertEquals(xs, b.hexlify(separator = ' '))
 
@@ -55,4 +54,8 @@ class StringTest {
     @Test fun long_hex_7FFF() = assertEquals("7FFF", 0x7FFF.hex)
     @Test fun long_hex_7FFF_FFFF() = assertEquals("7FFFFFFF", 0x7FFF_FFFF.hex)
     @Test fun long_hex_7FFF_FFFF_FFFF_FFFF() = assertEquals("7FFFFFFFFFFFFFFF", 0x7FFF_FFFF_FFFF_FFFF.hex)
+
+    @Test fun removeBetween1() = assertEquals("abc  qqq", "abc [def] qqq".removeBetween("[", "]"))
+    @Test fun removeBetween2() = assertEquals("", "[def]".removeBetween("[", "]"))
+    @Test fun removeBetween3() = assertEquals("abccde", "abc[]cde".removeBetween("[", "]"))
 }

@@ -413,11 +413,28 @@ fun String.splitWhitespaces() = splitTrim(Regex("\\s+"))
  * @return A substring between [start] and [end]
  */
 fun String.substringBetween(start: String, end: String): String {
-    val startIndex = indexOf(start)
+    val startIndex = lastIndexOf(start)
     require(startIndex >= 0)
     val endIndex = indexOf(end)
     require(endIndex >= 0)
     return substring(startIndex + 1, endIndex)
+}
+
+/**
+ * Returns a substring before the first occurrence of [start] and after the last occurrence of [end]
+ * If the string does not contain the [start] or [end] return original string.
+ *
+ * @param start delimiter after which start new string
+ * @param end delimiter before which end new string
+ *
+ * @return A string without substring from [start] to [end]
+ */
+fun String.removeBetween(start: String, end: String): String {
+    val startIndex = indexOf(start)
+    if (startIndex < 0) return this
+    val endIndex = lastIndexOf(end)
+    if (endIndex < 0) return this
+    return substring(0, startIndex) + substring(endIndex + 1)
 }
 
 
