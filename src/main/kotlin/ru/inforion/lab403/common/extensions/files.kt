@@ -3,10 +3,11 @@ package ru.inforion.lab403.common.extensions
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import java.lang.IllegalArgumentException
 import java.net.URI
 import java.net.URL
+import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
+
 
 fun createTimeFile(prefix: String? = null, suffix: String? = null, directory: File? = null): File {
     val realPrefix = prefix ?: System.currentTimeMillis().toString()
@@ -32,7 +33,7 @@ fun gzipInputStreamIfPossible(path: String): InputStream {
     return result
 }
 
-fun <T: Any> T.getJarDirectory(): String = File(this::class.java.protectionDomain.codeSource.location.toURI().path).path
+fun <T : Any> T.getJarDirectory(): String = File(this::class.java.protectionDomain.codeSource.location.toURI().path).path
 
 fun walkTo(result: MutableCollection<File>, folder: File, depth: Int): MutableCollection<File> {
     if (!folder.isDirectory)
@@ -94,3 +95,43 @@ operator fun File.div(child: File): File = this / child.path
  * {EN}
  */
 val <T>Class<T>.location get() = protectionDomain.codeSource.location.toURI().path
+
+/**
+ * {EN}
+ * Checks if a path specified as string [this] traverse [base] directory
+ *
+ * see https://portswigger.net/web-security/file-path-traversal
+ *
+ * @param base base directory path
+ *
+ * @return true if [this] path traverse [base] path
+ * {EN}
+ */
+fun String.isNotTraverseDirectory(base: String): Boolean {
+    val baseCanonicalPath = base.toFile().canonicalPath
+    val childCanonicalPath = base.toFile(this).canonicalPath
+    return childCanonicalPath.startsWith(baseCanonicalPath)
+}
+
+/**
+ * {EN}see [isNotTraverseDirectory]{EN}
+ */
+fun String.isTraverseDirectory(base: String) = !isNotTraverseDirectory(this)
+
+/**
+ * {EN}
+ * Checks if a string is a valid path.
+ *
+ * Calling examples:
+ *    isValidPath("c:/test");      //returns true
+ *    isValidPath("c:/te:t");      //returns false
+ *    isValidPath("c:/te?t");      //returns false
+ *    isValidPath("c/te*t");       //returns false
+ *    isValidPath("good.txt");     //returns true
+ *    isValidPath("not|good.txt"); //returns false
+ *    isValidPath("not:good.txt"); //returns false
+ *
+ * see https://stackoverflow.com/questions/468789/is-there-a-way-in-java-to-determine-if-a-path-is-valid-without-attempting-to-cre
+ * {EN}
+ */
+fun String.isValidPath() = runCatching { Paths.get(this) }.isSuccess
