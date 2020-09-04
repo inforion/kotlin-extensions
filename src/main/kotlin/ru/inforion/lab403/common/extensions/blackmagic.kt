@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package ru.inforion.lab403.common.extensions
 
 import kotlin.reflect.KClass

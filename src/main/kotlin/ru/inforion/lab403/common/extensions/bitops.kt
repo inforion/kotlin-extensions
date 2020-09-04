@@ -165,6 +165,16 @@ inline fun insert(value: Long, indx: Int): Long = 0L.insert(value, indx)
 inline fun insert(data: Long, range: IntRange): Long = 0L.insert(data, range)
 inline fun insert(data: Int, range: IntRange): Int = 0.insert(data, range)
 
+inline fun Long.swap64(): Long = (
+        ((this and (0xFF shl  0)) shl  56) or   // 0x00000000_000000FF
+                ((this and (0xFF shl  8)) shl  40) or   // 0x00000000_0000FF00
+                ((this and (0xFF shl 16)) shl  24) or   // 0x00000000_00FF0000
+                ((this and (0xFF shl 24)) shl   8) or   // 0x00000000_FF000000
+                ((this and (0xFF shl 32)) ushr  8) or   // 0x000000FF_00000000
+                ((this and (0xFF shl 40)) ushr 24) or   // 0x0000FF00_00000000
+                ((this and (0xFF shl 48)) ushr 40) or   // 0x00FF0000_00000000
+                ((this and (0xFF shl 56)) ushr 56))     // 0xFF000000_00000000
+
 inline fun Long.swap32(): Long = this.toInt().swap32().toULong()
 inline fun Long.swap16(): Long = this.toInt().swap16().toULong()
 

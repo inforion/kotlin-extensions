@@ -8,6 +8,12 @@ import java.net.URI
 import java.net.URL
 import java.util.zip.GZIPInputStream
 
+fun createTimeFile(prefix: String? = null, suffix: String? = null, directory: File? = null): File {
+    val realPrefix = prefix ?: System.currentTimeMillis().toString()
+    return File.createTempFile(realPrefix, suffix, directory).also { it.deleteOnExit() }
+}
+
+@Deprecated("use operator div()")
 fun joinPaths(vararg paths: String): String {
     if (paths.isEmpty())
         return ""
@@ -54,3 +60,37 @@ fun File?.getInternalFileURL(path: String, type: String = "jar"): URL {
 
     return URI("$type:file:${toURI().path}!/$path").toURL()
 }
+
+/**
+ * {EN}
+ * Operator function make possible to join paths using / operation between [File] and [String]
+ * val base = File("base")
+ * val fullpath = base / "test"
+ *
+ * @param child path suffix
+ * @return joined paths
+ * {EN}
+ */
+operator fun File.div(child: String): File = File(this, child)
+
+/**
+ * {EN}
+ * Operator function make possible to join paths using / operation between [File] and [File]
+ * val base = File("base")
+ * val test = File("test")
+ * val fullpath = base / test
+ *
+ * @param child path suffix
+ * @return joined paths
+ * {EN}
+ */
+operator fun File.div(child: File): File = this / child.path
+
+/**
+ * {EN}
+ * Property function to simplify get of the location associated with this CodeSource for class
+ *
+ * @return the location or raise NPE
+ * {EN}
+ */
+val <T>Class<T>.location get() = protectionDomain.codeSource.location.toURI().path
