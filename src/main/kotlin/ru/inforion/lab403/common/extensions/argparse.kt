@@ -11,8 +11,6 @@ import net.sourceforge.argparse4j.inf.Subparser
 import java.util.*
 
 /**
- * Created by Alexei Gladkikh on 05/04/17.
- *
  * Java ArgumentParser library wrapper for simplify usage in Kotlin
  */
 

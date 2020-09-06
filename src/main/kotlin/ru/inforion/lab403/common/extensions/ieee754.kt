@@ -1,7 +1,9 @@
 package ru.inforion.lab403.common.extensions
 
-import java.lang.Double.*
-import java.lang.Float.*
+import java.lang.Double.doubleToRawLongBits
+import java.lang.Double.longBitsToDouble
+import java.lang.Float.floatToRawIntBits
+import java.lang.Float.intBitsToFloat
 
 /**
  * Created by Alexei Gladkikh on 08/02/17.

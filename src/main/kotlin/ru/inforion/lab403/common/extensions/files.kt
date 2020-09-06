@@ -116,7 +116,7 @@ fun String.isNotTraverseDirectory(base: String): Boolean {
 /**
  * {EN}see [isNotTraverseDirectory]{EN}
  */
-fun String.isTraverseDirectory(base: String) = !isNotTraverseDirectory(this)
+fun String.isTraverseDirectory(base: String) = !isNotTraverseDirectory(base)
 
 /**
  * {EN}

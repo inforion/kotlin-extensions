@@ -218,23 +218,18 @@ inline val Short.hex get() = when {
 
 inline val Byte.hex get() = hex2
 
+inline fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
+
+inline fun String.alignRight(maxlen: Int = length) = "%-${maxlen}s".format(this)
+
 /**
  * Slice input string from 0 to maxlen.
  * If maxlen > string.length then remain string.length (no exception thrown)
  */
-inline fun String.stretch(maxlen: Int, alignRight: Boolean = true): String {
-    if (length == 0) return "%${maxlen}s".format(this)
-
-    val tmp: String
-    val format: String
-    if (!alignRight) {
-        tmp = slice(Math.max(0, length - maxlen)..(length - 1))
-        format = "%${maxlen}s"
-    } else {
-        tmp = slice(0..Math.min(maxlen - 1, length - 1))
-        format = "%-${maxlen}s"
-    }
-    return format.format(tmp)
+inline fun String.stretch(maxlen: Int, alignRight: Boolean = true) = when {
+    length == 0 -> alignLeft(maxlen)
+    alignRight -> slice(0 until length.coerceAtMost(maxlen)).alignRight(maxlen)
+    else -> slice((length - maxlen).coerceAtLeast(0) until length).alignLeft(maxlen)
 }
 
 val emptyString: String = String()

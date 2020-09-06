@@ -1,11 +1,5 @@
 package ru.inforion.lab403.common.extensions
 
-import ru.inforion.lab403.common.extensions.toUInt
-import ru.inforion.lab403.common.extensions.toULong
-
-/**
- * Created by Alexei Gladkikh on 12/06/17.
- */
 inline val Long.asLong: Long get() = toLong()
 inline val Long.asInt: Int get() = toInt()
 inline val Long.asShort: Short get() = toShort()

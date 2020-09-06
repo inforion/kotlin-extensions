@@ -5,8 +5,10 @@ package ru.inforion.lab403.common.extensions
 import java.io.DataInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.ByteOrder.*
+import java.nio.ByteOrder.BIG_ENDIAN
+import java.nio.ByteOrder.LITTLE_ENDIAN
 import java.nio.charset.Charset
+import kotlin.math.abs
 
 /**
  * Safely convert byte array to string without loss any information (even negative bytes)
@@ -24,7 +26,7 @@ inline fun String.convertToBytes() = toByteArray(Charsets.ISO_8859_1)
 
 fun ByteArray.fromPDP11(start: Int = 0, end: Int = 0): ByteArray {
     val result = this.slice(start until end).toByteArray()
-    for (k in 0 until result.size step 2) {
+    for (k in result.indices step 2) {
         val tmp = result[k]
         result[k] = result[k + 1]
         result[k + 1] = tmp
@@ -33,7 +35,7 @@ fun ByteArray.fromPDP11(start: Int = 0, end: Int = 0): ByteArray {
 }
 
 fun <T> Array<T>.bisectLeft(key: T): Int where T : Comparable<T> {
-    var idx = Math.min(this.size - 1, Math.abs(this.sorted().binarySearch(key)))
+    var idx = Math.min(size - 1, abs(sorted().binarySearch(key)))
     while (idx > 0 && this[idx - 1] >= key) idx--
     return idx
 }
@@ -69,9 +71,7 @@ operator fun ByteArray.get(range: IntRange): ByteArray {
 }
 
 fun ByteArray.startswith(data: ByteArray, size: Int = -1): Boolean {
-    if (size > data.size) {
-        throw IllegalArgumentException("size must be <= data.size")
-    }
+    require(size <= data.size) { "size must be <= data.size" }
     if (size != -1) {
         if (size > this.size)
             return false
@@ -88,9 +88,7 @@ fun ByteArray.startswith(data: ByteArray, size: Int = -1): Boolean {
 }
 
 fun ByteArray.fuzzyStartswith(data: ByteArray, size: Int = -1, fuzzy: List<Boolean>): Boolean {
-    if (size > data.size) {
-        throw IllegalArgumentException("size must be <= data.size")
-    }
+    require(size <= data.size) { "size must be <= data.size" }
     if (size != -1) {
         if (size > this.size)
             return false
