@@ -45,35 +45,35 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "11"
 }
 
-// To specify a license in the pom:
-install {
-    repositories.mavenInstaller {
-        pom.project {
-            licenses {
-                license {
-                    name 'The MIT License'
-                    url 'https://opensource.org/licenses/MIT'
-                    distribution 'repo'
-                }
-            }
-        }
-    }
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = group
-            artifactId = 'kotlin-extensions'
-            version = version
-
             from components.kotlin
             artifact tasks.sourcesJar
+
+            pom {
+                groupId = group
+                artifactId = 'kotlin-extensions'
+                version = version
+
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/inforion/kotlin-extensions.git'
+                    developerConnection = 'scm:git:ssh://github.com/inforion/kotlin-extensions.git'
+                    url = "https://github.com/inforion/kotlin-extensions"
+                }
+            }
         }
     }
 }
