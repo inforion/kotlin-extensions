@@ -35,7 +35,7 @@ fun ByteArray.fromPDP11(start: Int = 0, end: Int = 0): ByteArray {
 }
 
 fun <T> Array<T>.bisectLeft(key: T): Int where T : Comparable<T> {
-    var idx = Math.min(size - 1, abs(sorted().binarySearch(key)))
+    var idx = abs(sorted().binarySearch(key)).coerceAtMost(size - 1)
     while (idx > 0 && this[idx - 1] >= key) idx--
     return idx
 }

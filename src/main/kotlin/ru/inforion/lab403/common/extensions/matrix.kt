@@ -153,15 +153,15 @@ inline operator fun DoubleMatrix.minusAssign(value: DoubleMatrix): Unit { subi(v
 inline operator fun DoubleMatrix.times(value: Double): DoubleMatrix = mul(value)
 inline operator fun DoubleMatrix.times(value: DoubleMatrix): DoubleMatrix = mmul(value)
 
-infix inline fun DoubleMatrix.forIndices(block: (i: Int, j: Int) -> Unit): DoubleMatrix {
+inline infix fun DoubleMatrix.forIndices(block: (i: Int, j: Int) -> Unit): DoubleMatrix {
 //    arows.forEach { i -> acols.forEach { j -> block(i, j) } }
     for (i in arows) for (j in acols) block(i, j)
     return this
 }
 
-infix inline fun DoubleMatrix.forEach(block: (value: Double) -> Unit): DoubleMatrix = forIndices { i, j -> block(this[i, j]) }
+inline infix fun DoubleMatrix.forEach(block: (value: Double) -> Unit): DoubleMatrix = forIndices { i, j -> block(this[i, j]) }
 
-infix inline fun DoubleMatrix.transform(block: (value: Double) -> Double): DoubleMatrix {
+inline infix fun DoubleMatrix.transform(block: (value: Double) -> Double): DoubleMatrix {
     val result = DoubleMatrix(rows, columns)
     result.forIndices { i, j -> result[i, j] = block(this[i, j]) }
     return result
