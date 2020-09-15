@@ -74,8 +74,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = "$mavenUsername"
-                password = "$mavenPassword"
+                username = project.properties["mavenUsername"]
+                password = project.properties["mavenPassword"]
             }
 
             def releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
@@ -126,6 +126,8 @@ publishing {
 
 signing {
     required = false
-    useGpgCmd()
+    if (project.hasProperty('signing.keyId')) {
+        useGpgCmd()
+    }
     sign publishing.publications.kotlinLogging
 }
