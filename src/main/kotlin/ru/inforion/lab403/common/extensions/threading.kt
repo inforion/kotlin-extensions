@@ -28,6 +28,8 @@ fun <T> Deferred<T>.wait() = runBlocking { await() }
 
 fun Job.wait() = runBlocking { join() }
 
+inline fun <T> Deferred<T>.onComplete(crossinline action: (T) -> Unit) = invokeOnCompletion { action(getCompleted()) }
+
 class BlockingValue <T: Any> {
     private lateinit var value: T
 

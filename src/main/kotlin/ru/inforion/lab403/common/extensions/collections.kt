@@ -13,3 +13,5 @@ inline fun <T>Array<T?>.forEachNotNull(block: (T) -> Unit) = forEach {
 inline fun <T> collect(count: Int, item: (Int) -> T) = (0 until count).map(item)
 
 inline fun collect(count: Int) = (0 until count).toList()
+
+inline fun <T> sequence(count: Int, crossinline block: (Int) -> T) = sequence { repeat(count) { yield(block(it)) } }
