@@ -24,6 +24,11 @@ fun <T> Collection<Deferred<T>>.wait() = runBlocking { awaitAll() }
 
 fun Collection<Job>.wait() = runBlocking { joinAll() }
 
+fun MutableCollection<Job>.waitAndClear() {
+    wait()
+    clear()
+}
+
 fun <T> Deferred<T>.wait() = runBlocking { await() }
 
 fun Job.wait() = runBlocking { join() }
