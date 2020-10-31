@@ -50,6 +50,7 @@ internal fun ArgumentParser.setIdentifier(value: String) = setDefault(SUBPARSER_
  * @param name subparser name
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun ArgumentParser.subparser(name: String, help: String? = null): ArgumentParser {
     val subparsers = addSubparsers()
     val parser: Subparser = subparsers.addParser(name)
@@ -71,6 +72,7 @@ fun ArgumentParser.subparser(name: String, help: String? = null): ArgumentParser
  * @param help help string
  * @param default default value for flag
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun ArgumentParser.flag(short: String, long: String, help: String? = null, default: Boolean = false) {
     val action = if (!default) StoreTrueArgumentAction() else StoreFalseArgumentAction()
     val arg = addArgument(short, long).action(action)
@@ -84,6 +86,7 @@ fun ArgumentParser.flag(short: String, long: String, help: String? = null, defau
  * @param name choices parameter name (will be used for namespace after parse)
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 inline fun <reified T: Enum<T>>ArgumentParser.choices(name: String, help: String? = null) =
         choices(name, enumValues<T>().map { it.toString() }, help)
 
@@ -95,6 +98,7 @@ inline fun <reified T: Enum<T>>ArgumentParser.choices(name: String, help: String
  * @param required is parameter required
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 inline fun <reified T: Enum<T>>ArgumentParser.choices(short: String, long: String, required: Boolean = false, help: String? = null) =
         choices(short, long, enumValues<T>().map { it.toString() }, required, help)
 
@@ -105,6 +109,7 @@ inline fun <reified T: Enum<T>>ArgumentParser.choices(short: String, long: Strin
  * @param choices values of choice
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun ArgumentParser.choices(name: String, choices: Collection<String>, help: String? = null) {
     val arg = addArgument(name).choices(choices)
     if (help != null)
@@ -119,6 +124,7 @@ fun ArgumentParser.choices(name: String, choices: Collection<String>, help: Stri
  * @param required is parameter required
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun ArgumentParser.choices(short: String, long: String, choices: Collection<String>, required: Boolean = false, help: String? = null) {
     val arg = addArgument(short, long).choices(choices)
     if (help != null)
@@ -133,6 +139,7 @@ fun ArgumentParser.choices(short: String, long: String, choices: Collection<Stri
  * @param default default argument value
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 inline fun <reified T>ArgumentParser.variable(name: String, default: T? = null, help: String? = null) {
     val arg = addArgument(name).type(T::class.java)
 
@@ -152,6 +159,7 @@ inline fun <reified T>ArgumentParser.variable(name: String, default: T? = null, 
  * @param required is parameter required
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 inline fun <reified T>ArgumentParser.variable(
         short: String,
         long: String,
@@ -176,6 +184,7 @@ inline fun <reified T>ArgumentParser.variable(
  * @param count variable argument count (if -1 - unspecified)
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 inline fun <reified T>ArgumentParser.varags(name: String, count: Int = -1, help: String? = null) {
     val arg = addArgument(name)
             .type(T::class.java)
@@ -200,6 +209,7 @@ inline fun <reified T>ArgumentParser.varags(name: String, count: Int = -1, help:
  * @param required is parameter required
  * @param help help string
  */
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun ArgumentParser.file(
         short: String,
         long: String,
@@ -264,5 +274,5 @@ fun ArgumentParser.parse(args: List<String>) = parseIntern(args)
  */
 fun ArgumentParser.parse(args: String) = parseIntern(args.split(' ').map { it.trim() })
 
-
+@Deprecated("ArgumentParser extensions deprecated since 0.3.4", replaceWith = ReplaceWith("ApplicationOptions"))
 fun Namespace.getParserCommandStack() = LinkedList(getString(SUBPARSER_ID).split("."))
