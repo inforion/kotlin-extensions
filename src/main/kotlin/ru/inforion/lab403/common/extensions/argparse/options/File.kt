@@ -10,7 +10,7 @@ class File(
     val exists: Boolean,
     val canRead: Boolean,
     val canWrite: Boolean
-) : AbstractOption<Boolean>(help, required, null) {
+) : AbstractOption<java.io.File>(help, required, null) {
     override fun inject(parser: ArgumentParser) = super.inject(parser).also {
         val type = Arguments.fileType()
         if (exists) type.verifyExists()

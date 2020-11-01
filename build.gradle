@@ -85,7 +85,7 @@ publishing {
     }
 
     publications {
-        kotlinLogging(MavenPublication) {
+        kotlinExtensions(MavenPublication) {
             from components.kotlin
 
             artifact tasks.dokkaJar
@@ -129,5 +129,5 @@ signing {
     if (project.hasProperty('signing.keyId')) {
         useGpgCmd()
     }
-    sign publishing.publications.kotlinLogging
+    sign publishing.publications.kotlinExtensions
 }

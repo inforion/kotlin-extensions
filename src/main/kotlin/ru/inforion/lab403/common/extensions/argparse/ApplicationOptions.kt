@@ -17,6 +17,9 @@ open class ApplicationOptions(val name: String, val description: String? = null,
     var initialized: Boolean = false
         private set
 
+    lateinit var namespace: Namespace
+        private set
+
     private val items = mutableListOf<AbstractOption<*>>()
 
     fun <T : AbstractOption<*>> add(construct: () -> T) = construct().also { items.add(it) }
@@ -26,7 +29,7 @@ open class ApplicationOptions(val name: String, val description: String? = null,
 
         val injected = items.map { it to it.inject(parser) }
 
-        val namespace: Namespace = try {
+        namespace = try {
             parser.parseArgs(args)
         } catch (exception: HelpScreenException) {
             exitProcess(0)

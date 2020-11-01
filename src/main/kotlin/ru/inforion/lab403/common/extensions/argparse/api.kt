@@ -103,3 +103,6 @@ fun ApplicationOptions.file(
  */
 inline fun <reified T : Any> ApplicationOptions.nargs(name: String, help: String? = null, count: Int = -1) =
     add { Vararg(help, count, T::class).also { it.positional(name) } }
+
+inline fun <reified T: ApplicationOptions> Array<String>.parseArguments() =
+    T::class.java.getDeclaredConstructor().newInstance().also { it.parse(this) }

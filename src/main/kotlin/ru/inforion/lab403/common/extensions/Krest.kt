@@ -9,15 +9,18 @@ import java.io.File
 /**
  * Unirest Kotlin wrapper and request simplifier
  */
-class Krest constructor(
-    val host: String,
-    val port: Int,
-    val endpoint: String,
-    val retries: Int = 10
-) {
+class Krest constructor(val url: String, val retries: Int = 10) {
     companion object {
         val log = logger()
     }
+
+    constructor(
+        host: String,
+        port: Int,
+        endpoint: String,
+        protocol: String = "http",
+        retries: Int = 10
+    ) : this("$protocol://$host:$port/$endpoint", retries)
 
     inline fun <T> HttpResponse<T>.throwIfFailure() = apply {
         check(status == 200) { "Request to $url failed[${status} -> $statusText]: $body" }
@@ -42,10 +45,10 @@ class Krest constructor(
     // standard unirest serializer drops types id -> may required
     inline fun HttpRequestWithBody.json(body: Any?): HttpRequest<*> = if (body == null) this else body(body.writeJson())
 
-    inline fun <T: HttpRequest<*>> T.headers(vararg headers: Pair<String, String?>) =
-        apply {  headers.filter { it.second != null }.forEach { header(it.first, it.second) }}
+    inline fun <T : HttpRequest<*>> T.headers(vararg headers: Pair<String, String?>) =
+        apply { headers.filter { it.second != null }.forEach { header(it.first, it.second) } }
 
-    inline fun <T: HttpRequest<*>> T.params(vararg params: Pair<String, String?>) =
+    inline fun <T : HttpRequest<*>> T.params(vararg params: Pair<String, String?>) =
         apply { params.filter { it.second != null }.forEach { queryString(it.first, it.second) } }
 
     inline fun HttpRequestWithBody.files(vararg files: Pair<String, File>): MultipartBody {
@@ -55,8 +58,6 @@ class Krest constructor(
         files.drop(1).forEach { result = result.field(it.first, it.second) }
         return result
     }
-
-    val url = "http://$host:$port/$endpoint"
 
     inline fun <reified T : Any> post(endpoint: String, body: Any? = null, vararg headers: Pair<String, String?>): T =
         Unirest.post("$url/$endpoint").headers(*headers).json(body).executeAndGetResult(retries)

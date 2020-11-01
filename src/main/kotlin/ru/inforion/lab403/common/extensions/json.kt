@@ -20,9 +20,11 @@ fun ObjectMapper.enableTyping() {
 fun jsonParser(
     comments: Boolean = true,
     indent: Boolean = true,
-    typing: Boolean = false
+    typing: Boolean = false,
+    trailingComma: Boolean = true
 ) = ObjectMapper().apply {
     configure(JsonParser.Feature.ALLOW_COMMENTS, comments)
+    configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, trailingComma)
     configure(SerializationFeature.INDENT_OUTPUT, indent)
     registerModule(JodaModule())
     registerModule(KotlinModule())
