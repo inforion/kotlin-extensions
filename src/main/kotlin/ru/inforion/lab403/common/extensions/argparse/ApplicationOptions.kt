@@ -7,13 +7,13 @@ import ru.inforion.lab403.common.extensions.argparse.abstracts.AbstractOption
 import kotlin.system.exitProcess
 
 /**
- * Create new program options with specified [name], [description] and [defaultHelp] parameter
+ * Create new program options with specified [application], [description] and [defaultHelp] parameter
  *
- * @param name ArgumentParser name
+ * @param application ArgumentParser name
  * @param description ArgumentParser description
  * @param defaultHelp ArgumentParser defaultHelp
  */
-open class ApplicationOptions(val name: String, val description: String? = null, val defaultHelp: Boolean = true) {
+open class ApplicationOptions(val application: String, val description: String? = null, val defaultHelp: Boolean = true) {
     var initialized: Boolean = false
         private set
 
@@ -25,7 +25,7 @@ open class ApplicationOptions(val name: String, val description: String? = null,
     fun <T : AbstractOption<*>> add(construct: () -> T) = construct().also { items.add(it) }
 
     fun parse(args: Array<String>) {
-        val parser = argparser(name, description, defaultHelp)
+        val parser = argparser(application, description, defaultHelp)
 
         val injected = items.map { it to it.inject(parser) }
 
