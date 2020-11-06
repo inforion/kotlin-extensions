@@ -416,21 +416,32 @@ fun String.substringBetween(start: String, end: String): String {
 }
 
 /**
- * Returns a substring before the first occurrence of [start] and after the last occurrence of [end]
+ * Returns a substring with replaced from first [start] and after the last occurrence of [end] with [value]
  * If the string does not contain the [start] or [end] return original string.
  *
- * @param start delimiter after which start new string
- * @param end delimiter before which end new string
+ * @param start delimiter before which start new string
+ * @param end delimiter after which end new string
  *
- * @return A string without substring from [start] to [end]
+ * @return A string with replaced text between from [start] to [end]
  */
-fun String.removeBetween(start: String, end: String): String {
+fun String.replaceBetween(start: String, end: String, value: String): String {
     val startIndex = indexOf(start)
     if (startIndex < 0) return this
     val endIndex = lastIndexOf(end)
     if (endIndex < 0) return this
-    return substring(0, startIndex) + substring(endIndex + 1)
+    return substring(0, startIndex) + value + substring(endIndex + end.length)
 }
+
+/**
+ * Returns a substring before the first occurrence of [start] and after the last occurrence of [end]
+ * If the string does not contain the [start] or [end] return original string.
+ *
+ * @param start delimiter before which start new string
+ * @param end delimiter after which end new string
+ *
+ * @return A string without substring from [start] to [end]
+ */
+fun String.removeBetween(start: String, end: String) = replaceBetween(start, end, "")
 
 
 inline fun String.classpathToPath() = replace(".", "/")
