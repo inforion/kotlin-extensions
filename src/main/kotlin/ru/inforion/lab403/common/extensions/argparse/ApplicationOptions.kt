@@ -53,4 +53,6 @@ open class ApplicationOptions(application: String, description: String? = null, 
     private val items = mutableListOf<AbstractOption<*>>()
 
     fun <T : AbstractOption<*>> add(construct: () -> T) = construct().also { items.add(it) }
+
+    override fun toString() = internals.namespace.toString()
 }
