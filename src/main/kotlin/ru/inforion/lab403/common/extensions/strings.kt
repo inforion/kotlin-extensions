@@ -377,6 +377,7 @@ operator fun String.times(n: Int) = repeat(n)
  *
  * @return A list of trimmed strings split by [regex] expression
  */
+@Deprecated("splitTrim is deprecated use splitBy(trim = true) instead")
 fun String.splitTrim(regex: Regex) = split(regex).map { it.trim() }
 
 /**
@@ -388,6 +389,7 @@ fun String.splitTrim(regex: Regex) = split(regex).map { it.trim() }
  *
  * @return A list of trimmed strings split by [delimiters]
  */
+@Deprecated("splitTrim is deprecated use splitBy(trim = true) instead")
 fun String.splitTrim(vararg delimiters: String, ignoreCase: Boolean = false) =
     split(*delimiters, ignoreCase = ignoreCase).map { it.trim() }
 
@@ -396,7 +398,50 @@ fun String.splitTrim(vararg delimiters: String, ignoreCase: Boolean = false) =
  *
  * @return A list of strings split by any whitespace characters
  */
-fun String.splitWhitespaces() = splitTrim(Regex("\\s+"))
+@Deprecated("splitWhitespaces is deprecated use splitBy(whitespaces) instead")
+fun String.splitWhitespaces() = splitTrim(whitespaces)
+
+val whitespaces = Regex("\\s+")
+
+/**
+ * Splits this char sequence to a list of strings around occurrences of the
+ * specified [regex] and:
+ * - remove leading and trailing whitespace if required
+ * - remove blank strings if required
+ *
+ * @param regex A regex expression
+ * @param trim `true` to remove leading and trailing whitespaces
+ * @param removeBlank `true` to remove blank strings after split
+ */
+fun String.splitBy(regex: Regex, trim: Boolean = true, removeBlank: Boolean = true): List<String> {
+    var result = split(regex)
+    if (trim) result = result.map { it.trim() }
+    if (removeBlank) result = result.filter { it.isNotBlank() }
+    return result
+}
+
+/**
+ * Splits this char sequence to a list of strings around occurrences of the
+ * specified [delimiters] and:
+ * - remove leading and trailing whitespaces if required
+ * - remove blank strings if required
+ *
+ * @param delimiters One or more strings to be used as delimiters
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`
+ * @param trim `true` to remove leading and trailing whitespaces
+ * @param removeBlank `true` to remove blank strings after split
+ */
+fun String.splitBy(
+    vararg delimiters: String,
+    ignoreCase: Boolean = false,
+    trim: Boolean = true,
+    removeBlank: Boolean = true
+): List<String> {
+    var result = split(*delimiters, ignoreCase = ignoreCase)
+    if (trim) result = result.map { it.trim() }
+    if (removeBlank) result = result.filter { it.isNotBlank() }
+    return result
+}
 
 /**
  * Returns a substring after the last occurrence of [start] and before the first occurrence of [end]
