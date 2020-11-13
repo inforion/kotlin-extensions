@@ -1,6 +1,8 @@
 package ru.inforion.lab403.common.extensions.argparse
 
 import ru.inforion.lab403.common.extensions.argparse.options.*
+import ru.inforion.lab403.common.extensions.splitBy
+import ru.inforion.lab403.common.extensions.whitespaces
 
 typealias ValueGetter<T> = () -> T
 
@@ -104,5 +106,20 @@ fun ApplicationOptions.file(
 inline fun <reified T : Any> ApplicationOptions.nargs(name: String, help: String? = null, count: Int = -1) =
     add { Vararg(help, count, T::class).also { it.positional(name) } }
 
+/**
+ * Parse [this] array as specified arguments class [T]
+ */
 inline fun <reified T: ApplicationOptions> Array<String>.parseArguments() =
-    T::class.java.getDeclaredConstructor().newInstance().also { it.parse(this) }
+    T::class.java.getDeclaredConstructor().newInstance().also { it.internals.parse(this) }
+
+/**
+ * Parse [this] list as specified arguments class [T]
+ */
+inline fun <reified T: ApplicationOptions> List<String>.parseArguments() =
+    toTypedArray().parseArguments<T>()
+
+/**
+ * Parse [this] string as specified arguments class [T]
+ */
+inline fun <reified T: ApplicationOptions> String.parseArguments() =
+    splitBy(whitespaces).toTypedArray().parseArguments<T>()

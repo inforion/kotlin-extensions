@@ -30,7 +30,7 @@ abstract class AbstractOption<T>(
 
     @Suppress("UNCHECKED_CAST")
     operator fun getValue(thisRef: ApplicationOptions, property: KProperty<*>) = when {
-        !thisRef.initialized -> throw IllegalStateException("${thisRef::class.simpleName} was not initialized!")
+        !thisRef.internals.initialized -> throw IllegalStateException("${thisRef::class.simpleName} was not initialized!")
         value != null -> value!!
         default != null -> default.invoke()
         property.returnType.isMarkedNullable -> null as T  // it's ok... Kotlin eats this

@@ -7,36 +7,50 @@ import ru.inforion.lab403.common.extensions.argparse.abstracts.AbstractOption
 import kotlin.system.exitProcess
 
 /**
- * Create new program options with specified [application], [description] and [defaultHelp] parameter
+ * Create new program options with specified [application], [description] and [help] parameter
  *
  * @param application ArgumentParser name
  * @param description ArgumentParser description
- * @param defaultHelp ArgumentParser defaultHelp
+ * @param help ArgumentParser defaultHelp
  */
-open class ApplicationOptions(val application: String, val description: String? = null, val defaultHelp: Boolean = true) {
-    var initialized: Boolean = false
-        private set
+open class ApplicationOptions(application: String, description: String? = null, help: Boolean = true) {
 
-    lateinit var namespace: Namespace
-        private set
+    inner class Internals(
+        val application: String,
+        val description: String?,
+        val help: Boolean
+    ) {
+        var initialized: Boolean = false
+            private set
+
+        lateinit var args: Array<String>
+            private set
+
+        lateinit var namespace: Namespace
+            private set
+
+        fun parse(args: Array<String>) {
+            this.args = args
+
+            val parser = argparser(application, description, help)
+
+            val injected = items.map { it to it.inject(parser) }
+
+            namespace = try {
+                parser.parseArgs(args)
+            } catch (exception: HelpScreenException) {
+                exitProcess(0)
+            }
+
+            injected.forEach { (property, argument) -> property.extract(namespace, argument) }
+
+            initialized = true
+        }
+    }
+
+    val internals = Internals(application, description, help)
 
     private val items = mutableListOf<AbstractOption<*>>()
 
     fun <T : AbstractOption<*>> add(construct: () -> T) = construct().also { items.add(it) }
-
-    fun parse(args: Array<String>) {
-        val parser = argparser(application, description, defaultHelp)
-
-        val injected = items.map { it to it.inject(parser) }
-
-        namespace = try {
-            parser.parseArgs(args)
-        } catch (exception: HelpScreenException) {
-            exitProcess(0)
-        }
-
-        injected.forEach { (property, argument) -> property.extract(namespace, argument) }
-
-        initialized = true
-    }
 }
