@@ -2,6 +2,11 @@
 
 package ru.inforion.lab403.common.extensions
 
+import kotlin.toULong
+import kotlin.toUInt
+import kotlin.toUShort
+import kotlin.toUByte
+
 /**
  * Signed value to unsigned conversion
  */
