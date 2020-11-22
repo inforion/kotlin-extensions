@@ -4,6 +4,11 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+/**
+ * Blocking bytes buffer input-output implementation
+ *
+ * @since 0.3.4
+ */
 class BlockingCircularBytesIO(val capacity: Int) : BlockingBytesIO {
     private val io = CircularBytesIO(capacity)
 

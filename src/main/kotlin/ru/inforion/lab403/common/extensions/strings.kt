@@ -401,6 +401,11 @@ fun String.splitTrim(vararg delimiters: String, ignoreCase: Boolean = false) =
 @Deprecated("splitWhitespaces is deprecated use splitBy(whitespaces) instead")
 fun String.splitWhitespaces() = splitTrim(whitespaces)
 
+/**
+ * Returns regex to use in splitter for multiple spaces or tabs
+ *
+ * @since 0.3.4
+ */
 val whitespaces = Regex("\\s+")
 
 /**
@@ -412,6 +417,8 @@ val whitespaces = Regex("\\s+")
  * @param regex A regex expression
  * @param trim `true` to remove leading and trailing whitespaces
  * @param removeBlank `true` to remove blank strings after split
+ *
+ * @since 0.3.4
  */
 fun String.splitBy(regex: Regex, trim: Boolean = true, removeBlank: Boolean = true): List<String> {
     var result = split(regex)
@@ -430,6 +437,8 @@ fun String.splitBy(regex: Regex, trim: Boolean = true, removeBlank: Boolean = tr
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`
  * @param trim `true` to remove leading and trailing whitespaces
  * @param removeBlank `true` to remove blank strings after split
+ *
+ * @since 0.3.4
  */
 fun String.splitBy(
     vararg delimiters: String,
@@ -485,6 +494,8 @@ fun String.replaceBetween(start: String, end: String, value: String): String {
  * @param end delimiter after which end new string
  *
  * @return A string without substring from [start] to [end]
+ *
+ * @since 0.3.4
  */
 fun String.removeBetween(start: String, end: String) = replaceBetween(start, end, "")
 

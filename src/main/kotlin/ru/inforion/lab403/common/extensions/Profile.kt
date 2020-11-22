@@ -2,6 +2,11 @@
 
 package ru.inforion.lab403.common.extensions
 
+/**
+ * Simple wrapper for code profiling purpose
+ *
+ * @since 0.3.4
+ */
 class Profile(val name: String) {
     private inline fun time() = System.nanoTime()
 

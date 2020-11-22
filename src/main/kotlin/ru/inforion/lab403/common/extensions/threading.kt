@@ -24,6 +24,11 @@ fun <T> Collection<Deferred<T>>.wait() = runBlocking { awaitAll() }
 
 fun Collection<Job>.wait() = runBlocking { joinAll() }
 
+/**
+ * Waits until all jobs in [this] collection not finished and then clear collection
+ *
+ * @since 0.3.4
+ */
 fun MutableCollection<Job>.waitAndClear() {
     wait()
     clear()
@@ -33,8 +38,18 @@ fun <T> Deferred<T>.wait() = runBlocking { await() }
 
 fun Job.wait() = runBlocking { join() }
 
+/**
+ * Executes an [action] for [this] deferred when completed with it result
+ *
+ * @since 0.3.4
+ */
 inline fun <T> Deferred<T>.onComplete(crossinline action: (T) -> Unit) = invokeOnCompletion { action(getCompleted()) }
 
+/**
+ * Represent blocking value class, like BlockingQueue but just with one element
+ *
+ * @since 0.3.3
+ */
 class BlockingValue <T: Any> {
     private lateinit var value: T
 

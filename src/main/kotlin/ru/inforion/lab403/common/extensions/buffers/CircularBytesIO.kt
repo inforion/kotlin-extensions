@@ -1,9 +1,13 @@
 package ru.inforion.lab403.common.extensions.buffers
 
-import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.logger
 
+/**
+ * Bytes buffer input-output implementation
+ *
+ * @since 0.3.4
+ */
 class CircularBytesIO(val capacity: Int) : BytesIO {
     companion object {
         val log = logger(INFO)

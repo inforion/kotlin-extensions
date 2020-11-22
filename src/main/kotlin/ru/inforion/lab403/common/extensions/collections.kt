@@ -16,6 +16,11 @@ inline fun <T> collect(count: Int, item: (Int) -> T) = (0 until count).map(item)
 @Deprecated("just use range(...) since 0.3.4")
 inline fun collect(count: Int) = (0 until count).toList()
 
+/**
+ * Returns sequence with total specified element [count] and [block] initializer for each
+ *
+ * @since 0.3.4
+ */
 inline fun <T> sequence(count: Int, crossinline block: (Int) -> T) = sequence { repeat(count) { yield(block(it)) } }
 
 /**
