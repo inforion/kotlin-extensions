@@ -12,6 +12,8 @@ import kotlin.system.exitProcess
  * @param application ArgumentParser name
  * @param description ArgumentParser description
  * @param help ArgumentParser defaultHelp
+ *
+ * @since 0.3.4
  */
 open class ApplicationOptions(application: String, description: String? = null, help: Boolean = true) {
 

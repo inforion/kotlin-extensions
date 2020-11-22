@@ -14,6 +14,8 @@ typealias ValueGetter<T> = () -> T
  * @param default default argument value
  * @param required is parameter required
  * @param help help string
+ *
+ * @since 0.3.4
  */
 inline fun <reified T : Any> ApplicationOptions.variable(
     short: String,
@@ -29,6 +31,8 @@ inline fun <reified T : Any> ApplicationOptions.variable(
  * @param name argument name (will be used for namespace after parse)
  * @param default default argument value
  * @param help help string
+ *
+ * @since 0.3.4
  */
 inline fun <reified T : Any> ApplicationOptions.variable(
     name: String,
@@ -42,6 +46,8 @@ inline fun <reified T : Any> ApplicationOptions.variable(
  * @param short short choice name
  * @param long long choice name (will be used for namespace after parse)
  * @param help help string
+ *
+ * @since 0.3.4
  */
 inline fun <reified E : Enum<E>> ApplicationOptions.choices(
     short: String,
@@ -57,6 +63,8 @@ inline fun <reified E : Enum<E>> ApplicationOptions.choices(
  * @param name choices parameter name (will be used for namespace after parse)
  * @param help help string
  * @param default default value for choice
+ *
+ * @since 0.3.4
  */
 inline fun <reified E : Enum<E>> ApplicationOptions.choices(
     name: String,
@@ -71,6 +79,8 @@ inline fun <reified E : Enum<E>> ApplicationOptions.choices(
  * @param long long flag name (will be used for namespace after parse)
  * @param help help string
  * @param default default value for flag
+ *
+ * @since 0.3.4
  */
 fun ApplicationOptions.flag(short: String, long: String, help: String? = null, default: Boolean = false) =
     add { Flag(help, default).also { it.optional(short, long) } }
@@ -85,6 +95,8 @@ fun ApplicationOptions.flag(short: String, long: String, help: String? = null, d
  * @param canWrite check whether file can be written
  * @param required is parameter required
  * @param help help string
+ *
+ * @since 0.3.4
  */
 fun ApplicationOptions.file(
     short: String,
@@ -102,24 +114,32 @@ fun ApplicationOptions.file(
  * @param name argument name (will be used for namespace after parse)
  * @param count variable argument count (if -1 - unspecified)
  * @param help help string
+ *
+ * @since 0.3.4
  */
 inline fun <reified T : Any> ApplicationOptions.nargs(name: String, help: String? = null, count: Int = -1) =
     add { Vararg(help, count, T::class).also { it.positional(name) } }
 
 /**
  * Parse [this] array as specified arguments class [T]
+ *
+ * @since 0.3.4
  */
 inline fun <reified T: ApplicationOptions> Array<String>.parseArguments() =
     T::class.java.getDeclaredConstructor().newInstance().also { it.internals.parse(this) }
 
 /**
  * Parse [this] list as specified arguments class [T]
+ *
+ * @since 0.3.4
  */
 inline fun <reified T: ApplicationOptions> List<String>.parseArguments() =
     toTypedArray().parseArguments<T>()
 
 /**
  * Parse [this] string as specified arguments class [T]
+ *
+ * @since 0.3.4
  */
 inline fun <reified T: ApplicationOptions> String.parseArguments() =
     splitBy(whitespaces).toTypedArray().parseArguments<T>()
