@@ -28,4 +28,13 @@ inline fun <T> sequence(count: Int, crossinline block: (Int) -> T) = sequence { 
  *
  * @since 0.3.4
  */
-inline fun <T, R>Collection<Map<T, R>>.flatten() = mutableMapOf<T, R>().also { map -> forEach { map += it } }
+inline fun <T, R>Collection<Map<T, R>>.flatten(): Map<T, R> = mutableMapOf<T, R>().also { map -> forEach { map += it } }
+
+/**
+ * Returns a map where keys are indexes of items of original list [this] and values are items
+ *
+ * @since 0.3.4
+ */
+inline fun <T> List<T>.associateByIndex(): Map<Int, T> = mutableMapOf<Int, T>().also {
+    forEachIndexed { index, item -> it[index] = item }
+}
