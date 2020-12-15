@@ -466,7 +466,7 @@ fun String.substringBetween(start: String, end: String): String {
     require(startIndex >= 0)
     val endIndex = indexOf(end)
     require(endIndex >= 0)
-    return substring(startIndex + 1, endIndex)
+    return substring(startIndex + start.length, endIndex)
 }
 
 /**

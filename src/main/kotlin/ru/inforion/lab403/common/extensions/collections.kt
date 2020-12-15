@@ -38,3 +38,14 @@ inline fun <T, R>Collection<Map<T, R>>.flatten(): Map<T, R> = mutableMapOf<T, R>
 inline fun <T> List<T>.associateByIndex(): Map<Int, T> = mutableMapOf<Int, T>().also {
     forEachIndexed { index, item -> it[index] = item }
 }
+
+/**
+ * Returns a mutable list of nulls with specified generic type
+ *
+ * NOTE: arrayOfNulls require reified T parameter and thus all upper parameter must be reified
+ *       that will lead to expose all private non-inline function
+ *
+ * @since 0.3.5
+ */
+@Suppress("UNCHECKED_CAST")
+inline fun <T> mutableListOfNulls(size: Int) = Array<Any?>(size) { null }.asList() as MutableList<T?>
