@@ -2,12 +2,12 @@ plugins {
     id 'signing'
     id 'maven'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
     id 'org.jetbrains.dokka' version '1.4.0'
 }
 
 group 'com.github.inforion'
-version '0.3.5'
+version '0.3.6'
 
 repositories {
     mavenLocal()
@@ -19,13 +19,13 @@ dependencies {
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-test'
-    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.3.9'
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.4.2'
 
     implementation group: 'joda-time', name: 'joda-time', version: '2.10.6'
     implementation group: 'io.javalin', name: 'javalin', version: '3.11.0'
     implementation group: 'com.konghq', name: 'unirest-java', version: '3.9.00'
-    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.11.3'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.11.3'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.12.0'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.12.0'
 
     implementation group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
     implementation group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
