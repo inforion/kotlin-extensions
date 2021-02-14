@@ -1,11 +1,16 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ru.inforion.lab403.common.extensions.tree
 
 import java.io.Serializable
+import kotlin.reflect.KProperty
 
-fun <T: Serializable> Node<T>.filterChildren(predicate: (Node<T>) -> Boolean) = children.filter(predicate)
-
-fun <T: Serializable> Node<T>.findChild(predicate: (Node<T>) -> Boolean) = children.find(predicate)
-
-fun <T: Serializable> Node<T>.forEachChild(action: (Node<T>) -> Unit) = children.forEach(action)
-
-fun <T: Serializable, R> Node<T>.mapChildren(transform: (Node<T>) -> R) = children.map(transform)
+inline fun <T : Serializable> Node<T>.calculateDepth(): Int {
+    var result = 0
+    var current = this
+    while (current.parent != null) {
+        current = current.parent!!
+        result++
+    }
+    return result
+}
