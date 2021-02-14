@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.extensions.tree
 
 import org.junit.Test
-import ru.inforion.lab403.common.extensions.tree.DepthFirstRecursive.Companion.dfs
+import ru.inforion.lab403.common.extensions.tree.DepthFirstIterator.Companion.dfs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -59,6 +59,37 @@ internal class DepthFirstRecursiveTest {
     )
 
     @Test
+    fun toStringTest() {
+        val actual = root.dfs.toString(ident = 2, separator = '-') { it.content }
+        val expected = """0
+--00
+----000
+----001
+------0010
+------0011
+----002
+--01
+----010
+----011
+------0110
+------0111
+--02
+----020
+----021
+------0210
+------0211
+"""
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun joinToStringTest() {
+        val actual = root.dfs.joinToString { it.content }
+        val expected = expectedDepthFirstFull.joinToString()
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun shallowDepthTest() = assertEquals(1, shallowNode.depth)
 
     @Test
@@ -105,9 +136,19 @@ internal class DepthFirstRecursiveTest {
 
     @Test
     fun trackTest() {
-        val actual = root.dfs.trackWithDepth { depth, node -> node.content[depth] == '0' }.map { it.content }
+        val actual = root.dfs.track { it.content[it.depth] == '0' }.map { it.content }
         val expected = listOf("0", "00", "000")
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun findLast() {
+        val actual = root.dfs.findLast {
+            println("$it -> ${it.content}")
+            it.content[it.depth] == '0'
+        }
+        println(root.dfs.toString { "$it -> ${it.content}" })
+        println(actual!!.content)
     }
 
     @Test

@@ -14,19 +14,14 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
     var parent: Node<T>? = null
         private set (value) {
             field = value
-            depth = null
+            depth = if (value != null) value.depth + 1 else 0
         }
 
     /**
      * Returns depth of this node or recalculate it
      */
-    var depth: Int? = null
+    var depth = 0
         private set
-        get() {
-            if (field == null)
-                field = calculateDepth()
-            return field
-        }
 
     /**
      * Returns immutable variant of node's children
