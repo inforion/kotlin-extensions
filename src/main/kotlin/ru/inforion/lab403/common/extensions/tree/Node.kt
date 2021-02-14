@@ -14,14 +14,22 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
     var parent: Node<T>? = null
         private set (value) {
             field = value
-            depth = if (value != null) value.depth + 1 else 0
+            depth = -1
         }
 
     /**
      * Returns depth of this node or recalculate it
      */
-    var depth = 0
+    var depth: Int = -1
         private set
+        get() {
+            if (field == -1) {
+                val p = parent
+                // Here is recursion call but hope this is better then update depth for children in parent
+                field = if (p != null) p.depth + 1 else 0
+            }
+            return field
+        }
 
     /**
      * Returns immutable variant of node's children
