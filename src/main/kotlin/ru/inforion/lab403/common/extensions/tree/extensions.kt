@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.extensions.tree
 
 import ru.inforion.lab403.common.extensions.tree.BackwardIterator.Companion.backward
+import ru.inforion.lab403.common.extensions.tree.DepthFirstIterator.Companion.dfs
 import java.io.Serializable
 
 /**

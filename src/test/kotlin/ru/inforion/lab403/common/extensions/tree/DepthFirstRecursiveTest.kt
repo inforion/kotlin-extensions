@@ -2,7 +2,7 @@ package ru.inforion.lab403.common.extensions.tree
 
 import org.junit.Test
 import ru.inforion.lab403.common.extensions.tree.DepthFirstIterator.Companion.dfs
-import ru.inforion.lab403.common.extensions.tree.Flow.Companion.toFlow
+import ru.inforion.lab403.common.extensions.tree.Tree.Companion.toTreeMapValue
 import ru.inforion.lab403.common.extensions.writeJson
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -201,11 +201,65 @@ internal class DepthFirstRecursiveTest {
     @Test
     fun sankeyTest() {
         val expected = """{
-  "sources" : [ 0, 0, 0, 1, 1, 1, 3, 3, 7, 7, 9, 9, 12, 12, 14, 14 ],
-  "targets" : [ 1, 7, 12, 2, 3, 6, 4, 5, 8, 9, 10, 11, 13, 14, 15, 16 ],
-  "values" : [ 12, 4, 38, 3, 6, 3, 1, 5, 1, 3, 1, 2, 13, 25, 10, 15 ]
+  "sources" : [ 0, 1, 1, 3, 3, 1, 0, 7, 7, 9, 9, 0, 12, 12, 14, 14 ],
+  "indexes" : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ],
+  "contents" : [ {
+    "value" : 54,
+    "depth" : 0
+  }, {
+    "value" : 12,
+    "depth" : 1
+  }, {
+    "value" : 3,
+    "depth" : 2
+  }, {
+    "value" : 6,
+    "depth" : 2
+  }, {
+    "value" : 1,
+    "depth" : 3
+  }, {
+    "value" : 5,
+    "depth" : 3
+  }, {
+    "value" : 3,
+    "depth" : 2
+  }, {
+    "value" : 4,
+    "depth" : 1
+  }, {
+    "value" : 1,
+    "depth" : 2
+  }, {
+    "value" : 3,
+    "depth" : 2
+  }, {
+    "value" : 1,
+    "depth" : 3
+  }, {
+    "value" : 2,
+    "depth" : 3
+  }, {
+    "value" : 38,
+    "depth" : 1
+  }, {
+    "value" : 13,
+    "depth" : 2
+  }, {
+    "value" : 25,
+    "depth" : 2
+  }, {
+    "value" : 10,
+    "depth" : 3
+  }, {
+    "value" : 15,
+    "depth" : 3
+  } ]
 }"""
-        val actual = flowRoot.toFlow().value { it.content }.toSankey().writeJson()
+        val actual = flowRoot.toTreeMapValue {
+            this["value"] = it.content
+            this["depth"] = it.depth()
+        }.writeJson()
         assertEquals(expected, actual)
     }
 
