@@ -89,10 +89,24 @@ inline class DepthFirstIterator<T: Serializable>(val target: Node<T>) : Iterable
         transform: (Node<T>) -> String
     ) = writer.apply {
         forEach { node ->
-            repeat(ident * node.depth) { append(separator) }
+            repeat(ident * node.depth()) { append(separator) }
             appendLine(transform(node))
         }
         flush()
+    }
+
+    /**
+     * Prints tree into string in depth first traverse order
+     *
+     * @param ident is a ident size for each tree depth level
+     * @param separator is a char for ident
+     * @param transform function to transform node to string
+     */
+    fun print(ident: Int = 4, separator: Char = ' ', transform: (Node<T>) -> String) {
+        with(System.out.writer()) {
+            write(this, ident, separator, transform).toString()
+            appendLine()
+        }
     }
 
     /**
@@ -105,7 +119,7 @@ inline class DepthFirstIterator<T: Serializable>(val target: Node<T>) : Iterable
      * @return writer
      */
     fun toString(ident: Int = 4, separator: Char = ' ', transform: (Node<T>) -> String) =
-        write(ident = ident, separator = separator, transform = transform).toString()
+        write(StringWriter(), ident, separator, transform).toString()
 
     override fun iterator() = object : Iterator<Node<T>> {
         private var next: Node<T>? = target

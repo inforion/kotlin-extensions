@@ -6,35 +6,18 @@ import java.io.Serializable
 
 class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Serializable {
 
-    private val childrenIntern = mutableListOf<Node<T>>()
+    private val myChildren = mutableListOf<Node<T>>()
 
     /**
      * Nodes parent or null if node has no parent
      */
     var parent: Node<T>? = null
-        private set (value) {
-            field = value
-            depth = -1
-        }
-
-    /**
-     * Returns depth of this node or recalculate it
-     */
-    var depth: Int = -1
         private set
-        get() {
-            if (field == -1) {
-                val p = parent
-                // Here is recursion call but hope this is better then update depth for children in parent
-                field = if (p != null) p.depth + 1 else 0
-            }
-            return field
-        }
 
     /**
      * Returns immutable variant of node's children
      */
-    val children: List<Node<T>> get() = childrenIntern
+    val children: List<Node<T>> get() = myChildren
 
     /**
      * Removes specified [node] from children of this node
@@ -42,7 +25,7 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
      * @param node is a node to remove from children
      */
     fun remove(node: Node<T>): Boolean {
-        if (childrenIntern.remove(node)) {
+        if (myChildren.remove(node)) {
             node.parent = null
             return true
         }
@@ -62,15 +45,8 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
     fun add(node: Node<T>) {
         node.unlink()
         node.parent = this
-        childrenIntern.add(node)
+        myChildren.add(node)
     }
-
-    /**
-     * Creates new node with specified [content] and add it to the this node
-     *
-     * @param content is a content set into new node
-     */
-    fun create(content: T) = Node(content).also { add(it) }
 
     /**
      * Checks whether or not this node is root node
@@ -80,19 +56,19 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
     /**
      * Checks whether or not this node has children
      */
-    val hasChildren get() = childrenIntern.isNotEmpty()
+    val hasChildren get() = myChildren.isNotEmpty()
 
     /**
      * Iterates only over this node children with hierarchy
      */
-    override fun iterator() = childrenIntern.iterator()
+    override fun iterator() = myChildren.iterator()
 
     /**
      * Returns nodes child with specified [index]
      *
      * @param index is a child index
      */
-    operator fun get(index: Int) = childrenIntern[index]
+    operator fun get(index: Int) = myChildren[index]
 
-    override fun toString() = "Node(id=${identity.lhex8})"
+    override fun toString() = "Node@${identity.lhex8}"
 }
