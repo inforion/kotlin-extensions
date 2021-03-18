@@ -1,7 +1,5 @@
 package ru.inforion.lab403.common.extensions.tree
 
-import ru.inforion.lab403.common.extensions.identity
-import ru.inforion.lab403.common.extensions.lhex8
 import java.io.Serializable
 
 class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Serializable {
@@ -70,5 +68,5 @@ class Node<T: Serializable> constructor(val content: T) : Iterable<Node<T>>, Ser
      */
     operator fun get(index: Int) = myChildren[index]
 
-    override fun toString() = "Node@${identity.lhex8}"
+    override fun toString() = "Node($content)"
 }
