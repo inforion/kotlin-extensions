@@ -92,6 +92,21 @@ fun ApplicationOptions.flag(
 ) = add { Flag(help, default).also { it.nameOrFlags(short, long) } }
 
 /**
+ * Adds flag argument to argument parser
+ *
+ * @param name long option flag, should started from "-"/"--" (will be used for namespace after parse)
+ * @param help help string
+ * @param default default value for flag
+ *
+ * @since 0.3.5
+ */
+fun ApplicationOptions.flag(
+    name: String,
+    help: String? = null,
+    default: Boolean = false
+) = add { Flag(help, default).also { it.nameOrFlags(name) } }
+
+/**
  * Add file argument
  *
  * @param short short file argument name
