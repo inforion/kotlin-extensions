@@ -13,13 +13,11 @@ abstract class AbstractOption<T>(
     val required: Boolean,
     val default: ValueGetter<T>?
 ) {
-    private var nameOrFlags: Array<String> = emptyArray()
+    private var nameOrFlags: Array<out String> = emptyArray()
 
     private var value: T? = null
 
-    fun positional(name: String) = run { nameOrFlags = arrayOf(name) }
-
-    fun optional(short: String, long: String) = run { nameOrFlags = arrayOf(short, long) }
+    fun nameOrFlags(vararg nameOrFlags: String) = run { this.nameOrFlags = nameOrFlags }
 
     open fun inject(parser: ArgumentParser): Argument = parser
         .addArgument(*nameOrFlags)

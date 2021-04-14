@@ -23,12 +23,12 @@ inline fun <reified T : Any> ApplicationOptions.variable(
     help: String? = null,
     required: Boolean = false,
     noinline default: ValueGetter<T>? = null
-) = add { Variable(help, required, default, T::class).also { it.optional(short, long) } }
+) = add { Variable(help, required, default, T::class).also { it.nameOrFlags(short, long) } }
 
 /**
  * Adds a position argument
  *
- * @param name argument name (will be used for namespace after parse)
+ * @param name argument name or long option if started from "-"/"--" (will be used for namespace after parse)
  * @param default default argument value
  * @param help help string
  *
@@ -37,8 +37,9 @@ inline fun <reified T : Any> ApplicationOptions.variable(
 inline fun <reified T : Any> ApplicationOptions.variable(
     name: String,
     help: String? = null,
+    required: Boolean = false,
     noinline default: ValueGetter<T>? = null
-) = add { Variable(help, true, default, T::class).also { it.positional(name) } }
+) = add { Variable(help, required, default, T::class).also { it.nameOrFlags(name) } }
 
 /**
  * Adds choices argument to argument parser using predefined Enum<T> type
@@ -55,12 +56,12 @@ inline fun <reified E : Enum<E>> ApplicationOptions.choices(
     help: String? = null,
     required: Boolean = false,
     noinline default: ValueGetter<E>? = null
-) = add { Choices(help, required, default, enumValues(), E::class).also { it.optional(short, long) } }
+) = add { Choices(help, required, default, enumValues(), E::class).also { it.nameOrFlags(short, long) } }
 
 /**
  * Adds choices argument to argument parser using predefined Enum<T> type
  *
- * @param name choices parameter name (will be used for namespace after parse)
+ * @param name argument name or long option if started from "-"/"--" (will be used for namespace after parse)
  * @param help help string
  * @param default default value for choice
  *
@@ -69,8 +70,9 @@ inline fun <reified E : Enum<E>> ApplicationOptions.choices(
 inline fun <reified E : Enum<E>> ApplicationOptions.choices(
     name: String,
     help: String? = null,
+    required: Boolean = false,
     noinline default: ValueGetter<E>? = null
-) = add { Choices(help, true, default, enumValues(), E::class).also { it.positional(name) } }
+) = add { Choices(help, required, default, enumValues(), E::class).also { it.nameOrFlags(name) } }
 
 /**
  * Adds flag argument to argument parser
@@ -82,8 +84,12 @@ inline fun <reified E : Enum<E>> ApplicationOptions.choices(
  *
  * @since 0.3.4
  */
-fun ApplicationOptions.flag(short: String, long: String, help: String? = null, default: Boolean = false) =
-    add { Flag(help, default).also { it.optional(short, long) } }
+fun ApplicationOptions.flag(
+    short: String,
+    long: String,
+    help: String? = null,
+    default: Boolean = false
+) = add { Flag(help, default).also { it.nameOrFlags(short, long) } }
 
 /**
  * Add file argument
@@ -106,19 +112,47 @@ fun ApplicationOptions.file(
     exists: Boolean = false,
     canRead: Boolean = false,
     canWrite: Boolean = false
-) = add { File(help, required, exists, canRead, canWrite).also { it.optional(short, long) } }
+) = add { File(help, required, exists, canRead, canWrite).also { it.nameOrFlags(short, long) } }
 
 /**
- * Adds vararg argument
+ * Adds vararg (space separated list) argument
  *
- * @param name argument name (will be used for namespace after parse)
- * @param count variable argument count (if -1 - unspecified)
+ * @param name argument name or long option if started from "-"/"--" (will be used for namespace after parse)
  * @param help help string
+ * @param required is parameter required
+ * @param default default value for flag
+ * @param count variable argument count (if -1 - unspecified)
  *
  * @since 0.3.4
  */
-inline fun <reified T : Any> ApplicationOptions.nargs(name: String, help: String? = null, count: Int = -1) =
-    add { Vararg(help, count, T::class).also { it.positional(name) } }
+inline fun <reified T : Any, C: List<T>> ApplicationOptions.nargs(
+    name: String,
+    help: String? = null,
+    required: Boolean = false,
+    count: Int = -1,
+    noinline default: ValueGetter<C>? = null
+) = add { Vararg(help, required, default, count, T::class).also { it.nameOrFlags(name) } }
+
+/**
+ * Adds vararg (space separated list) argument
+ *
+ * @param short short vararg argument name
+ * @param long long vararg argument name (will be used for namespace after parse)
+ * @param help help string
+ * @param required is parameter required
+ * @param default default value for flag
+ * @param count variable argument count (if -1 - unspecified)
+ *
+ * @since 0.3.5
+ */
+inline fun <reified T : Any, C: List<T>> ApplicationOptions.nargs(
+    short: String,
+    long: String,
+    help: String? = null,
+    required: Boolean = false,
+    count: Int = -1,
+    noinline default: ValueGetter<C>? = null
+) = add { Vararg(help, required, default, count, T::class).also { it.nameOrFlags(short, long) } }
 
 /**
  * Parse [this] array as specified arguments class [T]
@@ -133,8 +167,7 @@ inline fun <reified T: ApplicationOptions> Array<String>.parseArguments() =
  *
  * @since 0.3.4
  */
-inline fun <reified T: ApplicationOptions> List<String>.parseArguments() =
-    toTypedArray().parseArguments<T>()
+inline fun <reified T: ApplicationOptions> List<String>.parseArguments() = toTypedArray().parseArguments<T>()
 
 /**
  * Parse [this] string as specified arguments class [T]
