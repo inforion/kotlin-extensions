@@ -6,6 +6,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
+import java.util.*
 import kotlin.experimental.and
 
 /**
@@ -20,11 +21,11 @@ operator fun String.get(range: IntRange): String {
 
 fun String.toCamelCase(): String {
     if (this.isNotEmpty())
-        return this[0].toLowerCase() + this.substring(1)
+        return this[0].lowercaseChar() + this.substring(1)
     return this
 }
 
-fun ByteArray.ascii(): String = map { if (it in 0x20..0x7e) it.toChar() else '.' }.joinToString("")
+fun ByteArray.ascii(): String = map { if (it in 0x20..0x7e) it.asChar else '.' }.joinToString("")
 
 fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): String {
     val hexChars = CharArray(this.size * 2)
@@ -33,7 +34,7 @@ fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): Strin
         hexChars[j * 2] = Character.forDigit(v[7..4], 16)
         hexChars[j * 2 + 1] = Character.forDigit(v[3..0], 16)
     }
-    val result = if (upperCase) String(hexChars).toUpperCase() else String(hexChars)
+    val result = if (upperCase) String(hexChars).uppercase() else String(hexChars)
     if (separator != null) {
         val builder = StringBuilder()
         builder.append(result[0..2])

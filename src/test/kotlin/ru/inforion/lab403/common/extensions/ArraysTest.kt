@@ -158,17 +158,17 @@ class ArraysTest {
     }
 
     @Test fun subByLongByteArray() {
-        val sum = byteArrayOf(0, 1, 2, 3, 4, 5).sumByLong { it.toLong() }
+        val sum = byteArrayOf(0, 1, 2, 3, 4, 5).sumOf { it.toLong() }
         assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
     }
 
     @Test fun subByLongIntArray() {
-        val sum = intArrayOf(0, 1, 2, 3, 4, 5).sumByLong { it.toLong() }
+        val sum = intArrayOf(0, 1, 2, 3, 4, 5).sumOf { it.toLong() }
         assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
     }
 
     @Test fun subByLongLongArray() {
-        val sum = longArrayOf(0, 1, 2, 3, 4, 5).sumByLong { it }
+        val sum = longArrayOf(0, 1, 2, 3, 4, 5).sumOf { it }
         assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
     }
 
@@ -180,7 +180,7 @@ class ArraysTest {
                 TestClass(3, 3, "3"),
                 TestClass(4, 4, "4"),
                 TestClass(5, 5, "5")
-        ).sumByLong { it.long * 2 }
+        ).sumOf { it.long * 2 }
         assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
     }
 
@@ -192,7 +192,7 @@ class ArraysTest {
                 TestClass(3, 3, "3"),
                 TestClass(4, 4, "4"),
                 TestClass(5, 5, "5")
-        ).sumByLong { it.long * 2 }
+        ).sumOf { it.long * 2 }
         assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
     }
 }

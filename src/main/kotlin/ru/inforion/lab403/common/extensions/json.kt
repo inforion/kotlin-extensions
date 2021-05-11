@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import java.io.InputStream
 
 
@@ -27,7 +28,7 @@ fun jsonParser(
     configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, trailingComma)
     configure(SerializationFeature.INDENT_OUTPUT, indent)
     registerModule(JodaModule())
-    registerModule(KotlinModule())
+    registerKotlinModule()
     if (typing) enableTyping()
 }
 

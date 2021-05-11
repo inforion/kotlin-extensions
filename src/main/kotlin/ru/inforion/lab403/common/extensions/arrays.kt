@@ -135,9 +135,9 @@ inline fun<T>ByteArray.split(byte: Byte, limit: Int = 0, modify: (ByteArray) -> 
     return result
 }
 
-inline fun<T>ByteArray.split(char: Char, limit: Int = 0, modify: (ByteArray) -> T) = split(char.toByte(), limit, modify)
+inline fun<T>ByteArray.split(char: Char, limit: Int = 0, modify: (ByteArray) -> T) = split(char.code.toByte(), limit, modify)
 
-inline fun ByteArray.split(char: Char, limit: Int = 0) = split(char.toByte(), limit) { it }
+inline fun ByteArray.split(char: Char, limit: Int = 0) = split(char.code.toByte(), limit) { it }
 
 fun ByteArray.chunks(length: Int): List<ByteArray> {
     var offset = 0
@@ -560,6 +560,7 @@ fun Int.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
 fun Long.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
         ByteArray(size).also { it.putInt(0, this, size, order) }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun ByteArray.sumByLong(selector: (Byte) -> Long): Long {
     var sum: Long = 0
     for (element in this) {
@@ -568,6 +569,7 @@ inline fun ByteArray.sumByLong(selector: (Byte) -> Long): Long {
     return sum
 }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun ShortArray.sumByLong(selector: (Short) -> Long): Long {
     var sum: Long = 0
     for (element in this) {
@@ -576,6 +578,7 @@ inline fun ShortArray.sumByLong(selector: (Short) -> Long): Long {
     return sum
 }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun IntArray.sumByLong(selector: (Int) -> Long): Long {
     var sum: Long = 0
     for (element in this) {
@@ -584,6 +587,7 @@ inline fun IntArray.sumByLong(selector: (Int) -> Long): Long {
     return sum
 }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun LongArray.sumByLong(selector: (Long) -> Long): Long {
     var sum: Long = 0
     for (element in this) {
@@ -592,6 +596,7 @@ inline fun LongArray.sumByLong(selector: (Long) -> Long): Long {
     return sum
 }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun <T> Array<T>.sumByLong(selector: (T) -> Long): Long {
     var sum: Long = 0
     for (element in this) {
@@ -600,6 +605,7 @@ inline fun <T> Array<T>.sumByLong(selector: (T) -> Long): Long {
     return sum
 }
 
+@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
 inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
     var sum: Long = 0
     for (element in this) {

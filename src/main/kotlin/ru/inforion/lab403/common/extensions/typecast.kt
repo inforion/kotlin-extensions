@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package ru.inforion.lab403.common.extensions
 
 inline val Long.asLong: Long get() = toLong()
@@ -6,7 +8,7 @@ inline val Long.asShort: Short get() = toShort()
 inline val Long.asByte: Byte get() = toByte()
 inline val Long.asFloat: Float get() = toFloat()
 inline val Long.asDouble: Double get() = toDouble()
-inline val Long.asChar: Char get() = toChar()
+inline val Long.asChar: Char get() = Char(toUShort())
 
 inline val Int.asLong: Long get() = toLong()
 inline val Int.asULong: Long get() = toULong()
@@ -25,7 +27,7 @@ inline val Short.asShort: Short get() = toShort()
 inline val Short.asByte: Byte get() = toByte()
 inline val Short.asFloat: Float get() = toFloat()
 inline val Short.asDouble: Double get() = toDouble()
-inline val Short.asChar: Char get() = toChar()
+inline val Short.asChar: Char get() = Char(toUShort())
 
 inline val Byte.asLong: Long get() = toLong()
 inline val Byte.asULong: Long get() = toULong()
@@ -35,16 +37,16 @@ inline val Byte.asShort: Short get() = toShort()
 inline val Byte.asByte: Byte get() = toByte()
 inline val Byte.asFloat: Float get() = toFloat()
 inline val Byte.asDouble: Double get() = toDouble()
-inline val Byte.asChar: Char get() = toChar()
+inline val Byte.asChar: Char get() = Char(toUShort())
 
-inline val Char.asLong: Long get() = toLong()
+inline val Char.asLong: Long get() = code.toLong()
 inline val Char.asULong: Long get() = toULong()
 inline val Char.asUInt: Int get() = toUInt()
-inline val Char.asInt: Int get() = toInt()
-inline val Char.asShort: Short get() = toShort()
-inline val Char.asByte: Byte get() = toByte()
-inline val Char.asFloat: Float get() = toFloat()
-inline val Char.asDouble: Double get() = toDouble()
+inline val Char.asInt: Int get() = code
+inline val Char.asShort: Short get() = code.toShort()
+inline val Char.asByte: Byte get() = code.toByte()
+inline val Char.asFloat: Float get() = code.toFloat()
+inline val Char.asDouble: Double get() = code.toDouble()
 inline val Char.asChar: Char get() = toChar()
 
 inline val Float.asLong: Long get() = toLong()

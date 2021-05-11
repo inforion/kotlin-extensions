@@ -22,7 +22,7 @@ class RandomTest {
     private val y = Array(collectionSize) { x.random { 0.0 } }
     private val py = x.map { item -> y.count { it.id == item.id }.toDouble() / z.count() }
 
-    @Test fun choiceBasicTest() = assertEquals(x.sumByDouble { it.weight }, 1.0, tolerance)
+    @Test fun choiceBasicTest() = assertEquals(x.sumOf { it.weight }, 1.0, tolerance)
 
     @Test fun choiceAccumTest() = assertEquals(pq.sum(), 1.0, tolerance)
 

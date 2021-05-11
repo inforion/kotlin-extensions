@@ -66,7 +66,7 @@ inline fun Short.toUInt(): Int = toInt() and INT16MASK
 inline fun Byte.toULong(): Long = asLong and INT8MASK.asULong
 inline fun Byte.toUInt(): Int = toInt() and INT8MASK
 inline fun Char.toULong(): Long = asLong and INT8MASK.asULong
-inline fun Char.toUInt(): Int = toInt() and INT8MASK
+inline fun Char.toUInt(): Int = code and INT8MASK
 
 // Get one many bits
 inline fun Long.xbits(high: Int, low: Int): Long = (this shr low) and ((1L shl (high - low + 1)) - 1)
