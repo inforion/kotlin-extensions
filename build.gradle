@@ -41,10 +41,20 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions {
+        jvmTarget = "11"
+        // remove when kotlin 1.5.0 will be released
+        // see https://youtrack.jetbrains.com/issue/KT-46562
+        freeCompilerArgs += '-Xsam-conversions=class'
+    }
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions {
+        jvmTarget = "11"
+        // remove when kotlin 1.5.0 will be released
+        // see https://youtrack.jetbrains.com/issue/KT-46562
+        freeCompilerArgs += '-Xsam-conversions=class'
+    }
 }
 
 dokkaJavadoc.configure {
