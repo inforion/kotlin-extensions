@@ -109,6 +109,27 @@ fun ApplicationOptions.flag(
 /**
  * Add file argument
  *
+ * @param name long option flag, should started from "-"/"--" (will be used for namespace after parse)
+ * @param exists check whether file exists
+ * @param canRead check whether file can be read
+ * @param canWrite check whether file can be written
+ * @param required is parameter required
+ * @param help help string
+ *
+ * @since 0.3.6
+ */
+fun ApplicationOptions.file(
+    name: String,
+    help: String? = null,
+    required: Boolean = false,
+    exists: Boolean = false,
+    canRead: Boolean = false,
+    canWrite: Boolean = false
+) = add { File(help, required, exists, canRead, canWrite).also { it.nameOrFlags(name) } }
+
+/**
+ * Add file argument
+ *
  * @param short short file argument name
  * @param long long file argument name (will be used for namespace after parse)
  * @param exists check whether file exists
