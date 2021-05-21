@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import java.io.File
 import java.io.InputStream
 
 
@@ -37,10 +38,11 @@ fun jsonParser(
 // using several mappers and get at each time random mapper to prevent heavy deadlocks
 val mappers = Array(16) { jsonParser() }
 
-
 inline fun <reified T: Any> String.parseJson(m: ObjectMapper = mappers.random()) = m.readValue<T>(this)
 
 inline fun <reified T: Any> InputStream.parseJson(m: ObjectMapper = mappers.random()) = m.readValue<T>(this)
+
+inline fun <reified T: Any> File.parseJson(m: ObjectMapper = mappers.random()) = m.readValue<T>(this)
 
 inline fun <reified T: Any> Map<String, Any?>.parseJson(m: ObjectMapper = mappers.random()): T = m.convertValue(this, T::class.java)
 
