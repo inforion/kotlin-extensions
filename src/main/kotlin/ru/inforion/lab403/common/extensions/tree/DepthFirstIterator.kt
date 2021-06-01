@@ -16,63 +16,6 @@ inline class DepthFirstIterator<T: Serializable>(val target: Node<T>) : Iterable
     }
 
     /**
-     * Tracks nodes by specified [predicate] into [result] list
-     * NOTE: Function checks nodes until first unmatched found starting from [target] node
-     *   i.e. if [target] node matched then all children will be checked looking for first match and if found
-     *   function goes to the next depth level and so on
-     *
-     * For the tree shown below result of:
-     * ```
-     * - track is [root, child0, child01, child010, child011] NOTE: also child011
-     * - filter is [root, child0, child001, child01, child010, child011]
-     * - find is [root, ]
-     *                                    |- child000
-     *                                    |
-     *                                    |
-     *                        |- child00 -|
-     *                        |           |
-     *                        |           | [matched]
-     *              [matched] |           |- child001
-     *            |- child0 --|
-     *            |           |             [matched]
-     *            |           |           |- child010
-     *            |           | [matched] |
-     *            |           |- child01 -|
-     *            |                       | [matched]
-     * [matched]  |                       |- child011
-     *    root ---|
-     *            |           |-
-     *            |- child1 --|
-     *                        |-
-     *
-     * ```
-     *
-     * @param result list of tracked nodes
-     * @param predicate function to track nodes into [result] list
-     *
-     * @return [result] list of nodes track
-     */
-    fun trackTo(result: MutableList<Node<T>>, predicate: (Node<T>) -> Boolean): MutableList<Node<T>> {
-        if (predicate(target)) {
-            result.add(target)
-            target.children.forEach { it.dfs.trackTo(result, predicate) }
-        }
-        return result
-    }
-
-    /**
-     * Tracks nodes by specified [predicate]
-     * NOTE: Function checks nodes until first unmatched found starting from [target] node
-     *   i.e. if [target] node matched then all children will be checked looking for first match and if found
-     *   function goes to the next depth level and so on
-     *
-     * @param predicate function to track nodes
-     *
-     * @see [trackTo]
-     */
-    fun track(predicate: (Node<T>) -> Boolean) = trackTo(mutableListOf(), predicate)
-
-    /**
      * Writes tree into string in depth first traverse order
      *
      * @param writer where to write

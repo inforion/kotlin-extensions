@@ -2,6 +2,7 @@ package ru.inforion.lab403.common.extensions.tree
 
 import org.junit.Test
 import ru.inforion.lab403.common.extensions.tree.DepthFirstIterator.Companion.dfs
+import ru.inforion.lab403.common.extensions.tree.TrackIterator.Companion.track
 import ru.inforion.lab403.common.extensions.tree.Tree.Companion.toTreeMapValue
 import ru.inforion.lab403.common.extensions.writeJson
 import kotlin.test.assertEquals
@@ -165,7 +166,7 @@ internal class DepthFirstRecursiveTest {
 
     @Test
     fun trackTest() {
-        val actual = root.dfs.track { it.content[it.depth()] == '0' }.map { it.content }
+        val actual = root.track { it.content[it.depth()] == '0' }.map { it.content }
         val expected = listOf("0", "00", "000")
         assertEquals(expected, actual)
     }
