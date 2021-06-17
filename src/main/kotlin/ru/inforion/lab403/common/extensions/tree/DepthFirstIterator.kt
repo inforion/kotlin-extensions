@@ -9,7 +9,8 @@ import java.io.Writer
 import java.util.*
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
-inline class DepthFirstIterator<T: Serializable>(val target: Node<T>) : Iterable<Node<T>> {
+@JvmInline
+value class DepthFirstIterator<T: Serializable>(val target: Node<T>) : Iterable<Node<T>> {
 
     companion object {
         inline val <T : Serializable> Node<T>.dfs get() = DepthFirstIterator(this)
