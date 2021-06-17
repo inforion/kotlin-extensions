@@ -35,3 +35,8 @@ inline fun <T: Serializable> Node<T>.clear() = listOfChildren().forEach { remove
  * Adds all [newChildren] to [this] node
  */
 inline fun <T: Serializable> Node<T>.addAll(newChildren: List<Node<T>>) = newChildren.forEach { add(it) }
+
+/**
+ * Returns list of leaves (nodes without any children)
+ */
+inline fun <T: Serializable> Node<T>.leaves() = dfs.filter { !it.hasChildren }
