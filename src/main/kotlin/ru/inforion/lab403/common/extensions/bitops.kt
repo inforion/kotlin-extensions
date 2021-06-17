@@ -37,7 +37,7 @@ inline infix fun Byte.bzero(range: IntRange): Byte = (asULong and bitMask(range)
 
 inline fun signext(value: Long, n: Int): Int {
     val mask = bitMask(n)
-    val result = if (value and mask > mask shr 1) {
+    val result = if (value and mask > mask ushr 1) {
         -((value.inv() and mask) + 1)
     } else {
         value and mask
@@ -69,8 +69,8 @@ inline fun Char.toULong(): Long = asLong and INT8MASK.asULong
 inline fun Char.toUInt(): Int = code and INT8MASK
 
 // Get one many bits
-inline fun Long.xbits(high: Int, low: Int): Long = (this shr low) and ((1L shl (high - low + 1)) - 1)
-inline fun Int.xbits(high: Int, low: Int): Int = (this shr low) and ((1 shl (high - low + 1)) - 1)
+inline fun Long.xbits(high: Int, low: Int): Long = (this ushr low) and ((1L shl (high - low + 1)) - 1)
+inline fun Int.xbits(high: Int, low: Int): Int = (this ushr low) and ((1 shl (high - low + 1)) - 1)
 
 inline operator fun Long.get(range: IntRange): Long = xbits(range.first, range.last)
 inline operator fun Int.get(range: IntRange): Int = xbits(range.first, range.last)
@@ -78,8 +78,8 @@ inline operator fun Short.get(range: IntRange): Short = toInt().xbits(range.firs
 inline operator fun Byte.get(range: IntRange): Byte = toInt().xbits(range.first, range.last).asByte
 
 // Get one bit methods
-inline fun Long.xbit(indx: Int): Long = (this shr indx) and 1
-inline fun Int.xbit(indx: Int): Int = (this shr indx) and 1
+inline fun Long.xbit(indx: Int): Long = (this ushr indx) and 1
+inline fun Int.xbit(indx: Int): Int = (this ushr indx) and 1
 
 inline operator fun Long.get(indx: Int): Long = xbit(indx)
 inline operator fun Int.get(indx: Int): Int = xbit(indx)
@@ -187,7 +187,7 @@ inline fun Int.swap16(): Int = (((this and 0xFF) shl 8) or ((this and 0xFF00) us
 inline fun Short.swap16(): Int = ((asUInt and 0xFF) shl 8) or ((asUInt and 0xFF00) ushr 8)
 
 inline infix fun Byte.shl(count: Int): Long = asULong shl count
-inline infix fun Byte.shr(count: Int): Long = asULong shr count
+inline infix fun Byte.ashr(count: Int): Long = asULong shr count
 inline infix fun Byte.ushr(count: Int): Long = asULong ushr count
 
 inline fun Int.bitReverse(): Int {
@@ -246,8 +246,12 @@ infix fun Long.ssext(sbit: Int) = signext(this, sbit + 1).asLong
 infix fun Long.usext(sbit: Int) = signext(this, sbit + 1).asULong
 
 //Now it works and works faster
-infix fun Long.rotl32(amount: Int): Long = ((this shl amount) or (this shr (32 - amount))) mask 32
+infix fun Long.rotl32(amount: Int): Long = ((this shl amount) or (this ushr (32 - amount))) mask 32
 
 fun Long.replace(index: Int, value: Long): Long = (this and 1L.shl(index).inv() or (value shl index))
 fun Long.replace(index: Int, value: Boolean): Long = replace(index, value.asLong)
 fun Long.replace(range: IntRange, value: Long): Long = (this and bitMask(range).inv() or (value shl range.last))
+
+inline infix fun Int.ashr(n: Int) = shr(n)
+inline infix fun Long.ashr(n: Int) = shr(n)
+
