@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package ru.inforion.lab403.common.extensions
 
 import net.sourceforge.argparse4j.ArgumentParsers

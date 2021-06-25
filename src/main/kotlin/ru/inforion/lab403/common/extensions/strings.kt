@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.extensions
 
 import java.io.File
+import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
@@ -508,3 +509,13 @@ inline fun String.className() = substringAfterLast(".")
 inline fun String.packageName() = substringBeforeLast(".")
 
 inline fun String.splitPackageClass() = Pair(packageName(), className())
+
+inline fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${take(maxlen)}..."
+
+inline fun String.toFileOutputStream() = toFile().outputStream()
+
+inline fun String.toInetSocketAddress(): InetSocketAddress {
+    val host = substringBefore(":")
+    val port = substringAfter(":").toInt()
+    return InetSocketAddress(host, port)
+}

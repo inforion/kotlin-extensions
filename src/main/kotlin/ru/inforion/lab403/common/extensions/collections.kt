@@ -49,3 +49,55 @@ inline fun <T> List<T>.associateByIndex(): Map<Int, T> = mutableMapOf<Int, T>().
  */
 @Suppress("UNCHECKED_CAST")
 inline fun <T> mutableListOfNulls(size: Int) = Array<Any?>(size) { null }.asList() as MutableList<T?>
+
+inline val <T> List<T>.start get() = first()
+
+inline val <T> List<T>.startOrNull get() = firstOrNull()
+
+inline val <T> List<T>.end get() = last()
+
+inline val <T> List<T>.endOrNull get() = lastOrNull()
+
+inline fun <R> List<*>.findInstance(klass: Class<R>): R? {
+    for (element in this) if (klass.isInstance(element)) return element.cast()
+    return null
+}
+
+inline fun <R> List<*>.firstInstance(klass: Class<R>): R {
+    for (element in this) if (klass.isInstance(element)) return element.cast()
+    throw NoSuchElementException()
+}
+
+
+inline fun <R> List<*>.hasInstance(klass: Class<R>): Boolean {
+    for (element in this) if (klass.isInstance(element)) return true
+    return false
+}
+
+inline fun <T> Iterator<T>.toList(): List<T> {
+    val result = mutableListOf<T>()
+    while (hasNext()) result.add(next())
+    return result
+}
+
+inline fun <T, C: Collection<T>> C.ifNotEmpty(action: (C) -> Unit) {
+    if (isNotEmpty()) action(this)
+}
+
+inline fun <IK, IV, OK, OV> Map<IK, IV>.associate(transform: (Map.Entry<IK, IV>) -> Pair<OK, OV>) = entries.associate(transform)
+
+inline fun <K, V> Map<K, V>.ifContains(key: K, action: (V) -> Unit) = get(key) ifNotNull action
+
+inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R) =
+    minByOrNull(selector) ?: error("Collection should not be empty")
+
+inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R) =
+    maxByOrNull(selector) ?: error("Collection should not be empty")
+
+inline val <A, B> Collection<Pair<A, B>>.firsts get() = map { it.first }
+
+inline val <A, B> Collection<Pair<A, B>>.seconds get() = map { it.second }
+
+inline val <reified A, B> Array<out Pair<A, B>>.firsts get() = map { it.first }.toTypedArray()
+
+inline val <A, reified B> Array<out Pair<A, B>>.seconds get() = map { it.second }.toTypedArray()
