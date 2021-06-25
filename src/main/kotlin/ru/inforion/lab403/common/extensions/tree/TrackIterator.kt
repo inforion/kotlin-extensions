@@ -48,7 +48,7 @@ class TrackIterator<T : Serializable>(val target: Node<T>, val predicate: (Node<
     }
 
     override fun iterator() = object : Iterator<Node<T>> {
-        private var next: Node<T>? = target
+        private var next: Node<T>? = if (predicate(target)) target else null
 
         override fun hasNext() = next != null
 
