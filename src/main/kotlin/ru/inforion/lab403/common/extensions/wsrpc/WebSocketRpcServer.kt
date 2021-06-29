@@ -9,16 +9,17 @@ import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import ru.inforion.lab403.common.extensions.*
+import ru.inforion.lab403.common.extensions.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.extensions.wsrpc.descs.Request
 import ru.inforion.lab403.common.extensions.wsrpc.descs.Response
-import ru.inforion.lab403.common.extensions.wsrpc.endpoints.ServiceEndpoint
 import ru.inforion.lab403.common.extensions.wsrpc.interfaces.WebSocketRpcEndpoint
 import java.io.Closeable
 import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 
 @OptIn(ObsoleteCoroutinesApi::class)
@@ -29,16 +30,21 @@ class WebSocketRpcServer constructor(
     val pingTimeout: Int = 10, // in seconds
     val isReuseAddress: Boolean = true,
     val isTcpNoDelayActive: Boolean = false
-): Closeable {
+) : Closeable {
     companion object {
+        const val SERVICE_ENDPOINT_NAME = "Service"
+        val SERVICE_ENDPOINT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID()
+
         val log = logger(FINER)
     }
 
-    private val myEndpoints = dictionaryOf<UUID, EndpointHolder>()
+    private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()
 
     fun register(endpoint: WebSocketRpcEndpoint, uuid: UUID? = null): EndpointHolder {
         val actual = uuid ?: uuid()
-        require(actual !in myEndpoints) { "Endpoint with $uuid already registered!" }
+
+        require(!myEndpoints.contains(actual)) { "Endpoint with $uuid already registered!" }
+
         return EndpointHolder(this, endpoint, actual).also {
             myEndpoints[actual] = it
             it.onRegister()
@@ -47,6 +53,8 @@ class WebSocketRpcServer constructor(
     }
 
     fun unregister(uuid: UUID) {
+        require(uuid != SERVICE_ENDPOINT_UUID) { "Can't unregister service endpoint!" }
+
         myEndpoints.remove(uuid)
             .sure { "Endpoint with $uuid not registered!" }
             .also {
@@ -79,7 +87,8 @@ class WebSocketRpcServer constructor(
                     log.severe { it.stackTraceToString() }
                 }.onSuccess { request ->
                     val response = try {
-                        val endpoint = myEndpoints[request.endpoint].sure { "Endpoint ${request.endpoint} not registered!" }
+                        val endpoint = myEndpoints[request.endpoint]
+                            .sure { "Endpoint ${request.endpoint} not registered!" }
                         val result = endpoint.execute(request.method, request.values)
                         Response(request.uuid, result, null)
                     } catch (error: Throwable) {
@@ -129,11 +138,28 @@ class WebSocketRpcServer constructor(
 
     override fun close() = stop()
 
-    val endpoints: Map<UUID, EndpointHolder> get() = myEndpoints
-
     internal val resources = ResourceManager()
 
+    inner class ServiceEndpoint(override val name: String = SERVICE_ENDPOINT_NAME) : WebSocketRpcEndpoint {
+        @WebSocketRpcMethod
+        fun endpoints() = myEndpoints.associate { it.key to it.value.identifier }
+
+        @WebSocketRpcMethod
+        fun clear() = myEndpoints.values
+            .filter { it.endpoint != this }
+            .forEach { this@WebSocketRpcServer.unregister(it.uuid) }
+
+        @WebSocketRpcMethod
+        fun unregister(uuid: UUID) = this@WebSocketRpcServer.unregister(uuid)
+
+        @WebSocketRpcMethod
+        fun address() = server.address
+
+        @WebSocketRpcMethod
+        fun port() = server.port
+    }
+
     init {
-        register(ServiceEndpoint(this), "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID())
+        register(ServiceEndpoint(), SERVICE_ENDPOINT_UUID)
     }
 }
