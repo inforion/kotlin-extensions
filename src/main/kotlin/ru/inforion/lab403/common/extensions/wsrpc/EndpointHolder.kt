@@ -44,7 +44,7 @@ class EndpointHolder constructor(
 
     internal fun execute(name: String, values: Map<String, Any?>): String {
         val method = methods[name].sure { "Method $name was not found in $endpoint" }
-        log.fine { "$this.${name}(${values.map { (key, value) -> "$key=${value?.toString()}" }.joinToString()})" }
+        log.finer { "$this.${name}(${values.map { (key, value) -> "$key=${value?.toString()}" }.joinToString()})" }
         val args = method.parameters.map { values.getValueOfParameter(it) }
         val result = method.function.call(endpoint, *args.toTypedArray())
         if (method.close) server.unregister(uuid)
