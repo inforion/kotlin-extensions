@@ -9,6 +9,8 @@ import org.apache.kafka.clients.admin.TopicDescription
 import org.apache.kafka.common.Node
 import org.apache.kafka.common.TopicPartition
 import ru.inforion.lab403.common.extensions.associate
+import ru.inforion.lab403.common.extensions.ifNotNull
+import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.logging.logger
 import java.io.Closeable
 
@@ -57,19 +59,20 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         TopicInfo(topic.name(), partitions)
     }
 
-    fun consumersInfo(groups: Collection<String>) = groups.map { group ->
+    fun consumersInfo(groups: Collection<String>) = groups.associateWith { group ->
         log.fine { "Collecting info for group: '${group}'" }
 
         val offsets = listConsumerGroupOffsets(group)
+
         // assume group for single topic
-        val topic = offsets.keys.first()
+        offsets.keys.firstOrNull() ifNotNull {
+            val partitions = listOffsets(offsets.keys).map { (partition, size) ->
+                val offset = offsets.getValue(partition)
+                PartitionInfo(partition.partition(), offset, size)
+            }
 
-        val partitions = listOffsets(offsets.keys).map { (partition, size) ->
-            val offset = offsets.getValue(partition)
-            PartitionInfo(partition.partition(), offset, size)
+            TopicInfo(topic(), partitions)
         }
-
-        TopicInfo(topic.topic(), partitions)
     }
 
     override fun close() = client.close()
