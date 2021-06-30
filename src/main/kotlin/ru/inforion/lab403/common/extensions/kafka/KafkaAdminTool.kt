@@ -60,8 +60,6 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
     }
 
     fun consumersInfo(groups: Collection<String>) = groups.associateWith { group ->
-        log.fine { "Collecting info for group: '${group}'" }
-
         val offsets = listConsumerGroupOffsets(group)
 
         // assume group for single topic
