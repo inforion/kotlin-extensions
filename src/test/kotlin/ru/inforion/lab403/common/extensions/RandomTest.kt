@@ -64,7 +64,7 @@ class RandomTest {
     fun success() {
         val prob = 0.69
         val total = 1_000_000
-        val data = Array(total) { random.success(prob).asInt }
+        val data = Array(total) { random.success(prob).int }
         val result = data.count { it == 1 } / total.toDouble()
         val error = Math.abs(result - prob)
         println("Positive success = $result, error = $error")

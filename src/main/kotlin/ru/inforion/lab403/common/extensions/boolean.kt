@@ -15,10 +15,10 @@ inline fun Boolean.toShort(): Short = if (this) 1 else 0
 inline fun Boolean.toInt(): Int = if (this) 1 else 0
 inline fun Boolean.toLong(): Long = if (this) 1L else 0L
 
-inline val Boolean.asByte get() = toByte()
-inline val Boolean.asShort get() = toShort()
-inline val Boolean.asInt get() = toInt()
-inline val Boolean.asLong get() = toLong()
+inline val Boolean.byte get() = toByte()
+inline val Boolean.short get() = toShort()
+inline val Boolean.int get() = toInt()
+inline val Boolean.long get() = toLong()
 
 fun convertBooleanArrayToNumber(range: IntRange = 0..31, converter: (Int) -> Boolean): Long {
     var result = 0L

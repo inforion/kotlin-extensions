@@ -15,24 +15,24 @@ inline fun bitMask(range: IntRange): Long = if (range.last == 0) bitMask(range.f
 
 inline infix fun Long.mask(size: Int): Long = this and bitMask(size)
 inline infix fun Int.mask(size: Int): Int = this and bitMask(size).toInt()
-inline infix fun Short.mask(size: Int): Short = this and bitMask(size).asShort
-inline infix fun Byte.mask(size: Int): Byte = this and bitMask(size).asByte
+inline infix fun Short.mask(size: Int): Short = this and bitMask(size).short
+inline infix fun Byte.mask(size: Int): Byte = this and bitMask(size).byte
 
 /**
  * Fill with zeros bit outside the specified range for long values
  */
 inline infix fun Long.mask(range: IntRange): Long = this and bitMask(range)
 inline infix fun Int.mask(range: IntRange): Int = this and bitMask(range).toInt()
-inline infix fun Short.mask(range: IntRange): Short = (asULong and bitMask(range)).asShort
-inline infix fun Byte.mask(range: IntRange): Byte = (asULong and bitMask(range)).asByte
+inline infix fun Short.mask(range: IntRange): Short = (asULong and bitMask(range)).short
+inline infix fun Byte.mask(range: IntRange): Byte = (asULong and bitMask(range)).byte
 
 /**
  * Fill with zero specified bit range (from msb to lsb)
  */
 inline infix fun Long.bzero(range: IntRange): Long = this and bitMask(range).inv()
 inline infix fun Int.bzero(range: IntRange): Int = this and bitMask(range).inv().toInt()
-inline infix fun Short.bzero(range: IntRange): Short = (asULong and bitMask(range).inv()).asShort
-inline infix fun Byte.bzero(range: IntRange): Byte = (asULong and bitMask(range).inv()).asByte
+inline infix fun Short.bzero(range: IntRange): Short = (asULong and bitMask(range).inv()).short
+inline infix fun Byte.bzero(range: IntRange): Byte = (asULong and bitMask(range).inv()).byte
 
 
 inline fun signext(value: Long, n: Int): Int {
@@ -42,7 +42,7 @@ inline fun signext(value: Long, n: Int): Int {
     } else {
         value and mask
     }
-    return result.asInt
+    return result.int
 }
 
 /**
@@ -56,16 +56,16 @@ inline fun Number.bext(n: Int): Long {
 }
 
 // To unsigned long conversion
-inline fun Double.toULong(): Long = asLong and INT32MASK
-inline fun Float.toULong(): Long = asLong and INT32MASK
-inline fun Int.toULong(): Long = asLong and INT32MASK
+inline fun Double.toULong(): Long = long and INT32MASK
+inline fun Float.toULong(): Long = long and INT32MASK
+inline fun Int.toULong(): Long = long and INT32MASK
 
-inline fun Short.toULong(): Long = asLong and INT16MASK.asULong
+inline fun Short.toULong(): Long = long and INT16MASK.asULong
 inline fun Short.toUInt(): Int = toInt() and INT16MASK
 
-inline fun Byte.toULong(): Long = asLong and INT8MASK.asULong
+inline fun Byte.toULong(): Long = long and INT8MASK.asULong
 inline fun Byte.toUInt(): Int = toInt() and INT8MASK
-inline fun Char.toULong(): Long = asLong and INT8MASK.asULong
+inline fun Char.toULong(): Long = long and INT8MASK.asULong
 inline fun Char.toUInt(): Int = code and INT8MASK
 
 // Get one many bits
@@ -74,8 +74,8 @@ inline fun Int.xbits(high: Int, low: Int): Int = (this ushr low) and ((1 shl (hi
 
 inline operator fun Long.get(range: IntRange): Long = xbits(range.first, range.last)
 inline operator fun Int.get(range: IntRange): Int = xbits(range.first, range.last)
-inline operator fun Short.get(range: IntRange): Short = toInt().xbits(range.first, range.last).asShort
-inline operator fun Byte.get(range: IntRange): Byte = toInt().xbits(range.first, range.last).asByte
+inline operator fun Short.get(range: IntRange): Short = toInt().xbits(range.first, range.last).short
+inline operator fun Byte.get(range: IntRange): Byte = toInt().xbits(range.first, range.last).byte
 
 // Get one bit methods
 inline fun Long.xbit(indx: Int): Long = (this ushr indx) and 1
@@ -83,12 +83,12 @@ inline fun Int.xbit(indx: Int): Int = (this ushr indx) and 1
 
 inline operator fun Long.get(indx: Int): Long = xbit(indx)
 inline operator fun Int.get(indx: Int): Int = xbit(indx)
-inline operator fun Short.get(indx: Int): Short = toInt().xbit(indx).asShort
-inline operator fun Byte.get(indx: Int): Byte = toInt().xbit(indx).asByte
+inline operator fun Short.get(indx: Int): Short = toInt().xbit(indx).short
+inline operator fun Byte.get(indx: Int): Byte = toInt().xbit(indx).byte
 
 // Set one bit
 inline fun insertBit(dst: Long, value: Int, indx: Int): Long {
-    val ins = value.asLong.shl(indx)
+    val ins = value.long.shl(indx)
     val mask = 1L.shl(indx).inv()
     return dst.and(mask).or(ins)
 }
@@ -102,15 +102,15 @@ inline fun insertBit(dst: Int, value: Int, indx: Int): Int {
 
 inline fun clearBit(dst: Long, indx: Int): Long = dst and (1L shl indx).inv()
 inline fun clearBit(dst: Int, indx: Int): Int = dst and (1 shl indx).inv()
-inline fun clearBit(dst: Short, indx: Int): Short = (dst.toUInt() and (1 shl indx).inv()).asShort
+inline fun clearBit(dst: Short, indx: Int): Short = (dst.toUInt() and (1 shl indx).inv()).short
 
 inline fun setBit(dst: Long, indx: Int): Long = dst or (1L shl indx)
 inline fun setBit(dst: Int, indx: Int): Int = dst or (1 shl indx)
-inline fun setBit(dst: Short, indx: Int): Short = (dst.toUInt() or (1 shl indx)).asShort
+inline fun setBit(dst: Short, indx: Int): Short = (dst.toUInt() or (1 shl indx)).short
 
 inline fun toggleBit(dst: Long, indx: Int): Long = dst xor (1L shl indx)
 inline fun toggleBit(dst: Int, indx: Int): Int = dst xor (1 shl indx)
-inline fun toggleBit(dst: Short, indx: Int): Short = (dst.toUInt() xor (1 shl indx)).asShort
+inline fun toggleBit(dst: Short, indx: Int): Short = (dst.toUInt() xor (1 shl indx)).short
 
 inline infix fun Long.toggle(index: Int): Long = toggleBit(this, index)
 inline infix fun Int.toggle(index: Int): Int = toggleBit(this, index)
@@ -134,7 +134,7 @@ inline fun insertField(dst: Int, src: Int, range: IntRange): Int = (dst bzero ra
 inline fun isIntegerOverflow(op1: Int, op2: Int, res: Int): Boolean =
         (op1 < 0 && op2 < 0 && res >= 0) || (op1 > 0 && op2 > 0 && res < 0)
 
-inline fun Long.insert(value: Long, indx: Int): Long = insertBit(this, value.asInt, indx)
+inline fun Long.insert(value: Long, indx: Int): Long = insertBit(this, value.int, indx)
 inline fun Long.insert(value: Int, indx: Int): Long = insertBit(this, value, indx)
 inline fun Int.insert(value: Int, indx: Int): Int = insertBit(this, value, indx)
 
@@ -175,8 +175,8 @@ inline fun Long.swap64(): Long = (
                 ((this and (0xFF shl 48)) ushr 40) or   // 0x00FF0000_00000000
                 ((this and (0xFF shl 56)) ushr 56))     // 0xFF000000_00000000
 
-inline fun Long.swap32(): Long = asInt.swap32().asULong
-inline fun Long.swap16(): Long = asInt.swap16().asULong
+inline fun Long.swap32(): Long = int.swap32().asULong
+inline fun Long.swap16(): Long = int.swap16().asULong
 
 inline fun Int.swap32(): Int = (((this and 0xFF) shl 24) or
         ((this and 0xFF00) shl 8)) or
@@ -212,9 +212,9 @@ inline infix fun Long.rotr64(amount: Int): Long = (this to 64) rotr amount
 inline infix fun Long.rotr32(amount: Int): Long = (this to 32) rotr amount
 inline infix fun Long.rotr16(amount: Int): Long = (this to 16) rotr amount
 inline infix fun Long.rotr8(amount: Int): Long = (this to 8) rotr amount
-inline infix fun Int.rotr32(amount: Int): Int = ((asULong to 32) rotr amount).asInt
-inline infix fun Int.rotr16(amount: Int): Int = ((asULong to 16) rotr amount).asInt
-inline infix fun Int.rotr8(amount: Int): Int = ((asULong to 8) rotr amount).asInt
+inline infix fun Int.rotr32(amount: Int): Int = ((asULong to 32) rotr amount).int
+inline infix fun Int.rotr16(amount: Int): Int = ((asULong to 16) rotr amount).int
+inline infix fun Int.rotr8(amount: Int): Int = ((asULong to 8) rotr amount).int
 
 /**
  * Returns java unsigned unary minus representation of value (two's complement notation)
@@ -223,7 +223,7 @@ inline infix fun Int.rotr8(amount: Int): Int = ((asULong to 8) rotr amount).asIn
  */
 inline infix fun Long.cmpl2(bits: Int): Long = -this mask bits
 inline infix fun Int.cmpl2(bits: Int): Long = (-this mask bits).asULong
-inline infix fun Boolean.cmpl2(bits: Int): Long = asInt cmpl2 bits
+inline infix fun Boolean.cmpl2(bits: Int): Long = int cmpl2 bits
 inline fun cmpl2(bits: Int): Long = 1.cmpl2(bits)
 
 
@@ -242,14 +242,14 @@ inline fun pow2(n: Int): Long = 1L shl n
  *
  * @return extended integer
  */
-infix fun Long.ssext(sbit: Int) = signext(this, sbit + 1).asLong
+infix fun Long.ssext(sbit: Int) = signext(this, sbit + 1).long
 infix fun Long.usext(sbit: Int) = signext(this, sbit + 1).asULong
 
 //Now it works and works faster
 infix fun Long.rotl32(amount: Int): Long = ((this shl amount) or (this ushr (32 - amount))) mask 32
 
 fun Long.replace(index: Int, value: Long): Long = (this and 1L.shl(index).inv() or (value shl index))
-fun Long.replace(index: Int, value: Boolean): Long = replace(index, value.asLong)
+fun Long.replace(index: Int, value: Boolean): Long = replace(index, value.long)
 fun Long.replace(range: IntRange, value: Long): Long = (this and bitMask(range).inv() or (value shl range.last))
 
 inline infix fun Int.ashr(n: Int) = shr(n)

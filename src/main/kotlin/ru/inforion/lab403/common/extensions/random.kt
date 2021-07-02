@@ -2,7 +2,6 @@
 
 package ru.inforion.lab403.common.extensions
 
-import java.security.SecureRandom
 import java.util.concurrent.ThreadLocalRandom
 
 // ThreadLocalRandom wrappers
@@ -23,6 +22,23 @@ inline fun ThreadLocalRandom.long(bound: Long) = nextLong(bound)
  * Get random long
  */
 inline val ThreadLocalRandom.long get() = nextLong()
+
+// Random function simplifier for Unsigned Long
+
+/**
+ * Get random long
+ */
+inline val ThreadLocalRandom.ulong get() = nextLong().ulong
+
+/**
+ * Get random long with inclusive lower and exclusive upper boundary
+ */
+inline fun ThreadLocalRandom.ulong(origin: ULong, bound: ULong) = nextLong(origin.long, bound.long).ulong
+
+/**
+ * Get random long with exclusive upper boundary
+ */
+inline fun ThreadLocalRandom.ulong(bound: ULong) = nextLong(bound.long).ulong
 
 // Random function simplifier for Integer
 
@@ -63,7 +79,7 @@ inline val ThreadLocalRandom.uint get(): Long = uint(maxUIntValue + 1)
 /**
  * Get random short with inclusive lower and exclusive upper boundary
  */
-inline fun ThreadLocalRandom.short(origin: Short, bound: Short) = int(origin.asUInt, bound.asUInt).asShort
+inline fun ThreadLocalRandom.short(origin: Short, bound: Short) = int(origin.asUInt, bound.asUInt).short
 
 /**
  * Get random short with exclusive upper boundary
@@ -73,14 +89,14 @@ inline fun ThreadLocalRandom.short(bound: Short) = short(0, bound)
 /**
  * Get random short
  */
-inline val ThreadLocalRandom.short get() = int(minShortValue + 0, maxShortValue + 1).asShort
+inline val ThreadLocalRandom.short get() = int(minShortValue + 0, maxShortValue + 1).short
 
 // Random function simplifier for Byte
 
 /**
  * Get random byte with inclusive lower and exclusive upper boundary
  */
-inline fun ThreadLocalRandom.byte(origin: Byte, bound: Byte) = int(origin.asUInt, bound.asUInt).asByte
+inline fun ThreadLocalRandom.byte(origin: Byte, bound: Byte) = int(origin.asUInt, bound.asUInt).byte
 
 /**
  * Get random byte with exclusive upper boundary
@@ -90,7 +106,7 @@ inline fun ThreadLocalRandom.byte(bound: Byte) = byte(0, bound)
 /**
  * Get random byte
  */
-inline val ThreadLocalRandom.byte get() = int(minByteValue + 0, maxByteValue + 1).asByte
+inline val ThreadLocalRandom.byte get() = int(minByteValue + 0, maxByteValue + 1).byte
 
 // Random function simplifier for Double
 

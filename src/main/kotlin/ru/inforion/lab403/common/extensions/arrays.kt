@@ -112,7 +112,7 @@ inline fun ByteArray.indexOf(element: Byte, fromIndex: Int): Int {
 
 inline fun ByteArray.copyOfRange(start: Int) = copyOfRange(start, size)
 
-inline fun<T>ByteArray.split(byte: Byte, limit: Int = 0, modify: (ByteArray) -> T): List<T> {
+inline fun <T> ByteArray.split(byte: Byte, limit: Int = 0, modify: (ByteArray) -> T): List<T> {
     require(limit >= 0) { "Limit must be non-negative, but was $limit." }
 
     var currentOffset = 0
@@ -135,7 +135,8 @@ inline fun<T>ByteArray.split(byte: Byte, limit: Int = 0, modify: (ByteArray) -> 
     return result
 }
 
-inline fun<T>ByteArray.split(char: Char, limit: Int = 0, modify: (ByteArray) -> T) = split(char.code.toByte(), limit, modify)
+inline fun <T> ByteArray.split(char: Char, limit: Int = 0, modify: (ByteArray) -> T) =
+    split(char.code.toByte(), limit, modify)
 
 inline fun ByteArray.split(char: Char, limit: Int = 0) = split(char.code.toByte(), limit) { it }
 
@@ -156,32 +157,32 @@ inline fun ByteBuffer.short(value: Short): ByteBuffer = putShort(value)
 inline fun ByteBuffer.int(value: Int): ByteBuffer = putInt(value)
 inline fun ByteBuffer.long(value: Long): ByteBuffer = putLong(value)
 
-operator fun <T, E: Enum<E>>Array<T>.get(e: Enum<E>): T = this[e.ordinal]
-operator fun <T, E: Enum<E>>Array<T>.set(e: Enum<E>, value: T) {
+operator fun <T, E : Enum<E>> Array<T>.get(e: Enum<E>): T = this[e.ordinal]
+operator fun <T, E : Enum<E>> Array<T>.set(e: Enum<E>, value: T) {
     this[e.ordinal] = value
 }
 
 fun ByteArray.putInt64(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[63..56].asByte
-            this[index + 1] = value[55..48].asByte
-            this[index + 2] = value[47..40].asByte
-            this[index + 3] = value[39..32].asByte
-            this[index + 4] = value[31..24].asByte
-            this[index + 5] = value[23..16].asByte
-            this[index + 6] = value[15..8].asByte
-            this[index + 7] = value[7..0].asByte
+            this[index + 0] = value[63..56].byte
+            this[index + 1] = value[55..48].byte
+            this[index + 2] = value[47..40].byte
+            this[index + 3] = value[39..32].byte
+            this[index + 4] = value[31..24].byte
+            this[index + 5] = value[23..16].byte
+            this[index + 6] = value[15..8].byte
+            this[index + 7] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 7] = value[63..56].asByte
-            this[index + 6] = value[55..48].asByte
-            this[index + 5] = value[47..40].asByte
-            this[index + 4] = value[39..32].asByte
-            this[index + 3] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 7] = value[63..56].byte
+            this[index + 6] = value[55..48].byte
+            this[index + 5] = value[47..40].byte
+            this[index + 4] = value[39..32].byte
+            this[index + 3] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -190,22 +191,22 @@ fun ByteArray.putInt64(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN
 fun ByteArray.putInt56(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[55..48].asByte
-            this[index + 1] = value[47..40].asByte
-            this[index + 2] = value[39..32].asByte
-            this[index + 3] = value[31..24].asByte
-            this[index + 4] = value[23..16].asByte
-            this[index + 5] = value[15..8].asByte
-            this[index + 6] = value[7..0].asByte
+            this[index + 0] = value[55..48].byte
+            this[index + 1] = value[47..40].byte
+            this[index + 2] = value[39..32].byte
+            this[index + 3] = value[31..24].byte
+            this[index + 4] = value[23..16].byte
+            this[index + 5] = value[15..8].byte
+            this[index + 6] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 6] = value[55..48].asByte
-            this[index + 5] = value[47..40].asByte
-            this[index + 4] = value[39..32].asByte
-            this[index + 3] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 6] = value[55..48].byte
+            this[index + 5] = value[47..40].byte
+            this[index + 4] = value[39..32].byte
+            this[index + 3] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -214,20 +215,20 @@ fun ByteArray.putInt56(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN
 fun ByteArray.putInt48(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[47..40].asByte
-            this[index + 1] = value[39..32].asByte
-            this[index + 2] = value[31..24].asByte
-            this[index + 3] = value[23..16].asByte
-            this[index + 4] = value[15..8].asByte
-            this[index + 5] = value[7..0].asByte
+            this[index + 0] = value[47..40].byte
+            this[index + 1] = value[39..32].byte
+            this[index + 2] = value[31..24].byte
+            this[index + 3] = value[23..16].byte
+            this[index + 4] = value[15..8].byte
+            this[index + 5] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 5] = value[47..40].asByte
-            this[index + 4] = value[39..32].asByte
-            this[index + 3] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 5] = value[47..40].byte
+            this[index + 4] = value[39..32].byte
+            this[index + 3] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -236,18 +237,18 @@ fun ByteArray.putInt48(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN
 fun ByteArray.putInt40(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[39..32].asByte
-            this[index + 1] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 3] = value[15..8].asByte
-            this[index + 4] = value[7..0].asByte
+            this[index + 0] = value[39..32].byte
+            this[index + 1] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 3] = value[15..8].byte
+            this[index + 4] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 4] = value[39..32].asByte
-            this[index + 3] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 4] = value[39..32].byte
+            this[index + 3] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -256,16 +257,16 @@ fun ByteArray.putInt40(index: Int, value: Long, order: ByteOrder = LITTLE_ENDIAN
 fun ByteArray.putInt32(index: Int, value: Int, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[31..24].asByte
-            this[index + 1] = value[23..16].asByte
-            this[index + 2] = value[15..8].asByte
-            this[index + 3] = value[7..0].asByte
+            this[index + 0] = value[31..24].byte
+            this[index + 1] = value[23..16].byte
+            this[index + 2] = value[15..8].byte
+            this[index + 3] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 3] = value[31..24].asByte
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 3] = value[31..24].byte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -274,14 +275,14 @@ fun ByteArray.putInt32(index: Int, value: Int, order: ByteOrder = LITTLE_ENDIAN)
 fun ByteArray.putInt24(index: Int, value: Int, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 2] = value[7..0].asByte
+            this[index + 0] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 2] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 2] = value[23..16].asByte
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 2] = value[23..16].byte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -290,27 +291,27 @@ fun ByteArray.putInt24(index: Int, value: Int, order: ByteOrder = LITTLE_ENDIAN)
 fun ByteArray.putInt16(index: Int, value: Int, order: ByteOrder = LITTLE_ENDIAN) {
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = value[15..8].asByte
-            this[index + 1] = value[7..0].asByte
+            this[index + 0] = value[15..8].byte
+            this[index + 1] = value[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 1] = value[15..8].asByte
-            this[index + 0] = value[7..0].asByte
+            this[index + 1] = value[15..8].byte
+            this[index + 0] = value[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
 }
 
 fun ByteArray.putInt8(index: Int, value: Int) {
-    this[index + 0] = value[7..0].asByte
+    this[index + 0] = value[7..0].byte
 }
 
 fun ByteArray.putInt(index: Int, value: Long, size: Int, order: ByteOrder = LITTLE_ENDIAN) {
     when (size) {
-        1 -> putInt8(index, value.asInt)
-        2 -> putInt16(index, value.asInt, order)
-        3 -> putInt24(index, value.asInt, order)
-        4 -> putInt32(index, value.asInt, order)
+        1 -> putInt8(index, value.int)
+        2 -> putInt16(index, value.int, order)
+        3 -> putInt24(index, value.int, order)
+        4 -> putInt32(index, value.int, order)
         5 -> putInt40(index, value, order)
         6 -> putInt48(index, value, order)
         7 -> putInt56(index, value, order)
@@ -319,227 +320,173 @@ fun ByteArray.putInt(index: Int, value: Long, size: Int, order: ByteOrder = LITT
     }
 }
 
-fun ByteArray.getInt64(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 7].asULong, 7..0)
-                    .insert(this[index + 6].asULong, 15..8)
-                    .insert(this[index + 5].asULong, 23..16)
-                    .insert(this[index + 4].asULong, 31..24)
-                    .insert(this[index + 3].asULong, 39..32)
-                    .insert(this[index + 2].asULong, 47..40)
-                    .insert(this[index + 1].asULong, 55..48)
-                    .insert(this[index + 0].asULong, 63..56)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-                    .insert(this[index + 2].asULong, 23..16)
-                    .insert(this[index + 3].asULong, 31..24)
-                    .insert(this[index + 4].asULong, 39..32)
-                    .insert(this[index + 5].asULong, 47..40)
-                    .insert(this[index + 6].asULong, 55..48)
-                    .insert(this[index + 7].asULong, 63..56)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt64(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 7].ulong, 7..0)
+        .insert(this[index + 6].ulong, 15..8)
+        .insert(this[index + 5].ulong, 23..16)
+        .insert(this[index + 4].ulong, 31..24)
+        .insert(this[index + 3].ulong, 39..32)
+        .insert(this[index + 2].ulong, 47..40)
+        .insert(this[index + 1].ulong, 55..48)
+        .insert(this[index + 0].ulong, 63..56)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 4].ulong, 39..32)
+        .insert(this[index + 5].ulong, 47..40)
+        .insert(this[index + 6].ulong, 55..48)
+        .insert(this[index + 7].ulong, 63..56)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt56(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 6].asULong, 7..0)
-                .insert(this[index + 5].asULong, 15..8)
-                .insert(this[index + 4].asULong, 23..16)
-                .insert(this[index + 3].asULong, 31..24)
-                .insert(this[index + 2].asULong, 39..32)
-                .insert(this[index + 1].asULong, 47..40)
-                .insert(this[index + 0].asULong, 55..48)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                .insert(this[index + 1].asULong, 15..8)
-                .insert(this[index + 2].asULong, 23..16)
-                .insert(this[index + 3].asULong, 31..24)
-                .insert(this[index + 4].asULong, 39..32)
-                .insert(this[index + 5].asULong, 47..40)
-                .insert(this[index + 6].asULong, 55..48)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt56(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 6].ulong, 7..0)
+        .insert(this[index + 5].ulong, 15..8)
+        .insert(this[index + 4].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 2].ulong, 39..32)
+        .insert(this[index + 1].ulong, 47..40)
+        .insert(this[index + 0].ulong, 55..48)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 4].ulong, 39..32)
+        .insert(this[index + 5].ulong, 47..40)
+        .insert(this[index + 6].ulong, 55..48)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt48(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 5].asULong, 7..0)
-                .insert(this[index + 4].asULong, 15..8)
-                .insert(this[index + 3].asULong, 23..16)
-                .insert(this[index + 2].asULong, 31..24)
-                .insert(this[index + 1].asULong, 39..32)
-                .insert(this[index + 0].asULong, 47..40)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                .insert(this[index + 1].asULong, 15..8)
-                .insert(this[index + 2].asULong, 23..16)
-                .insert(this[index + 3].asULong, 31..24)
-                .insert(this[index + 4].asULong, 39..32)
-                .insert(this[index + 5].asULong, 47..40)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt48(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 5].ulong, 7..0)
+        .insert(this[index + 4].ulong, 15..8)
+        .insert(this[index + 3].ulong, 23..16)
+        .insert(this[index + 2].ulong, 31..24)
+        .insert(this[index + 1].ulong, 39..32)
+        .insert(this[index + 0].ulong, 47..40)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 4].ulong, 39..32)
+        .insert(this[index + 5].ulong, 47..40)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt40(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 4].asULong, 7..0)
-                .insert(this[index + 3].asULong, 15..8)
-                .insert(this[index + 2].asULong, 23..16)
-                .insert(this[index + 1].asULong, 31..24)
-                .insert(this[index + 0].asULong, 39..32)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                .insert(this[index + 1].asULong, 15..8)
-                .insert(this[index + 2].asULong, 23..16)
-                .insert(this[index + 3].asULong, 31..24)
-                .insert(this[index + 4].asULong, 39..32)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt40(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 4].ulong, 7..0)
+        .insert(this[index + 3].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 1].ulong, 31..24)
+        .insert(this[index + 0].ulong, 39..32)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 4].ulong, 39..32)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
 
-fun ByteArray.getInt32(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 3].asULong, 7..0)
-                    .insert(this[index + 2].asULong, 15..8)
-                    .insert(this[index + 1].asULong, 23..16)
-                    .insert(this[index + 0].asULong, 31..24)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-                    .insert(this[index + 2].asULong, 23..16)
-                    .insert(this[index + 3].asULong, 31..24)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt32(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 3].ulong, 7..0)
+        .insert(this[index + 2].ulong, 15..8)
+        .insert(this[index + 1].ulong, 23..16)
+        .insert(this[index + 0].ulong, 31..24)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt24(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 2].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-                    .insert(this[index + 0].asULong, 23..16)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-                    .insert(this[index + 2].asULong, 23..16)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt24(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 2].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 0].ulong, 23..16)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt16(index: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (order) {
-        BIG_ENDIAN -> {
-            insert(this[index + 1].asULong, 7..0)
-                    .insert(this[index + 0].asULong, 15..8)
-        }
-        LITTLE_ENDIAN -> {
-            insert(this[index + 0].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getInt16(index: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (order) {
+    BIG_ENDIAN -> insert(this[index + 1].ulong, 7..0)
+        .insert(this[index + 0].ulong, 15..8)
+    LITTLE_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt8(index: Int): Int {
-    return this[index].asUInt
-}
+fun ByteArray.getInt8(index: Int) = this[index].uint mask 8
 
 @Deprecated("getValue is deprecated use getInt instead", ReplaceWith("getInt"))
-fun ByteArray.getValue(index: Int, bytesNumber: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when(bytesNumber){
-        1 -> getInt8(index).toULong()
-        2 -> getInt16(index, order)
-        3 -> getInt24(index, order)
-        4 -> getInt32(index, order)
-        8 -> getInt64(index, order)
-        else -> throw IllegalArgumentException("Available bytesNumber is 1, 2, 3, 4, 8")
-    }
+fun ByteArray.getValue(index: Int, bytesNumber: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (bytesNumber) {
+    1 -> getInt8(index).ulong mask 8
+    2 -> getInt16(index, order)
+    3 -> getInt24(index, order)
+    4 -> getInt32(index, order)
+    8 -> getInt64(index, order)
+    else -> throw IllegalArgumentException("Available bytesNumber is 1, 2, 3, 4, 8")
 }
 
-fun ByteArray.getDouble(index: Int, order: ByteOrder = LITTLE_ENDIAN): Double {
-    return when (order) {
-        LITTLE_ENDIAN -> {
-            val tmp = insert(this[index + 7].asULong, 7..0)
-                    .insert(this[index + 6].asULong, 15..8)
-                    .insert(this[index + 5].asULong, 23..16)
-                    .insert(this[index + 4].asULong, 31..24)
-                    .insert(this[index + 3].asULong, 39..32)
-                    .insert(this[index + 2].asULong, 47..40)
-                    .insert(this[index + 1].asULong, 55..48)
-                    .insert(this[index + 0].asULong, 63..56)
-            tmp.ieee754()
-        }
-        BIG_ENDIAN -> {
-            val tmp = insert(this[index + 0].asULong, 7..0)
-                    .insert(this[index + 1].asULong, 15..8)
-                    .insert(this[index + 2].asULong, 23..16)
-                    .insert(this[index + 3].asULong, 31..24)
-                    .insert(this[index + 4].asULong, 39..32)
-                    .insert(this[index + 5].asULong, 47..40)
-                    .insert(this[index + 6].asULong, 55..48)
-                    .insert(this[index + 7].asULong, 63..56)
-            tmp.ieee754()
-        }
-        else -> throw IllegalArgumentException("WRONG BYTE ORDER")
-    }
+fun ByteArray.getDouble(index: Int, order: ByteOrder = LITTLE_ENDIAN): Double = when (order) {
+    LITTLE_ENDIAN -> insert(this[index + 7].ulong, 7..0)
+        .insert(this[index + 6].ulong, 15..8)
+        .insert(this[index + 5].ulong, 23..16)
+        .insert(this[index + 4].ulong, 31..24)
+        .insert(this[index + 3].ulong, 39..32)
+        .insert(this[index + 2].ulong, 47..40)
+        .insert(this[index + 1].ulong, 55..48)
+        .insert(this[index + 0].ulong, 63..56)
+        .ieee754()
+    BIG_ENDIAN -> insert(this[index + 0].ulong, 7..0)
+        .insert(this[index + 1].ulong, 15..8)
+        .insert(this[index + 2].ulong, 23..16)
+        .insert(this[index + 3].ulong, 31..24)
+        .insert(this[index + 4].ulong, 39..32)
+        .insert(this[index + 5].ulong, 47..40)
+        .insert(this[index + 6].ulong, 55..48)
+        .insert(this[index + 7].ulong, 63..56)
+        .ieee754()
+    else -> throw IllegalArgumentException("WRONG BYTE ORDER")
 }
 
-fun ByteArray.getInt(index: Int, size: Int, order: ByteOrder = LITTLE_ENDIAN): Long {
-    return when (size) {
-        1 -> getInt8(index).asULong
-        2 -> getInt16(index, order)
-        3 -> getInt24(index, order)
-        4 -> getInt32(index, order)
-        5 -> getInt40(index, order)
-        6 -> getInt48(index, order)
-        7 -> getInt56(index, order)
-        8 -> getInt64(index, order)
-        else -> throw IllegalArgumentException("Wrong int size!")
-    }
+fun ByteArray.getInt(index: Int, size: Int, order: ByteOrder = LITTLE_ENDIAN): ULong = when (size) {
+    1 -> getInt8(index).ulong mask 8
+    2 -> getInt16(index, order)
+    3 -> getInt24(index, order)
+    4 -> getInt32(index, order)
+    5 -> getInt40(index, order)
+    6 -> getInt48(index, order)
+    7 -> getInt56(index, order)
+    8 -> getInt64(index, order)
+    else -> throw IllegalArgumentException("Wrong int size!")
 }
 
 fun ByteArray.putDouble(index: Int, value: Double, order: ByteOrder = LITTLE_ENDIAN) {
-    val tmp = value.ieee754()
+    val tmp = value.ieee754AsSigned()
     when (order) {
         BIG_ENDIAN -> {
-            this[index + 0] = tmp[63..56].asByte
-            this[index + 1] = tmp[55..48].asByte
-            this[index + 2] = tmp[47..40].asByte
-            this[index + 3] = tmp[39..32].asByte
-            this[index + 4] = tmp[31..24].asByte
-            this[index + 5] = tmp[23..16].asByte
-            this[index + 6] = tmp[15..8].asByte
-            this[index + 7] = tmp[7..0].asByte
+            this[index + 0] = tmp[63..56].byte
+            this[index + 1] = tmp[55..48].byte
+            this[index + 2] = tmp[47..40].byte
+            this[index + 3] = tmp[39..32].byte
+            this[index + 4] = tmp[31..24].byte
+            this[index + 5] = tmp[23..16].byte
+            this[index + 6] = tmp[15..8].byte
+            this[index + 7] = tmp[7..0].byte
         }
         LITTLE_ENDIAN -> {
-            this[index + 7] = tmp[63..56].asByte
-            this[index + 6] = tmp[55..48].asByte
-            this[index + 5] = tmp[47..40].asByte
-            this[index + 4] = tmp[39..32].asByte
-            this[index + 3] = tmp[31..24].asByte
-            this[index + 2] = tmp[23..16].asByte
-            this[index + 1] = tmp[15..8].asByte
-            this[index + 0] = tmp[7..0].asByte
+            this[index + 7] = tmp[63..56].byte
+            this[index + 6] = tmp[55..48].byte
+            this[index + 5] = tmp[47..40].byte
+            this[index + 4] = tmp[39..32].byte
+            this[index + 3] = tmp[31..24].byte
+            this[index + 2] = tmp[23..16].byte
+            this[index + 1] = tmp[15..8].byte
+            this[index + 0] = tmp[7..0].byte
         }
         else -> throw IllegalArgumentException("WRONG BYTE ORDER")
     }
@@ -548,68 +495,20 @@ fun ByteArray.putDouble(index: Int, value: Double, order: ByteOrder = LITTLE_END
 fun ByteArray.getArray(index: Int, size: Int): ByteArray = copyOfRange(index, index + size)
 fun ByteArray.putArray(index: Int, data: ByteArray) = System.arraycopy(data, 0, this, index, data.size)
 
-fun ByteArray.getString(index: Int, size: Int, charset: Charset = Charsets.US_ASCII): String = getArray(index, size).toString(charset)
-fun ByteArray.putString(index: Int, string: String, charset: Charset = Charsets.US_ASCII) = putArray(index, string.toByteArray(charset))
+fun ByteArray.getString(index: Int, size: Int, charset: Charset = Charsets.US_ASCII): String =
+    getArray(index, size).toString(charset)
+
+fun ByteArray.putString(index: Int, string: String, charset: Charset = Charsets.US_ASCII) =
+    putArray(index, string.toByteArray(charset))
 
 fun Byte.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
-        ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+    ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+
 fun Short.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
-        ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+    ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+
 fun Int.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
-        ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+    ByteArray(size).also { it.putInt(0, this.asULong, size, order) }
+
 fun Long.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
-        ByteArray(size).also { it.putInt(0, this, size, order) }
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun ByteArray.sumByLong(selector: (Byte) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun ShortArray.sumByLong(selector: (Short) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun IntArray.sumByLong(selector: (Int) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun LongArray.sumByLong(selector: (Long) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun <T> Array<T>.sumByLong(selector: (T) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-@Deprecated(message = "Deprecated since 0.3.5", replaceWith = ReplaceWith("sumOf()"))
-inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
-    var sum: Long = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
+    ByteArray(size).also { it.putInt(0, this, size, order) }

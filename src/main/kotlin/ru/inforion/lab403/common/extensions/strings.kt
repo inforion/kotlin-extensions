@@ -26,7 +26,7 @@ fun String.toCamelCase(): String {
     return this
 }
 
-fun ByteArray.ascii(): String = map { if (it in 0x20..0x7e) it.asChar else '.' }.joinToString("")
+fun ByteArray.ascii(): String = map { if (it in 0x20..0x7e) it.char else '.' }.joinToString("")
 
 fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): String {
     val hexChars = CharArray(this.size * 2)
@@ -62,9 +62,9 @@ fun String.unhexlify(): ByteArray {
 fun Long.sbits(bitSize: Int): String = (bitSize - 1 downTo 0).joinToString("") { "${this[it]}" }
 
 val Long.sbits get() = sbits(64)
-val Int.sbits get() = asLong.sbits(32)
-val Short.sbits get() = asLong.sbits(16)
-val Byte.sbits get() = asLong.sbits(8)
+val Int.sbits get() = long.sbits(32)
+val Short.sbits get() = long.sbits(16)
+val Byte.sbits get() = long.sbits(8)
 
 fun ByteArray.decode(charset: Charset = Charsets.UTF_8): String {
     var size = 0

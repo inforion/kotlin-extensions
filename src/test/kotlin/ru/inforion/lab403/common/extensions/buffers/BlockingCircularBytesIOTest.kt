@@ -10,43 +10,43 @@ import kotlin.test.expect
 internal class BlockingCircularBytesIOTest {
     @Test
     fun takePutTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
 
         val job = async { io.take(10) }
 
         io.put(chunk, 0, 12)
 
-        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.asInt } }
+        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int } }
     }
 
     @Test
     fun pollFullPutTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
 
         val job = async { io.poll(10, 1000) }
 
         io.put(chunk, 0, 10)
 
-        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.asInt } }
+        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int } }
     }
 
     @Test
     fun pollPartPutTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
 
         val job = async { io.poll(10, 1000) }
 
         io.put(chunk, 0, 5)
 
-        expect(listOf(0, 1, 2, 3, 4)) { job.wait().map { it.asInt } }
+        expect(listOf(0, 1, 2, 3, 4)) { job.wait().map { it.int } }
     }
 
     @Test
     fun offerLargeTakeTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
 
         val job = async { io.offer(chunk, timeout = 1000) }
@@ -64,7 +64,7 @@ internal class BlockingCircularBytesIOTest {
 
     @Test
     fun offerLargePollTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
 
         val job = async { io.offer(chunk, timeout = 1000) }
@@ -80,7 +80,7 @@ internal class BlockingCircularBytesIOTest {
 
     @Test
     fun writeFailTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
         val io = BlockingCircularBytesIO(16)
         assertFails { io.write(chunk) }
     }

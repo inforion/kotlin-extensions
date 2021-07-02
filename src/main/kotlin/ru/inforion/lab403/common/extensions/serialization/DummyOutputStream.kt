@@ -2,7 +2,7 @@
 
 package ru.inforion.lab403.common.extensions.serialization
 
-import ru.inforion.lab403.common.extensions.asByte
+import ru.inforion.lab403.common.extensions.byte
 import java.io.OutputStream
 
 internal class DummyOutputStream(private val template: DummyOutputStream? = null) : OutputStream() {
@@ -35,7 +35,7 @@ internal class DummyOutputStream(private val template: DummyOutputStream? = null
 
     override fun write(b: Int) {
         written += 1
-        verify(byteArrayOf(b.asByte), 0, 1)
+        verify(byteArrayOf(b.byte), 0, 1)
     }
 
     override fun write(b: ByteArray) {

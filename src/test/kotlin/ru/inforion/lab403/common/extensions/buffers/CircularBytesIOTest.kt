@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.extensions.buffers
 
 import org.junit.Test
-import ru.inforion.lab403.common.extensions.asByte
+import ru.inforion.lab403.common.extensions.byte
 import ru.inforion.lab403.common.extensions.asUInt
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -10,7 +10,7 @@ import kotlin.test.assertFails
 internal class CircularBytesIOTest {
     @Test
     fun writeAvailableNotFullTest() {
-        val bytes = ByteArray(12) { it.asByte }
+        val bytes = ByteArray(12) { it.byte }
         val io = CircularBytesIO(16)
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)
@@ -21,7 +21,7 @@ internal class CircularBytesIOTest {
 
     @Test
     fun writeAvailableFullTest() {
-        val bytes = ByteArray(16) { it.asByte }
+        val bytes = ByteArray(16) { it.byte }
         val io = CircularBytesIO(16)
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)
@@ -32,7 +32,7 @@ internal class CircularBytesIOTest {
 
     @Test
     fun writeOverflowTest() {
-        val bytes = ByteArray(20) { it.asByte }
+        val bytes = ByteArray(20) { it.byte }
         val io = CircularBytesIO(16)
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)
@@ -41,7 +41,7 @@ internal class CircularBytesIOTest {
 
     @Test
     fun writeReadNotFullTest() {
-        val bytes = ByteArray(12) { it.asByte }
+        val bytes = ByteArray(12) { it.byte }
         val io = CircularBytesIO(16)
 
         assertEquals(0, io.readAvailable)
@@ -57,7 +57,7 @@ internal class CircularBytesIOTest {
 
     @Test
     fun writeReadCircularTest() {
-        val chunk0 = ByteArray(12) { it.asByte }
+        val chunk0 = ByteArray(12) { it.byte }
         val io = CircularBytesIO(16)
 
         assertEquals(0, io.readAvailable)
@@ -66,7 +66,7 @@ internal class CircularBytesIOTest {
         io.write(chunk0)
         val actual = io.read(7)
 
-        val chunk1 = ByteArray(11) { it.asByte }
+        val chunk1 = ByteArray(11) { it.byte }
         io.write(chunk1)
 
         assertEquals(16, io.readAvailable)
@@ -109,7 +109,7 @@ internal class CircularBytesIOTest {
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)
 
-        val chunk3 = ByteArray(20) { it.asByte }
+        val chunk3 = ByteArray(20) { it.byte }
         io.write(chunk3, 0, 16)
 
         assertEquals(16, io.readAvailable)
@@ -118,7 +118,7 @@ internal class CircularBytesIOTest {
 
     @Test
     fun writeReadCircularDataTest() {
-        val chunk = ByteArray(20) { it.asByte }
+        val chunk = ByteArray(20) { it.byte }
 
         val io = CircularBytesIO(16)
         io.write(chunk, 0, 10)
