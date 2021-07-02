@@ -78,7 +78,7 @@ inline val UByte.ubyte get() = toUByte()
 
 inline fun ubitMask(size: Int): ULong {
     require(size in 1..64) { "Size must be in range 1..64" }
-    return ULong.MAX_VALUE shr (64 - size)
+    return ULong.MAX_VALUE ushr (64 - size)
 }
 
 inline fun ubitMask(range: IntRange): ULong = if (range.last == 0) ubitMask(range.first + 1) else
@@ -160,3 +160,9 @@ inline val UShort.hex4 get() = "%04X".format(short)
 
 inline val UByte.hex get() = toString(16)
 inline val UByte.hex2 get() = "%02X".format(byte)
+
+inline infix fun UInt.ashr(n: Int) = int.shr(n).uint
+inline infix fun ULong.ashr(n: Int) = long.shr(n).ulong
+
+inline infix fun UInt.ushr(n: Int) = shr(n)
+inline infix fun ULong.ushr(n: Int) = shr(n)
