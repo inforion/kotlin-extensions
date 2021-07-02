@@ -14,9 +14,9 @@ fun ByteArray.sha512(): ByteArray = hash("SHA-512")
 
 fun ByteArray.md5(): ByteArray = hash("MD5")
 
-fun ByteArray.b64encode() = Base64.getEncoder().encode(this)
+fun ByteArray.b64encode(): String = Base64.getEncoder().encodeToString(this)
 
-fun String.b64decode() = Base64.getDecoder().decode(this)
+fun String.b64decode(): ByteArray = Base64.getDecoder().decode(this)
 
 fun File.sha1() = readBytes().sha1()
 

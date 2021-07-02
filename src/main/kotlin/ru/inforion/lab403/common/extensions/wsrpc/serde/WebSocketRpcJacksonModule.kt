@@ -39,6 +39,9 @@ class WebSocketRpcJacksonModule constructor(val server: WebSocketRpcServer) : Si
         addMapping(Event::class) { EventEndpoint(it) }
         addMapping(EventEndpoint::class) { it }
 
+        addSerializer(ByteArray::class.java, ByteArrayDescriptor.Serializer)
+        addDeserializer(ByteArray::class.java, ByteArrayDescriptor.Deserializer)
+
         addDeserializer(Callable::class.java, functionDeserializer)
     }
 }
