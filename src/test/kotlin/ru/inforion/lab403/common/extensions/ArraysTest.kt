@@ -5,6 +5,7 @@ import org.junit.Before
 import org.junit.Test
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
+import java.util.*
 
 /**
  * Created by davydov_vn on 22/04/19.
@@ -56,8 +57,8 @@ class ArraysTest {
         array = "DEADBEEF CAFEAFFE BAADF00DAABBCCDD".unhexlify()
     }
 
-    fun assertPut(expected: String, actual: ByteArray) = assertEquals(expected.replace(" ", "").toUpperCase(), actual.hexlify())
-    fun assertGet(expected: String, actual: Long) = assertEquals(expected.replace(" ", "").toUpperCase(), actual.hex16)
+    fun assertPut(expected: String, actual: ByteArray) = assertEquals(expected.replace(" ", "").uppercase(), actual.hexlify())
+    fun assertGet(expected: String, actual: Long) = assertEquals(expected.replace(" ", "").uppercase(), actual.hex16)
 
     @Test fun putInt64BigEndian() {
         array.putInt(2, 0x00112233_44556677L, 8, BIG_ENDIAN)

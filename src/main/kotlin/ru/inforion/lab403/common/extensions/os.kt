@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.extensions
 
 object os {
-    val name = System.getProperty("os.name").toLowerCase()
+    val name = System.getProperty("os.name").lowercase()
 
     val windows = name.indexOf("win") >= 0
     val mac = name.indexOf("mac") >= 0

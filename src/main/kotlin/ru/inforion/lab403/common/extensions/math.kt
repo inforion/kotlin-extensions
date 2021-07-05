@@ -28,7 +28,7 @@ object math {
     fun histogram(values: Set<Byte>, data: ByteArray, mask: BooleanArray): IntArray {
         val result = IntArray(256)
         val filtered = data.filterIndexed { i, _ -> mask[i] }
-        values.forEach { byte -> result[byte.toUInt()] = filtered.count { it == byte } }
+        values.forEach { byte -> result[byte.int_z] = filtered.count { it == byte } }
         return result
     }
 

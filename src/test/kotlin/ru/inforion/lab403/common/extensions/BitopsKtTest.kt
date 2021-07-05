@@ -22,42 +22,42 @@ class BitopsKtTest {
 
     @Test fun bitMask() {
 //        assertEquals(bitMask(0), 0x01)
-        assertFails { bitMask(0) }
-        assertEquals(bitMask(1), 0x01)
-        assertEquals(bitMask(2), 0x03)
-        assertEquals(bitMask(3), 0x07)
-        assertEquals(bitMask(4), 0x0F)
-        assertEquals(bitMask(5), 0x1F)
-        assertEquals(bitMask(6), 0x3F)
-        assertEquals(bitMask(7), 0x7F)
+        assertFails { bitMask64(0) }
+        assertEquals(bitMask64(1), 0x01)
+        assertEquals(bitMask64(2), 0x03)
+        assertEquals(bitMask64(3), 0x07)
+        assertEquals(bitMask64(4), 0x0F)
+        assertEquals(bitMask64(5), 0x1F)
+        assertEquals(bitMask64(6), 0x3F)
+        assertEquals(bitMask64(7), 0x7F)
 
-        assertEquals(bitMask(11), 0x0000_07FF)
-        assertEquals(bitMask(15), 0x0000_7FFF)
-        assertEquals(bitMask(19), 0x0007_FFFF)
-        assertEquals(bitMask(23), 0x007F_FFFF)
-        assertEquals(bitMask(27), 0x07FF_FFFF)
-        assertEquals(bitMask(31), 0x7FFF_FFFF)
-        assertEquals(bitMask(32), 0xFFFF_FFFF)
-        assertEquals(bitMask(64), -1)
-        assertFails { bitMask(65) }
+        assertEquals(bitMask64(11), 0x0000_07FF)
+        assertEquals(bitMask64(15), 0x0000_7FFF)
+        assertEquals(bitMask64(19), 0x0007_FFFF)
+        assertEquals(bitMask64(23), 0x007F_FFFF)
+        assertEquals(bitMask64(27), 0x07FF_FFFF)
+        assertEquals(bitMask64(31), 0x7FFF_FFFF)
+        assertEquals(bitMask64(32), 0xFFFF_FFFF)
+        assertEquals(bitMask64(64), -1)
+        assertFails { bitMask64(65) }
 
 //        assertEquals(bitMask(63), "FFFFFFFFFFFFFFFF".hexAsULong)
     }
 
     @Test fun bitMaskRange() {
-        assertEquals(bitMask(7..4), 0xF0)
-        assertEquals(bitMask(7..0), 0xFF)
+        assertEquals(bitMask64(7..4), 0xF0)
+        assertEquals(bitMask64(7..0), 0xFF)
 
-        assertEquals(bitMask(11..0), 0x0000_0FFF)
-        assertEquals(bitMask(15..0), 0x0000_FFFF)
-        assertEquals(bitMask(19..0), 0x000F_FFFF)
-        assertEquals(bitMask(23..0), 0x00FF_FFFF)
-        assertEquals(bitMask(27..0), 0x0FFF_FFFF)
-        assertEquals(bitMask(31..0), 0xFFFF_FFFF)
+        assertEquals(bitMask64(11..0), 0x0000_0FFF)
+        assertEquals(bitMask64(15..0), 0x0000_FFFF)
+        assertEquals(bitMask64(19..0), 0x000F_FFFF)
+        assertEquals(bitMask64(23..0), 0x00FF_FFFF)
+        assertEquals(bitMask64(27..0), 0x0FFF_FFFF)
+        assertEquals(bitMask64(31..0), 0xFFFF_FFFF)
 
-        assertEquals(bitMask(31..16), 0xFFFF_0000)
+        assertEquals(bitMask64(31..16), 0xFFFF_0000)
 
-        assertEquals(bitMask(63..0), "FFFFFFFFFFFFFFFF".hexAsULong)
+        assertEquals(bitMask64(63..0), "FFFFFFFFFFFFFFFF".ulongByHex)
     }
 
     @Test fun maskRange() {

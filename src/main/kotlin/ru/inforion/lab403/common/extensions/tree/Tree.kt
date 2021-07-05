@@ -30,7 +30,7 @@ data class Tree<T>(
 
         inline fun <T : Serializable> Node<T>.toTreeMapValue(
             transform: MutableMap<String, Any>.(Node<T>) -> Unit
-        ) = fromRoot(this) { mutableMapOf<String, Any>().apply { transform(it) } as Map<String, Any> }
+        ) = fromRoot(this) { mutableMapOf<String, Any>().apply { transform(it) } }
 
         inline fun <T : Serializable> Node<T>.toTree() = fromRoot(this) { it.content }
     }

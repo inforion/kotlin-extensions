@@ -1,8 +1,6 @@
 package ru.inforion.lab403.common.extensions.buffers
 
 import org.junit.Test
-import ru.inforion.lab403.common.extensions.byte
-import ru.inforion.lab403.common.extensions.asUInt
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
@@ -52,7 +50,7 @@ internal class CircularBytesIOTest {
 
         assertEquals(5, io.readAvailable)
         assertEquals(11, io.writeAvailable)
-        assertEquals(listOf(0, 1, 2, 3, 4, 5, 6), actual.map { it.asUInt })
+        assertEquals(listOf(0, 1, 2, 3, 4, 5, 6), actual.map { it.zint })
     }
 
     @Test
@@ -126,7 +124,7 @@ internal class CircularBytesIOTest {
         io.write(chunk, 0, 10)
         val actual = io.read(14)
 
-        assertEquals(listOf(6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9), actual.map { it.asUInt })
+        assertEquals(listOf(6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9), actual.map { it.zint })
 
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)

@@ -10,9 +10,6 @@ inline fun <T>Array<T?>.forEachNotNull(block: (T) -> Unit) = forEach {
     if (it != null) block(it)
 }
 
-@Deprecated("just use List(count) { ... } since 0.3.4")
-inline fun <T> collect(count: Int, item: (Int) -> T) = (0 until count).map(item)
-
 @Deprecated("just use range(...) since 0.3.4")
 inline fun collect(count: Int) = (0 until count).toList()
 

@@ -2,10 +2,33 @@
 
 package ru.inforion.lab403.common.extensions
 
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.EOFException
+import java.io.*
+import java.nio.ByteBuffer
 import java.util.*
+
+inline fun InputStream.readByteBuffer(dst: ByteBuffer, offset: Int = 0, bufferSize: Int = 0x800000): Int {
+    var total = 0
+    val buf = ByteArray(bufferSize)
+    dst.position(offset)
+    do {
+        val count = read(buf, 0, bufferSize)
+        if (count > 0) {
+            dst.put(buf, 0, count)
+            total += count
+        } else break
+    } while (count > 0)
+    return total
+}
+
+inline fun OutputStream.writeByteBuffer(src: ByteBuffer, offset: Int = 0, bufferSize: Int = 0x800000) {
+    src.position(offset)
+    val buffer = ByteArray(bufferSize)
+    do {
+        val count = bufferSize.coerceAtMost(src.remaining())
+        src.get(buffer, 0, count)
+        write(buffer, 0, count)
+    } while (src.remaining() != 0)
+}
 
 inline fun DataOutputStream.writeTribyte(v: Int) {
     write(v ushr 16 and 0xFF)
@@ -41,10 +64,10 @@ inline fun DataInputStream.readIntOrNull() = if (readBoolean()) readInt() else n
 
 inline fun DataOutputStream.writeStringIso(value: String) {
     writeInt(value.length)
-    write(value.convertToBytes())
+    write(value.bytes)
 }
 
-inline fun DataInputStream.readStringIso() = readNBytes(readInt()).convertToString()
+inline fun DataInputStream.readStringIso() = readNBytes(readInt()).string
 
 inline fun DataOutputStream.writeStringIsoOptional(value: String?) {
     writeBoolean(value != null)

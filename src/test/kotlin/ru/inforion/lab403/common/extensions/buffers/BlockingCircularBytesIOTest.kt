@@ -17,7 +17,7 @@ internal class BlockingCircularBytesIOTest {
 
         io.put(chunk, 0, 12)
 
-        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int } }
+        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int_s } }
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class BlockingCircularBytesIOTest {
 
         io.put(chunk, 0, 10)
 
-        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int } }
+        expect(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) { job.wait().map { it.int_s } }
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class BlockingCircularBytesIOTest {
 
         io.put(chunk, 0, 5)
 
-        expect(listOf(0, 1, 2, 3, 4)) { job.wait().map { it.int } }
+        expect(listOf(0, 1, 2, 3, 4)) { job.wait().map { it.int_s } }
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class BlockingCircularBytesIOTest {
 
         val job = async { io.offer(chunk, timeout = 1000) }
 
-        val actual = List(5) { io.take(4) }.map { byte -> byte.map { it.asUInt } }
+        val actual = List(5) { io.take(4) }.map { byte -> byte.map { it.int_z } }
 
         expect(20) { job.wait() }
 
@@ -69,7 +69,7 @@ internal class BlockingCircularBytesIOTest {
 
         val job = async { io.offer(chunk, timeout = 1000) }
 
-        val actual = List(5) { io.poll(8, 1000) }.map { byte -> byte.map { it.asUInt } }
+        val actual = List(5) { io.poll(8, 1000) }.map { byte -> byte.map { it.int_z } }
 
         expect(20) { job.wait() }
 

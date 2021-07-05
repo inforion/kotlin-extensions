@@ -6,7 +6,7 @@ import org.apache.spark.sql.SparkSession
 import org.jetbrains.kotlinx.spark.api.SparkLogLevel
 import org.jetbrains.kotlinx.spark.api.setLogLevel
 import org.jetbrains.kotlinx.spark.api.sparkContext
-import ru.inforion.lab403.common.extensions.toULong
+import ru.inforion.lab403.common.extensions.long_z
 
 fun sparkSession(
         props: Map<String, Any> = emptyMap(),
@@ -22,7 +22,7 @@ fun sparkSession(
                 when (val value = it.value) {
                     is String -> config(it.key, value)
                     is Boolean -> config(it.key, value)
-                    is Int -> config(it.key, value.toULong())
+                    is Int -> config(it.key, value.long_z)
                     is Long -> config(it.key, value)
                     is Double -> config(it.key, value)
                     else -> throw IllegalArgumentException("Cannot set property ${it.key} because value $value of unsupported type ${value::class}")

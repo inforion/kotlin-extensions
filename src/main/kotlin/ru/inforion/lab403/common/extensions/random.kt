@@ -79,7 +79,7 @@ inline val ThreadLocalRandom.uint get(): Long = uint(maxUIntValue + 1)
 /**
  * Get random short with inclusive lower and exclusive upper boundary
  */
-inline fun ThreadLocalRandom.short(origin: Short, bound: Short) = int(origin.asUInt, bound.asUInt).short
+inline fun ThreadLocalRandom.short(origin: Short, bound: Short) = int(origin.int_z, bound.int_z).short
 
 /**
  * Get random short with exclusive upper boundary
@@ -96,7 +96,7 @@ inline val ThreadLocalRandom.short get() = int(minShortValue + 0, maxShortValue 
 /**
  * Get random byte with inclusive lower and exclusive upper boundary
  */
-inline fun ThreadLocalRandom.byte(origin: Byte, bound: Byte) = int(origin.asUInt, bound.asUInt).byte
+inline fun ThreadLocalRandom.byte(origin: Byte, bound: Byte) = int(origin.int_z, bound.int_z).byte
 
 /**
  * Get random byte with exclusive upper boundary

@@ -3,6 +3,7 @@ package ru.inforion.lab403.common.extensions
 import org.junit.Test
 import org.junit.Assert.*
 import ru.inforion.lab403.common.logging.logger
+import kotlin.math.abs
 
 class RandomTest {
 
@@ -44,12 +45,12 @@ class RandomTest {
         val histogram = math.histogram(data)
 
         // check that all values generated from 0 .. 255
-        val values = histogram.map { it.value.asUInt }.toSet()
-        val expected = collect(256).toSet()
+        val values = histogram.map { it.value.int_z }.toSet()
+        val expected = (0 until 256).toList()
         assertEquals(expected, values)
 
         // check uniformity
-        val bad = histogram.sortedBy { it.value.asUInt }.find {
+        val bad = histogram.sortedBy { it.value.int_z }.find {
             log.fine { "0x${it.value.hex2} -> ${it.count}" }
             error(it.count, size) > 0.01
         }
@@ -66,7 +67,7 @@ class RandomTest {
         val total = 1_000_000
         val data = Array(total) { random.success(prob).int }
         val result = data.count { it == 1 } / total.toDouble()
-        val error = Math.abs(result - prob)
+        val error = abs(result - prob)
         println("Positive success = $result, error = $error")
         assert(error < 0.01)
     }

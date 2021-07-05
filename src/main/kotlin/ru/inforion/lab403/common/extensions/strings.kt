@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "unused")
 
 package ru.inforion.lab403.common.extensions
 
@@ -7,22 +7,16 @@ import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
-import java.util.*
 import kotlin.experimental.and
 
-/**
- * Created by Alexei Gladkikh on 20/06/16.
- *
- * Extension methods and function for working with Strings and transformation
- */
 operator fun String.get(range: IntRange): String {
-    val _r = if (range.last < 0) range.start..this.length + range.last else range
-    return this.slice(_r.start until _r.last)
+    val tmp = if (range.last < 0) range.first..length + range.last else range
+    return slice(tmp.first until tmp.last)
 }
 
 fun String.toCamelCase(): String {
-    if (this.isNotEmpty())
-        return this[0].lowercaseChar() + this.substring(1)
+    if (isNotEmpty())
+        return this[0].lowercaseChar() + substring(1)
     return this
 }
 
@@ -31,7 +25,7 @@ fun ByteArray.ascii(): String = map { if (it in 0x20..0x7e) it.char else '.' }.j
 fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): String {
     val hexChars = CharArray(this.size * 2)
     for (j in 0 until this.size) {
-        val v = this[j].toInt()
+        val v = this[j]
         hexChars[j * 2] = Character.forDigit(v[7..4], 16)
         hexChars[j * 2 + 1] = Character.forDigit(v[3..0], 16)
     }
@@ -54,7 +48,7 @@ fun String.unhexlify(): ByteArray {
     for (k in 0 until tmp.length step 2) {
         val ch0 = Character.digit(tmp[k + 0], 16)
         val ch1 = Character.digit(tmp[k + 1], 16)
-        data[k / 2] = (ch0.shl(4) or ch1).toByte()
+        data[k / 2] = (ch0 shl 4 or ch1).byte
     }
     return data
 }
@@ -62,49 +56,58 @@ fun String.unhexlify(): ByteArray {
 fun Long.sbits(bitSize: Int): String = (bitSize - 1 downTo 0).joinToString("") { "${this[it]}" }
 
 val Long.sbits get() = sbits(64)
-val Int.sbits get() = long.sbits(32)
-val Short.sbits get() = long.sbits(16)
-val Byte.sbits get() = long.sbits(8)
+val Int.sbits get() = long_z.sbits(32)
+val Short.sbits get() = long_z.sbits(16)
+val Byte.sbits get() = long_z.sbits(8)
 
 fun ByteArray.decode(charset: Charset = Charsets.UTF_8): String {
     var size = 0
-    while (this[size].toInt() != 0) size++
+    while (this[size].int_z != 0) size++
     return String(this, 0, size, charset)
 }
 
-fun String.toUnhexlifyByteBuffer(byteOrder: ByteOrder = ByteOrder.LITTLE_ENDIAN): ByteBuffer {
-    return ByteBuffer.wrap(this.unhexlify()).apply { order(byteOrder) }
-}
+fun String.toUnhexlifyByteBuffer(byteOrder: ByteOrder = ByteOrder.LITTLE_ENDIAN): ByteBuffer =
+    ByteBuffer.wrap(this.unhexlify()).apply { order(byteOrder) }
 
-fun String.toLong(radix: Int = 10): Long = java.lang.Long.parseLong(this, radix)
-fun String.toULong(radix: Int = 10): Long = java.lang.Long.parseUnsignedLong(this, radix)
-fun String.toInt(radix: Int = 10): Int = Integer.parseInt(this, radix)
-fun String.toUInt(radix: Int = 10): Int = Integer.parseUnsignedInt(this, radix)
-fun String.toShort(radix: Int = 10): Short = java.lang.Short.parseShort(this, radix)
-fun String.toByte(radix: Int = 10): Byte = java.lang.Byte.parseByte(this, radix)
+inline fun String.long(radix: Int = 10): Long = toLong(radix)
+inline fun String.int(radix: Int = 10): Int = toInt(radix)
+inline fun String.short(radix: Int = 10): Short = toShort(radix)
+inline fun String.byte(radix: Int = 10): Byte = toByte(radix)
+
+inline fun String.ulong(radix: Int = 10): ULong = java.lang.Long.parseUnsignedLong(this, radix).ulong
+inline fun String.uint(radix: Int = 10): UInt = Integer.parseUnsignedInt(this, radix).uint
+
+inline val String.longByDec get() = long(10)
+inline val String.intByDec get() = int(10)
+inline val String.shortByDec get() = short(10)
+inline val String.byteByDec get() = byte(10)
+inline val String.ulongByDec get() = ulong(10)
+inline val String.uintByDec get() = uint(10)
+
+inline val String.longByHex get() = long(16)
+inline val String.intByHex get() = int(16)
+inline val String.shortByHex get() = short(16)
+inline val String.byteByHex get() = byte(16)
+inline val String.ulongByHex get() = ulong(16)
+inline val String.uintByHex get() = uint(16)
+
+inline val String.long: Long get() = removePrefixOrNull("0x")?.longByHex ?: longByDec
+inline val String.int: Int get() = removePrefixOrNull("0x")?.intByHex ?: intByDec
+inline val String.short: Short get() = removePrefixOrNull("0x")?.shortByHex ?: shortByDec
+inline val String.byte: Byte get() = removePrefixOrNull("0x")?.byteByHex ?: byteByDec
+
+inline val String.ulong: ULong get() = removePrefixOrNull("0x")?.ulongByHex ?: ulongByDec
+inline val String.uint: UInt get() = removePrefixOrNull("0x")?.uintByHex ?: uintByDec
+
+inline val String.bool: Boolean get() = toBoolean()
+inline val String.double: Double get() = toDouble()
+inline val String.float: Float get() = toFloat()
 
 
-val String.hexAsInt get() = java.lang.Integer.parseInt(this, 16)
-val String.hexAsUInt get() = java.lang.Integer.parseUnsignedInt(this, 16)
-val String.hexAsULong get() = java.lang.Long.parseUnsignedLong(this, 16)
-
-
-@Deprecated("Use property syntax", replaceWith = ReplaceWith("hexAsInt"))
-fun String.toIntFromHex(): Int = Integer.parseInt(this, 16)
-
-@Deprecated("Use property syntax", replaceWith = ReplaceWith("hexAsUInt"))
-fun String.toUIntFromHex(): Int = Integer.parseUnsignedInt(this, 16)
-
-@Deprecated("Use property syntax", replaceWith = ReplaceWith("hexAsULong"))
-fun String.toULongFromHex(): Long = java.lang.Long.parseUnsignedLong(this, 16)
-
-@Deprecated("Use hex1, hex2, hex4 or hex8 properties instead", replaceWith = ReplaceWith("hex4"))
-fun Number.toHexString(): String = "%08X".format(this)
-
-
-infix fun String.resembles(other: String): Boolean {
-    return this.asSequence().zip(other.asSequence()).filter { it.first != '*' }.all { it.first == it.second }
-}
+infix fun String.resembles(other: String) = asSequence()
+    .zip(other.asSequence())
+    .filter { it.first != '*' }
+    .all { it.first == it.second }
 
 /**
  * Returns string of hex representation of byte value with only 2 tetrades
@@ -194,11 +197,28 @@ inline val Long.lhex8 get() = "%08x".format(this and 0xFFFF_FFFF)
  */
 inline val Long.lhex16 get() = "%016x".format(this)
 
+inline val ULong.hex get() = toString(16)
+inline val ULong.hex2 get() = "%02X".format(this)
+inline val ULong.hex4 get() = "%04X".format(this)
+inline val ULong.hex8 get() = "%08X".format(this)
+inline val ULong.hex16 get() = "%016X".format(this)
+
+inline val UInt.hex get() = toString(16)
+inline val UInt.hex2 get() = "%02X".format(this)
+inline val UInt.hex4 get() = "%04X".format(this)
+inline val UInt.hex8 get() = "%08X".format(this)
+
+inline val UShort.hex get() = toString(16)
+inline val UShort.hex2 get() = "%02X".format(this)
+inline val UShort.hex4 get() = "%04X".format(this)
+
+inline val UByte.hex get() = toString(16)
+inline val UByte.hex2 get() = "%02X".format(this)
+
 inline val Long.str get() = toString()
 inline val Int.str get() = toString()
 inline val Short.str get() = toString()
 inline val Byte.str get() = toString()
-
 
 inline val Long.hex get() = when {
     this > 0xFFFF_FFFF -> hex16
@@ -502,6 +522,20 @@ fun String.replaceBetween(start: String, end: String, value: String): String {
 fun String.removeBetween(start: String, end: String) = replaceBetween(start, end, "")
 
 
+/**
+ * If this string starts with the given [prefix], returns a copy of this string
+ * with the prefix removed. Otherwise, returns this null.
+ *
+ * @param prefix string to remove
+ *
+ * @since 0.3.6
+ */
+inline fun String.removePrefixOrNull(prefix: CharSequence): String? {
+    val result = removePrefix(prefix)
+    return if (this === result) null else result
+}
+
+
 inline fun String.classpathToPath() = replace(".", "/")
 
 inline fun String.className() = substringAfterLast(".")
@@ -516,6 +550,6 @@ inline fun String.toFileOutputStream() = toFile().outputStream()
 
 inline fun String.toInetSocketAddress(): InetSocketAddress {
     val host = substringBefore(":")
-    val port = substringAfter(":").toInt()
+    val port = substringAfter(":").int()
     return InetSocketAddress(host, port)
 }

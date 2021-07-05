@@ -5,7 +5,8 @@ package ru.inforion.lab403.common.extensions.tree
 import ru.inforion.lab403.common.extensions.sure
 import java.io.Serializable
 
-inline class BackwardIterator<T : Serializable>(val target: Node<T>) : Iterable<Node<T>> {
+@JvmInline
+value class BackwardIterator<T : Serializable>(val target: Node<T>) : Iterable<Node<T>> {
     companion object {
         inline val <T : Serializable> Node<T>.backward get() = BackwardIterator(this)
     }
