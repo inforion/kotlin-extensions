@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':extensions')
+    implementation project(':concurrent')
+    implementation project(':scripts')
+    implementation project(':uuid')
+    implementation project(':json')
+    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.2'
+}

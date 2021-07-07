@@ -169,3 +169,5 @@ $RECYCLE.BIN/
 temp/
 
 *.hprof
+
+*/build/

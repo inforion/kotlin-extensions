@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':extensions')
+    implementation project(':identifier')
+    implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.8'
+    implementation group: 'org.mongodb', name: 'mongodb-driver', version: '3.12.7'
+}

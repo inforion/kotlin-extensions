@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':json')
+    implementation group: 'com.konghq', name: 'unirest-java', version: '3.9.00'
+}

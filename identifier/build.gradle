@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':extensions')
+    implementation project(':serialization')
+    implementation group: 'org.mongodb', name: 'bson', version: '4.2.2'
+}

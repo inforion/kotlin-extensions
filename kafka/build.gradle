@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':extensions')
+    implementation project(':json')
+    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.7.0'
+}
