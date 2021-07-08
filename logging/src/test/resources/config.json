@@ -1,0 +1,14 @@
+{
+  "all": {
+    "level": "FINE"
+  },
+
+  "ConfigFileLoggerTest": {
+    "publishers": [
+      {
+        "cls": "ru.inforion.lab403.common.logging.publishers.TestPublisher",
+        "args": [6969, "Meow"]
+      }
+    ]
+  }
+}

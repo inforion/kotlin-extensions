@@ -548,6 +548,8 @@ inline fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${ta
 
 inline fun String.toFileOutputStream() = toFile().outputStream()
 
+inline fun String.toFileInputStream() = toFile().inputStream()
+
 inline fun String.toInetSocketAddress(): InetSocketAddress {
     val host = substringBefore(":")
     val port = substringAfter(":").int()
