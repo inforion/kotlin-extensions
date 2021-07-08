@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.concurrent
 
 import kotlinx.coroutines.*
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -114,3 +115,11 @@ class BlockingValue <T: Any> {
      */
     fun poll() = lock.withLock { valueOrNull() }
 }
+
+/**
+ * Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue
+ * and convert it to coroutine dispatcher
+ *
+ * @param nThreads: maximum number of active threads
+ */
+inline fun newFixedThreadPoolDispatcher(nThreads: Int) = Executors.newFixedThreadPool(nThreads).asCoroutineDispatcher()

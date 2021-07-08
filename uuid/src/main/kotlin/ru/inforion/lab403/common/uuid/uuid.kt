@@ -10,7 +10,7 @@ inline fun uuid(): UUID = UUID.randomUUID()
 
 inline fun uuid(vararg serializable: Serializable): UUID {
     val name = serializable
-        .map { it.serialize(false) }
+        .map { it.serialize() }
         .reduce { acc, bytes -> acc + bytes }
     return UUID.nameUUIDFromBytes(name)
 }

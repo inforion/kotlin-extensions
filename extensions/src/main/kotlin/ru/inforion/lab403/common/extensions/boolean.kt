@@ -16,4 +16,4 @@ fun convertBooleanArrayToNumber(range: IntRange = 0..31, converter: (Int) -> Boo
     range.fold(0) { result, k -> result.insert(converter(k).int, k) }
 
 fun convertNumberToBooleanArray(value: Long, range: IntRange = 0..31, converter: (Int, Boolean) -> Unit) =
-    range.forEach { converter(it, value[it].bool) }
+    range.forEach { converter(it, value[it].truth) }

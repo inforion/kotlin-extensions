@@ -2,6 +2,7 @@ package ru.inforion.lab403.common.wsrpc
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.newFixedThreadPoolContext
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
@@ -9,6 +10,7 @@ import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import ru.inforion.lab403.common.concurrent.launch
+import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.*
 import ru.inforion.lab403.common.json.jsonParser
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
@@ -24,9 +26,9 @@ import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
 
 
-@OptIn(ObsoleteCoroutinesApi::class)
 class WebSocketRpcServer constructor(
     val host: String = "localhost",
     val port: Int,
@@ -69,7 +71,7 @@ class WebSocketRpcServer constructor(
 
     val address = InetSocketAddress(host, port)
 
-    private val threads = newFixedThreadPoolContext(availableProcessors, "WebSocketRpcServerPool")
+    private val threads = newFixedThreadPoolDispatcher(availableProcessors)
 
     private val server = object : WebSocketServer(address) {
         private val mapper = jsonParser(indent = false)

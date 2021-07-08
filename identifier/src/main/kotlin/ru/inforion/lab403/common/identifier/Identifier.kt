@@ -27,7 +27,7 @@ inline fun ObjectId.toIdentifier() = this
 inline fun Identifier.toBigInteger() = BigInteger(toByteArray())
 
 inline fun identifierOf(vararg values: Serializable) = values
-    .map { it.serialize(false) }
+    .map { it.serialize() }
     .reduce { acc, bytes -> acc + bytes }
     .sha1()
     .copyOfRange(0, 12)

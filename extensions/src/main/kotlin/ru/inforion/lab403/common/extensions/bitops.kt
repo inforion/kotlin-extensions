@@ -367,26 +367,67 @@ inline fun Short.swap16() = ushort.swap16().short
 // Bit rotate operations
 // =====================================================================================================================
 
-// rotate shift right first value from pair as bits count in second value by amount
-inline infix fun Pair<ULong, Int>.rotr(amount: Int): ULong =
-    first[amount - 1..0] shl(second - amount) or first[second-1..amount]
+inline fun ULong.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
+inline fun UInt.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
 
-inline infix fun ULong.rotr64(amount: Int): ULong = this to 64 rotr amount
-inline infix fun ULong.rotr32(amount: Int): ULong = this to 32 rotr amount
-inline infix fun ULong.rotr16(amount: Int): ULong = this to 16 rotr amount
-inline infix fun ULong.rotr8(amount: Int): ULong = this to 8 rotr amount
+inline infix fun ULong.rotr64(n: Int) = rotr(n, 64)
+inline infix fun ULong.rotr32(n: Int) = rotr(n, 32)
+inline infix fun ULong.rotr16(n: Int) = rotr(n, 16)
+inline infix fun ULong.rotr8(n: Int) = rotr(n, 8)
 
-inline infix fun Long.rotr64(amount: Int) = (ulong to 64 rotr amount).long
-inline infix fun Long.rotr32(amount: Int) = (ulong to 32 rotr amount).long
-inline infix fun Long.rotr16(amount: Int) = (ulong to 16 rotr amount).long
-inline infix fun Long.rotr8(amount: Int) = (ulong to 8 rotr amount).long
+inline infix fun UInt.rotr32(n: Int) = rotr(n, 32)
+inline infix fun UInt.rotr16(n: Int) = rotr(n, 16)
+inline infix fun UInt.rotr8(n: Int) = rotr(n, 8)
 
-inline infix fun Int.rotr32(amount: Int) = ((ulong_z to 32) rotr amount).int
-inline infix fun Int.rotr16(amount: Int) = ((ulong_z to 16) rotr amount).int
-inline infix fun Int.rotr8(amount: Int) = ((ulong_z to 8) rotr amount).int
+inline infix fun UShort.rotr16(n: Int) = uint_z.rotr(n, 16).ushort
+inline infix fun UShort.rotr8(n: Int) = uint_z.rotr(n, 8).ushort
 
-//Now it works and works faster
-infix fun Long.rotl32(amount: Int) = (this shl amount) or (this ushr (32 - amount)) mask 32
+inline infix fun UByte.rotr8(n: Int) = uint_z.rotr(n, 8).ubyte
+
+inline infix fun Long.rotr64(n: Int) = (ulong rotr64 n).long
+inline infix fun Long.rotr32(n: Int) = (ulong rotr32 n).long
+inline infix fun Long.rotr16(n: Int) = (ulong rotr16 n).long
+inline infix fun Long.rotr8(n: Int) = (ulong rotr8 n).long
+
+inline infix fun Int.rotr32(n: Int) = (uint rotr32 n).int
+inline infix fun Int.rotr16(n: Int) = (uint rotr16 n).int
+inline infix fun Int.rotr8(n: Int) = (uint rotr8 n).int
+
+inline infix fun Short.rotr16(n: Int) = (ushort rotr16 n).short
+inline infix fun Short.rotr8(n: Int) = (ushort rotr8 n).short
+
+inline infix fun Byte.rotr8(n: Int) = (ubyte rotr8 n).byte
+
+inline fun ULong.rotl(n: Int, size: Int) = (this shl n) or (this ushr (size - n)) mask size
+inline fun UInt.rotl(n: Int, size: Int) = (this shl n) or (this ushr (size - n)) mask size
+
+inline infix fun ULong.rotl64(n: Int) = rotl(n, 64)
+inline infix fun ULong.rotl32(n: Int) = rotl(n, 32)
+inline infix fun ULong.rotl16(n: Int) = rotl(n, 16)
+inline infix fun ULong.rotl8(n: Int) = rotl(n, 8)
+
+inline infix fun UInt.rotl32(n: Int) = rotl(n, 32)
+inline infix fun UInt.rotl16(n: Int) = rotl(n, 16)
+inline infix fun UInt.rotl8(n: Int) = rotl(n, 8)
+
+inline infix fun UShort.rotl16(n: Int) = uint_z.rotl(n, 16).ushort
+inline infix fun UShort.rotl8(n: Int) = uint_z.rotl(n, 8).ushort
+
+inline infix fun UByte.rotl8(n: Int) = uint_z.rotl(n, 8).ubyte
+
+inline infix fun Long.rotl64(n: Int) = (ulong rotl64 n).long
+inline infix fun Long.rotl32(n: Int) = (ulong rotl32 n).long
+inline infix fun Long.rotl16(n: Int) = (ulong rotl16 n).long
+inline infix fun Long.rotl8(n: Int) = (ulong rotl8 n).long
+
+inline infix fun Int.rotl32(n: Int) = (uint rotl32 n).int
+inline infix fun Int.rotl16(n: Int) = (uint rotl16 n).int
+inline infix fun Int.rotl8(n: Int) = (uint rotl8 n).int
+
+inline infix fun Short.rotl16(n: Int) = (ushort rotl16 n).short
+inline infix fun Short.rotl8(n: Int) = (ushort rotl8 n).short
+
+inline infix fun Byte.rotl8(n: Int) = (ubyte rotl8 n).byte
 
 // =====================================================================================================================
 // Bit complement operations

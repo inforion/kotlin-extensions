@@ -10,34 +10,19 @@ import java.io.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
-@Deprecated("Use gzip and ungzip extensions method instead")
-object gzip {
-    fun compress(data: ByteArray): ByteArray {
-        val stream = ByteArrayOutputStream(data.size)
-        val gzip = GZIPOutputStream(stream)
-        gzip.write(data)
-        return stream.toByteArray()
-    }
+/**
+ * Wraps [this] output stream in [GZIPOutputStream] if data compression is enabled otherwise returns [this]
+ *
+ * @param enabled if true wraps otherwise return original stream
+ */
+inline fun OutputStream.toGZIPOutputStream(enabled: Boolean = true) = if (enabled) GZIPOutputStream(this) else this
 
-    fun decompress(path: String): ByteArray {
-        val gzip = GZIPInputStream(FileInputStream(path))
-        val stream = ByteArrayOutputStream()
-        gzip.copyTo(stream)
-        return stream.toByteArray()
-    }
-
-    fun decompress(compressed: ByteArray): ByteArray {
-        val gzip = GZIPInputStream(ByteArrayInputStream(compressed))
-        val stream = ByteArrayOutputStream()
-        gzip.copyTo(stream)
-        return stream.toByteArray()
-    }
-}
-
-
-inline fun OutputStream.toGZIPOutputStream() = GZIPOutputStream(this)
-
-inline fun InputStream.toGZIPInputStream() = GZIPInputStream(this)
+/**
+ * Wraps [this] input stream in [GZIPInputStream] if data compression is enabled otherwise returns [this]
+ *
+ * @param enabled if true wraps otherwise return original stream
+ */
+inline fun InputStream.toGZIPInputStream(enabled: Boolean = true) = if (enabled) GZIPInputStream(this) else this
 
 inline fun ByteArray.gzip(): ByteArray {
     val stream = ByteArrayOutputStream(size)

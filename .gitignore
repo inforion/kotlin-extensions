@@ -171,3 +171,5 @@ temp/
 *.hprof
 
 */build/
+
+!swarm/lib/mpi.jar

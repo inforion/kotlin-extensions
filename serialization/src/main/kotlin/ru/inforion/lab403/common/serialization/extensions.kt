@@ -1,22 +1,13 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ru.inforion.lab403.common.serialization
 
+import ru.inforion.lab403.common.extensions.toGZIPInputStream
+import ru.inforion.lab403.common.extensions.toGZIPOutputStream
 import java.io.*
-import java.util.zip.GZIPInputStream
+import java.nio.ByteBuffer
 import java.util.zip.GZIPOutputStream
 
-/**
- * Wraps [this] output stream in [GZIPOutputStream] if data compression is enabled otherwise returns [this]
- *
- * @param enabled if true wraps otherwise return original stream
- */
-private fun OutputStream.gzip(enabled: Boolean) = if (enabled) GZIPOutputStream(this) else this
-
-/**
- * Wraps [this] input stream in [GZIPInputStream] if data compression is enabled otherwise returns [this]
- *
- * @param enabled if true wraps otherwise return original stream
- */
-private fun InputStream.gzip(enabled: Boolean) = if (enabled) GZIPInputStream(this) else this
 
 /**
  * Serialize [this] object in specified [output] stream
@@ -30,8 +21,8 @@ private fun InputStream.gzip(enabled: Boolean) = if (enabled) GZIPInputStream(th
  *   GZIP stream, call the [GZIPOutputStream.finish] method required,
  *   which can be called in the [OutputStream.close] method
  */
-private fun <T: Serializable> T.serialize(output: OutputStream, compress: Boolean) =
-        output.gzip(compress).use { ObjectOutputStream(it).writeUnshared(this) }
+inline fun <T: Serializable> T.serialize(output: OutputStream, compress: Boolean) =
+    output.toGZIPOutputStream(compress).use { ObjectOutputStream(it).writeUnshared(this) }
 
 /**
  * Calculate the size of an object after serialization by dummy "writing" it to an array
@@ -39,30 +30,38 @@ private fun <T: Serializable> T.serialize(output: OutputStream, compress: Boolea
  *
  * @param compress if true calculate size for compressed with GZIP
  */
-fun <T: Serializable> T.calcObjectSize(compress: Boolean) =
-        DummyOutputStream().apply { serialize(this, compress) }.written
+inline fun <T: Serializable> T.calcObjectSize(compress: Boolean) =
+    DummyOutputStream().apply { serialize(this, compress) }.written
 
 /**
- * Serialize an object to a array
+ * Serialize an object to a buffer
  *
  * @param compress if true serialized data will be GZIPed
+ * @param directed required or not buffer to be directed
  */
-fun <T: Serializable> T.serialize(compress: Boolean): ByteArray {
+inline fun <T: Serializable> T.serialize(compress: Boolean, directed: Boolean): ByteBuffer {
 //    TODO: code for serialization verification, make it configurable
 //    val stream1 = DummyOutputStream(verifiable = true).apply { serialize(this, compress) }
 //    val stream2 = DummyOutputStream(stream1, verifiable = true).apply { serialize(this, compress) }
     val size = calcObjectSize(compress)
-    return BytesOutputStream(size).apply { serialize(this, compress) }.array
+    return BufferOutputStream(size, directed).apply { serialize(this, compress) }.buffer
 }
+
+/**
+ * Serialize an object to a array.
+ *
+ * @param compress if true serialized data will be GZIPed
+ */
+inline fun <T: Serializable> T.serialize(compress: Boolean = false): ByteArray = serialize(compress, false).array()
 
 /**
  * Deserializes object from [this] stream
  */
 @Suppress("UNCHECKED_CAST")
-fun <T: Serializable, S: InputStream> S.deserialize(compress: Boolean) =
-        ObjectInputStream(gzip(compress)).readUnshared() as T
+inline fun <T: Serializable, S: InputStream> S.deserialize(compress: Boolean = false) =
+    ObjectInputStream(toGZIPInputStream(compress)).readUnshared() as T
 
 /**
  * Deserializes object from [this] bytes
  */
-fun <T: Serializable> ByteArray.deserialize(compress: Boolean): T = inputStream().deserialize(compress)
+inline fun <T: Serializable> ByteArray.deserialize(compress: Boolean = false): T = inputStream().deserialize(compress)

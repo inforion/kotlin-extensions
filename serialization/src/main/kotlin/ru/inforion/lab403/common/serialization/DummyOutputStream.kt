@@ -5,7 +5,7 @@ package ru.inforion.lab403.common.serialization
 import ru.inforion.lab403.common.extensions.byte
 import java.io.OutputStream
 
-internal class DummyOutputStream(private val template: DummyOutputStream? = null) : OutputStream() {
+class DummyOutputStream(private val template: DummyOutputStream? = null) : OutputStream() {
 
     companion object {
         const val verifiable: Boolean = false
