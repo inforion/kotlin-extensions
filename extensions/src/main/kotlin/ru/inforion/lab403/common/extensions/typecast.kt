@@ -219,6 +219,12 @@ inline val UShort.uint_z get() = toUInt()
 inline val UShort.ushort get() = toUShort()
 inline val UShort.ubyte get() = toUByte()
 
+inline val UShort.long_s get() = short.long_s
+inline val UShort.int_s get() = short.int_s
+
+inline val UShort.ulong_s get() = short.ulong_s
+inline val UShort.uint_s get() = short.uint_s
+
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val UShort.bool get() = int_z != 0
 
@@ -239,6 +245,14 @@ inline val UByte.uint_z get() = toUInt()
 inline val UByte.ushort_z get() = toUShort()
 @Deprecated("Conversion from UByte to UByte is useless", ReplaceWith("this"))
 inline val UByte.ubyte get() = toUByte()
+
+inline val UByte.long_s get() = byte.long_s
+inline val UByte.int_s get() = byte.int_s
+inline val UByte.short_s get() = byte.short_s
+
+inline val UByte.ulong_s get() = byte.ulong_s
+inline val UByte.uint_s get() = byte.uint_s
+inline val UByte.ushort_s get() = byte.ushort_s
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val UByte.bool get() = int_z != 0

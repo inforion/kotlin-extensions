@@ -29,11 +29,11 @@ inline infix fun UInt.ashr(n: Int) = (int shr n).uint
 inline infix fun UInt.ushr(n: Int) = this shr n
 
 inline infix fun UShort.shl(n: Int) = (uint_z shl n).ushort
-inline infix fun UShort.ashr(n: Int) = (int_z ashr n).ushort
+inline infix fun UShort.ashr(n: Int) = (int_s ashr n).ushort
 inline infix fun UShort.ushr(n: Int) = (uint_z shr n).ushort
 
 inline infix fun UByte.shl(n: Int) = (uint_z shr n).ubyte
-inline infix fun UByte.ashr(n: Int) = (int_z shr n).ubyte
+inline infix fun UByte.ashr(n: Int) = (int_s shr n).ubyte
 inline infix fun UByte.ushr(n: Int) = (uint_z shr n).ubyte
 
 // =====================================================================================================================
@@ -50,24 +50,42 @@ inline fun inv(data: UInt) = data.inv()
 inline fun inv(data: UShort) = data.inv()
 inline fun inv(data: UByte) = data.inv()
 
-inline fun Int.bitReverse(): Int {
-    var x = ulong_z
-    x = (((x and 0xaaaaaaaauL) ushr 1) or ((x and 0x55555555uL) shl 1))
-    x = (((x and 0xccccccccuL) ushr 2) or ((x and 0x33333333uL) shl 2))
-    x = (((x and 0xf0f0f0f0uL) ushr 4) or ((x and 0x0f0f0f0fuL) shl 4))
-    x = (((x and 0xff00ff00uL) ushr 8) or ((x and 0x00ff00ffuL) shl 8))
-    return ((x ushr 16) or (x shl 16)).int
+//inline operator fun ULong.not() = (this and 1u) xor 1u
+//inline operator fun UInt.not() = (this and 1u) xor 1u
+//inline operator fun UShort.not() = (this and 1u) xor 1u
+//inline operator fun UByte.not() = (this and 1u) xor 1u
+//
+//inline operator fun Long.not() = (this and 1) xor 1
+//inline operator fun Int.not() = (this and 1) xor 1
+//inline operator fun Short.not() = (this and 1) xor 1
+//inline operator fun Byte.not() = (this and 1) xor 1
+
+// =====================================================================================================================
+// Bit reverse operations
+// =====================================================================================================================
+
+inline fun UInt.bitrev32(): UInt {
+    var x = this
+    x = (((x and 0xAAAAAAAAu) ushr 1) or ((x and 0x55555555u) shl 1))
+    x = (((x and 0xCCCCCCCCu) ushr 2) or ((x and 0x33333333u) shl 2))
+    x = (((x and 0xF0F0F0F0u) ushr 4) or ((x and 0x0F0F0F0Fu) shl 4))
+    x = (((x and 0xFF00FF00u) ushr 8) or ((x and 0x00FF00FFu) shl 8))
+    return (x ushr 16) or (x shl 16)
 }
 
-inline operator fun ULong.not() = (this and 1u) xor 1u
-inline operator fun UInt.not() = (this and 1u) xor 1u
-inline operator fun UShort.not() = (this and 1u) xor 1u
-inline operator fun UByte.not() = (this and 1u) xor 1u
+inline fun ULong.bitrev32() = uint.bitrev32().ulong_z
 
-inline operator fun Long.not() = (this and 1) xor 1
-inline operator fun Int.not() = (this and 1) xor 1
-inline operator fun Short.not() = (this and 1) xor 1
-inline operator fun Byte.not() = (this and 1) xor 1
+inline fun ULong.bitrev64(): ULong {
+    val hi = (this ushr 32).uint.bitrev32()
+    val lo = uint.bitrev32()
+    return lo.ulong_z shl 32 or hi.ulong_z
+}
+
+inline fun Int.bitrev32() = uint.bitrev32().int
+
+inline fun Long.bitrev32() = ulong.bitrev32().long
+
+inline fun Long.bitrev64() = ulong.bitrev64().long
 
 // =====================================================================================================================
 // Create bit mask operations
@@ -133,15 +151,15 @@ inline infix fun Int.bzero(range: IntRange) = (uint bzero range).int
 inline infix fun Short.bzero(range: IntRange) = (ushort bzero range).short
 inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
 
-/**
- * Make bit extension by the lowest bit of the id.
- * for 0x034251.bext(3) return 0b111
- * for 0x031400.bext(10) return 0
- */
-inline fun Number.bext(n: Int): ULong {
-    val bit = toInt() and 1
-    return if (bit == 1) ubitMask64(n) else 0uL
-}
+///**
+// * Make bit extension by the lowest bit of the id.
+// * for 0x034251.bext(3) return 0b111
+// * for 0x031400.bext(10) return 0
+// */
+//inline fun Number.bext(n: Int): ULong {
+//    val bit = toInt() and 1
+//    return if (bit == 1) ubitMask64(n) else 0uL
+//}
 
 // =====================================================================================================================
 // Bit extract operations
@@ -463,10 +481,18 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-inline fun ULong.signext(n: Int): ULong {
-    val mask = ubitMask64(n)
-    val tmp = this and mask
-    return if (tmp <= mask ushr 1) tmp else -((inv(this) and mask) + 1u)
+inline infix fun ULong.signext(n: Int): ULong {
+    if (n < UInt.SIZE_BITS) {
+        val shift = UInt.SIZE_BITS - 1 - n
+        return ((this.int shl shift).long_s ashr shift).ulong
+    } else {
+        val shift = n - UInt.SIZE_BITS
+        return ((this ushr shift).int.long_s shl shift).ulong or this
+    }
+
+//    val mask = ubitMask64(n)
+//    val tmp = this and mask
+//    return if (tmp <= mask ushr 1) tmp else -((inv(this) and mask) + 1u)
 }
 
 inline fun Long.signext(n: Int) = ulong.signext(n).long
