@@ -1,11 +1,10 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Assert.*
 import org.junit.Test
 import ru.inforion.lab403.common.unittest.*
 import kotlin.test.assertFails
 
-class BitopsKtTest {
+internal class BitopsKtTest {
     @Test fun long_ashr_31() = assertLong(-3414779717, 0x9A3B4C5DDEADBEEFu.long ashr 31)
     @Test fun int_ashr_16() = assertInt(-8531, 0xDEADBEEFu.int ashr 16)
     @Test fun short_ashr_8() = assertShort(-66, 0xBEEFu.short ashr 8)

@@ -2,9 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
-import kotlin.experimental.and
 import kotlin.experimental.inv
-import kotlin.experimental.xor
 
 // =====================================================================================================================
 // Shift operations
@@ -92,13 +90,13 @@ inline fun Long.bitrev64() = ulong.bitrev64().long
 // =====================================================================================================================
 
 inline fun ubitMask32(size: Int): UInt {
-    require(size > 0 && size <= UInt.SIZE_BITS)
-    return UInt.MAX_VALUE ushr (UInt.SIZE_BITS - size)
+    require(size > 0 && size <= UINT_BITS)
+    return UINT_MAX ushr (UINT_BITS - size)
 }
 
 inline fun ubitMask64(size: Int): ULong {
-    require(size > 0 && size <= ULong.SIZE_BITS)
-    return ULong.MAX_VALUE ushr (ULong.SIZE_BITS - size)
+    require(size > 0 && size <= ULONG_BITS)
+    return ULONG_MAX ushr (ULONG_BITS - size)
 }
 
 inline fun ubitMask32(range: IntRange) = if (range.last == 0) ubitMask32(range.first + 1) else
@@ -472,7 +470,7 @@ inline fun cmpl2(bits: Int) = 1 cmpl2 bits
 
 inline fun log2(n: Int): Int {
     if (n <= 0) throw IllegalArgumentException()
-    return Int.SIZE_BITS - Integer.numberOfLeadingZeros(n) - 1
+    return INT_BITS - Integer.numberOfLeadingZeros(n) - 1
 }
 
 inline fun pow2(n: Int) = 1uL shl n
@@ -481,7 +479,7 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-inline infix fun ULong.signext(n: Int) = if ((this ushr n).int.truth) ULong.MAX_VALUE shl n or this else this
+inline infix fun ULong.signext(n: Int) = if ((this ushr n).int.truth) ULONG_MAX shl n or this else this
 
 inline fun Long.signext(n: Int) = ulong.signext(n).long
 

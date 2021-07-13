@@ -5,6 +5,8 @@ package ru.inforion.lab403.common.math
 import org.jblas.ComplexDouble
 import org.jblas.ComplexDoubleMatrix
 import org.jblas.DoubleMatrix
+import ru.inforion.lab403.common.extensions.DOUBLE_MAX
+import ru.inforion.lab403.common.extensions.DOUBLE_MIN
 import java.util.*
 
 /**
@@ -48,8 +50,8 @@ fun DoubleMatrix.stringify(
 
     return buildString {
 
-        var max = Double.MAX_VALUE
-        var min = Double.MIN_VALUE
+        var max = DOUBLE_MAX
+        var min = DOUBLE_MIN
         if (colorize) {
             max = this@stringify.max()
             min = this@stringify.min()

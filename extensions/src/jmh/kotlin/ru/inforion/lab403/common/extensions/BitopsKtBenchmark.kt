@@ -15,8 +15,8 @@ open class BitopsKtBenchmark {
     val x: ULong = 0x0400_0000uL
 
     inline infix fun ULong.signext2(n: Int): ULong {
-        if (n < UInt.SIZE_BITS) {
-            val shift = UInt.SIZE_BITS - 1 - n
+        if (n < UINT_BITS) {
+            val shift = UINT_BITS - 1 - n
             return ((this.int shl shift).long_s ashr shift).ulong
         } else TODO()
     }

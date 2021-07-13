@@ -6,6 +6,7 @@ import org.apache.spark.TaskContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.api.java.JavaRDDLike
 import ru.inforion.lab403.common.concurrent.launch
+import ru.inforion.lab403.common.extensions.INT_MAX
 import java.util.concurrent.LinkedBlockingQueue
 
 /**
@@ -32,7 +33,7 @@ inline fun <T> JavaRDD<T>.forEachPartitionsIndexed(noinline action: (Int, Iterat
  *
  * @return iterator to collected items
  */
-inline fun <T, U : JavaRDDLike<T, U>> JavaRDDLike<T, U>.asyncCollect(capacity: Int = Int.MAX_VALUE) = object : Iterator<T> {
+inline fun <T, U : JavaRDDLike<T, U>> JavaRDDLike<T, U>.asyncCollect(capacity: Int = INT_MAX) = object : Iterator<T> {
     private val emptyMarker = this
 
     private var next: Any? = emptyMarker

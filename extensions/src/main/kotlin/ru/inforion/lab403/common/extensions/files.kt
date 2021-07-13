@@ -50,7 +50,7 @@ fun walkTo(result: MutableCollection<File>, folder: File, depth: Int): MutableCo
     return result
 }
 
-fun walk(folder: File, depth: Int = Int.MAX_VALUE) = walkTo(arrayListOf(), folder, depth)
+fun walk(folder: File, depth: Int = INT_MAX) = walkTo(arrayListOf(), folder, depth)
 
 fun File?.getInternalFileURL(path: String, type: String = "jar"): URL {
     if (this == null)

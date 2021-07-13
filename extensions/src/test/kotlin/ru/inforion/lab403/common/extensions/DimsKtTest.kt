@@ -4,7 +4,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 
-class DimsKtTest {
+internal class DimsKtTest {
     @Test
     fun getHz() {
         assertEquals(1, 1.Hz)

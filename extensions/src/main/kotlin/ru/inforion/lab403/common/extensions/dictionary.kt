@@ -19,10 +19,10 @@ inline fun capacity(expectedSize: Int): Int = when {
     expectedSize < 3 -> expectedSize + 1
     expectedSize < INT_MAX_POWER_OF_TWO -> ((expectedSize / 0.75F) + 1.0F).toInt()
     // any large value
-    else -> Int.MAX_VALUE
+    else -> INT_MAX
 }
 
-const val INT_MAX_POWER_OF_TWO: Int = 1 shl (Int.SIZE_BITS - 2)
+const val INT_MAX_POWER_OF_TWO: Int = 1 shl (INT_BITS - 2)
 
 inline fun <K, V> dictionary(capacity: Int = DEFAULT_CAPACITY, factor: Float = LOAD_FACTOR) =
     Dictionary<K, V>(capacity, factor)

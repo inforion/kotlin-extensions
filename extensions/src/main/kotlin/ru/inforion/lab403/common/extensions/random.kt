@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom
 
 val random: ThreadLocalRandom get() = ThreadLocalRandom.current()
 
+// Random function simplifier for Signed Long
+
 /**
  * Get random long with inclusive lower and exclusive upper boundary
  */
@@ -40,7 +42,7 @@ inline fun ThreadLocalRandom.ulong(origin: ULong, bound: ULong) = nextLong(origi
  */
 inline fun ThreadLocalRandom.ulong(bound: ULong) = nextLong(bound.long).ulong
 
-// Random function simplifier for Integer
+// Random function simplifier for Signed Integer
 
 /**
  * Get random integer with inclusive lower and exclusive upper boundary
@@ -62,19 +64,19 @@ inline val ThreadLocalRandom.int get() = nextInt()
 /**
  * Get random unsigned integer with inclusive lower and exclusive upper boundary
  */
-inline fun ThreadLocalRandom.uint(origin: Long, bound: Long): Long = long(origin, bound) and INT32MASK
+inline fun ThreadLocalRandom.uint(origin: UInt, bound: UInt): UInt = long(origin.long_z, bound.long_z).uint
 
 /**
  * Get random unsigned integer with exclusive upper boundary
  */
-inline fun ThreadLocalRandom.uint(bound: Long): Long = uint(0, bound)
+inline fun ThreadLocalRandom.uint(bound: UInt): UInt = uint(0u, bound)
 
 /**
  * Get random unsigned integer
  */
-inline val ThreadLocalRandom.uint get(): Long = uint(maxUIntValue + 1)
+inline val ThreadLocalRandom.uint get(): UInt = uint(UINT_MAX + 1u)
 
-// Random function simplifier for Short
+// Random function simplifier for Signed Short
 
 /**
  * Get random short with inclusive lower and exclusive upper boundary
@@ -89,9 +91,9 @@ inline fun ThreadLocalRandom.short(bound: Short) = short(0, bound)
 /**
  * Get random short
  */
-inline val ThreadLocalRandom.short get() = int(minShortValue + 0, maxShortValue + 1).short
+inline val ThreadLocalRandom.short get() = int(SHORT_MIN + 0, SHORT_MAX + 1).short
 
-// Random function simplifier for Byte
+// Random function simplifier for Signed Byte
 
 /**
  * Get random byte with inclusive lower and exclusive upper boundary
@@ -106,7 +108,7 @@ inline fun ThreadLocalRandom.byte(bound: Byte) = byte(0, bound)
 /**
  * Get random byte
  */
-inline val ThreadLocalRandom.byte get() = int(minByteValue + 0, maxByteValue + 1).byte
+inline val ThreadLocalRandom.byte get() = int(BYTE_MIN + 0, BYTE_MAX + 1).byte
 
 // Random function simplifier for Double
 

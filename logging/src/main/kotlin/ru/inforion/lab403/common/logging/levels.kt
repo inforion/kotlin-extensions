@@ -2,13 +2,15 @@
 
 package ru.inforion.lab403.common.logging
 
+import ru.inforion.lab403.common.extensions.INT_MAX
+import ru.inforion.lab403.common.extensions.INT_MIN
 import ru.inforion.lab403.common.extensions.isWindowsOperatingSystem
 import ru.inforion.lab403.common.logging.misc.Colors
 import java.util.logging.Level
 
 
 // Level is made with constant to for maximum optimization
-const val OFF  = Int.MAX_VALUE
+const val OFF  = INT_MAX
 const val SEVERE  = 1000
 const val WARNING  = 900
 const val INFO = 800
@@ -18,7 +20,7 @@ const val FINER  = 400
 const val FINEST = 300
 const val DEBUG = 200
 const val TRACE = 100
-const val ALL = Int.MIN_VALUE
+const val ALL = INT_MIN
 
 
 /**

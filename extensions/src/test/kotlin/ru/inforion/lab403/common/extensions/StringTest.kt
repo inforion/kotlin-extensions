@@ -4,7 +4,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 
-class StringTest {
+internal class StringTest {
 
     private val x = "DEADBEEF"
     private val xs = "DE AD BE EF"

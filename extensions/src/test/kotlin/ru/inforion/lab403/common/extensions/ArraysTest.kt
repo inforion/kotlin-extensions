@@ -7,7 +7,7 @@ import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
 import java.util.*
 
-class ArraysTest {
+internal class ArraysTest {
     data class TestClass(val int: Int, val long: Long, val string: String)
 
     val correctValueSumbyLong = 15L

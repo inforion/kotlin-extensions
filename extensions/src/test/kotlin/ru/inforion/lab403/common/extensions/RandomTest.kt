@@ -5,7 +5,7 @@ import org.junit.Assert.*
 import ru.inforion.lab403.common.logging.logger
 import kotlin.math.abs
 
-class RandomTest {
+internal class RandomTest {
 
     val log = logger()
 
