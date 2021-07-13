@@ -481,19 +481,7 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-inline infix fun ULong.signext(n: Int): ULong {
-    if (n < UInt.SIZE_BITS) {
-        val shift = UInt.SIZE_BITS - 1 - n
-        return ((this.int shl shift).long_s ashr shift).ulong
-    } else {
-        val shift = n - UInt.SIZE_BITS
-        return ((this ushr shift).int.long_s shl shift).ulong or this
-    }
-
-//    val mask = ubitMask64(n)
-//    val tmp = this and mask
-//    return if (tmp <= mask ushr 1) tmp else -((inv(this) and mask) + 1u)
-}
+inline infix fun ULong.signext(n: Int) = if ((this ushr n).int.truth) ULong.MAX_VALUE shl n or this else this
 
 inline fun Long.signext(n: Int) = ulong.signext(n).long
 

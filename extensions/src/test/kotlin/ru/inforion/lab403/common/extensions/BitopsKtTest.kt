@@ -387,7 +387,7 @@ class BitopsKtTest {
     @Test fun ulong_signext_45() = assertULong(0xFFFF_E000_0000_0000uL, 0x0000_2000_0000_0000uL signext 45)
     @Test fun ulong_signext_46() = assertULong(0xFFFF_C000_0000_0000uL, 0x0000_4000_0000_0000uL signext 46)
     @Test fun ulong_signext_47() = assertULong(0xFFFF_8000_0000_0000uL, 0x0000_8000_0000_0000uL signext 47)
-    
+
     @Test fun ulong_signext_48() = assertULong(0xFFFF_0000_0000_0000uL, 0x0001_0000_0000_0000uL signext 48)
     @Test fun ulong_signext_49() = assertULong(0xFFFE_0000_0000_0000uL, 0x0002_0000_0000_0000uL signext 49)
     @Test fun ulong_signext_50() = assertULong(0xFFFC_0000_0000_0000uL, 0x0004_0000_0000_0000uL signext 50)
