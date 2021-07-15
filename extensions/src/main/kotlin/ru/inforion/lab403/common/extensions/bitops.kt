@@ -48,16 +48,6 @@ inline fun inv(data: UInt) = data.inv()
 inline fun inv(data: UShort) = data.inv()
 inline fun inv(data: UByte) = data.inv()
 
-//inline operator fun ULong.not() = (this and 1u) xor 1u
-//inline operator fun UInt.not() = (this and 1u) xor 1u
-//inline operator fun UShort.not() = (this and 1u) xor 1u
-//inline operator fun UByte.not() = (this and 1u) xor 1u
-//
-//inline operator fun Long.not() = (this and 1) xor 1
-//inline operator fun Int.not() = (this and 1) xor 1
-//inline operator fun Short.not() = (this and 1) xor 1
-//inline operator fun Byte.not() = (this and 1) xor 1
-
 // =====================================================================================================================
 // Bit reverse operations
 // =====================================================================================================================
