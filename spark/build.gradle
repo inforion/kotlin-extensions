@@ -3,10 +3,10 @@ dependencies {
     implementation project(':kafka')
     implementation project(':concurrent')
 
-    implementation group: 'org.jetbrains.kotlinx.spark', name: 'core-3.0_2.12', version: '1.0.0-preview2'
-    implementation group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-3.0', version: '1.0.0-preview2'
-    implementation group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-parent_2.12', version: '1.0.0-preview2'
-    implementation group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-common', version: '1.0.0-preview2'
+    implementation(group: 'org.jetbrains.kotlinx.spark', name: 'core-3.0_2.12', version: '1.0.1')
+    implementation(group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-3.0', version: '1.0.1')
+    implementation group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-parent_2.12', version: '1.0.1'
+    implementation(group: 'org.jetbrains.kotlinx.spark', name: 'kotlin-spark-api-common', version: '1.0.1')
 
     implementation group: 'org.apache.spark', name: 'spark-sql_2.12', version: '3.1.1'
     implementation group: 'org.apache.spark', name: 'spark-core_2.12', version: '3.1.1'

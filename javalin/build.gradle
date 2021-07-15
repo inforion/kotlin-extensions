@@ -1,4 +1,6 @@
 dependencies {
     implementation project(':json')
-    implementation group: 'io.javalin', name: 'javalin', version: '3.13.9'
+    implementation(group: 'io.javalin', name: 'javalin', version: '3.13.9') {
+        transitive = false
+    }
 }
