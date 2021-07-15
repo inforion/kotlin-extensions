@@ -139,15 +139,16 @@ inline infix fun Int.bzero(range: IntRange) = (uint bzero range).int
 inline infix fun Short.bzero(range: IntRange) = (ushort bzero range).short
 inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
 
-///**
-// * Make bit extension by the lowest bit of the id.
-// * for 0x034251.bext(3) return 0b111
-// * for 0x031400.bext(10) return 0
-// */
-//inline fun Number.bext(n: Int): ULong {
-//    val bit = toInt() and 1
-//    return if (bit == 1) ubitMask64(n) else 0uL
-//}
+/**
+ * Make bit extension by the lowest bit of the id.
+ * for 0x034251.bext(3) return 0b111
+ * for 0x031400.bext(10) return 0
+ */
+inline fun Number.bext(n: Int): ULong {
+    // used in mips lwl, lwr, swl, swr
+    val bit = toInt() and 1
+    return if (bit == 1) ubitMask64(n) else 0uL
+}
 
 // =====================================================================================================================
 // Bit extract operations
