@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.21"
@@ -67,8 +68,12 @@ subprojects
                         }
                     }
 
-                filterIsInstance<KotlinCompile>().forEach { task ->
-                    task.kotlinOptions { jvmTarget = "11" }
+                compileKotlin {
+                    kotlinOptions.jvmTarget = "11"
+                }
+
+                compileTestKotlin {
+                    kotlinOptions.jvmTarget = "11"
                 }
 
                 if (findByName("sourcesJar") == null) {
