@@ -4,7 +4,7 @@ import org.apache.spark.SparkContext;
 
 import java.util.List;
 
-public class SparkFuckingScalaAbstracter {
+public class SparkScalaAbstracter {
     public static List<String> getExecutors(SparkContext sc) {
         return scala.collection.JavaConverters.seqAsJavaList(sc.getExecutorIds());
     }

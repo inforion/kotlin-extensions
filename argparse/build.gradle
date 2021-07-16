@@ -1,4 +1,0 @@
-dependencies {
-    implementation project(':extensions')
-    implementation group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
-}

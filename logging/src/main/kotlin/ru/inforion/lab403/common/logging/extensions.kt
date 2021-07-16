@@ -1,8 +1,6 @@
-package ru.inforion.lab403.common.extensions
+package ru.inforion.lab403.common.logging
 
-import ru.inforion.lab403.common.logging.Levels
 import ru.inforion.lab403.common.logging.logger.Logger
-
 
 /**
  * Parses string with format logger0=LEVEL,logger1=LEVEL or just LEVEL and set hook on [Logger.onCreate]

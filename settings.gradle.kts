@@ -1,4 +1,4 @@
-rootProject.name = 'kotlin-extensions'
+rootProject.name = "kotlin-extensions"
 
 include(":argparse")
 include(":extensions")
@@ -16,7 +16,6 @@ include(":wsrpc")
 include(":mongo")
 include(":kafka")
 include(":spark")
-include(":scala")
 include(":utils")
 include(":uuid")
 include(":tree")
