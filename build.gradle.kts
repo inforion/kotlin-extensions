@@ -101,8 +101,8 @@ subprojects
                 repositories {
                     maven {
                         credentials {
-                            username = project.properties["mavenUsername"] as String
-                            password = project.properties["mavenPassword"] as String
+                            username = project.properties["mavenUsername"] as String?
+                            password = project.properties["mavenPassword"] as String?
                         }
 
                         val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")

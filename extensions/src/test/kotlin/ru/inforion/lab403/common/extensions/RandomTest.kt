@@ -2,12 +2,9 @@ package ru.inforion.lab403.common.extensions
 
 import org.junit.Test
 import org.junit.Assert.*
-import ru.inforion.lab403.common.logging.logger
 import kotlin.math.abs
 
 internal class RandomTest {
-
-    val log = logger()
 
     private val tolerance = 0.01
     private val collectionSize = 100000
