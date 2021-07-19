@@ -53,12 +53,20 @@ fun String.unhexlify(): ByteArray {
     return data
 }
 
-fun Long.sbits(bitSize: Int): String = (bitSize - 1 downTo 0).joinToString("") { "${this[it]}" }
+inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
+inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
+inline fun UShort.binary(n: Int): String = uint_z.binary(n)
+inline fun UByte.binary(n: Int): String = uint_z.binary(n)
 
-val Long.sbits get() = sbits(64)
-val Int.sbits get() = long_z.sbits(32)
-val Short.sbits get() = long_z.sbits(16)
-val Byte.sbits get() = long_z.sbits(8)
+inline val ULong.binary: String get() = binary(64)
+inline val UInt.binary: String get() = binary(32)
+inline val UShort.binary: String get() = binary(16)
+inline val UByte.binary: String get() = binary(8)
+
+inline val Long.binary: String get() = ulong.binary
+inline val Int.binary: String get() = uint.binary
+inline val Short.binary: String get() = ushort.binary
+inline val Byte.binary: String get() = ubyte.binary
 
 fun ByteArray.decode(charset: Charset = Charsets.UTF_8): String {
     var size = 0
