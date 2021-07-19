@@ -470,9 +470,15 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-inline infix fun ULong.signext(n: Int) = if ((this ushr n).int.truth) ULONG_MAX shl n or this else this
+inline infix fun ULong.signextRenameMeAfter(n: Int) = if ((this ushr n).int.truth)
+    ULONG_MAX shl n or this
+else
+    (ULONG_MAX shl n).inv() and this // 64 - n?
 
-inline fun Long.signext(n: Int) = ulong.signext(n).long
+inline infix fun ULong.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+
+inline fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
+inline fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
 // =====================================================================================================================
 // Overflow check operation
