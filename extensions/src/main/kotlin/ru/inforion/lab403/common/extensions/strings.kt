@@ -117,110 +117,46 @@ infix fun String.resembles(other: String) = asSequence()
     .filter { it.first != '*' }
     .all { it.first == it.second }
 
-/**
- * Returns string of hex representation of byte value with only 2 tetrades
- */
 inline val Byte.hex2 get() = "%02X".format(this)
 
-/**
- * Returns string of hex representation of short value with only 2 tetrades
- */
-inline val Short.hex2 get() = "%02X".format(this and 0xFF)
-/**
- * Returns string of hex representation of short value with only 4 tetrades
- */
-inline val Short.hex4 get() = "%04X".format(this and -1)
+inline val Short.hex2 get() = "%02X".format(this)
+inline val Short.hex4 get() = "%04X".format(this)
 
-/**
- * Returns string of hex representation of int value with only 2 tetrades
- */
-inline val Int.hex2 get() = "%02X".format(this and 0xFF)
-/**
- * Returns string of hex representation of int value with only 4 tetrades
- */
-inline val Int.hex4 get() = "%04X".format(this and 0xFFFF)
-/**
- * Returns string of hex representation of int value with only 8 tetrades
- */
-inline val Int.hex8 get() = "%08X".format(this and -1)
+inline val Int.hex2 get() = "%02X".format(this)
+inline val Int.hex4 get() = "%04X".format(this)
+inline val Int.hex8 get() = "%08X".format(this)
 
-/**
- * Returns string of hex representation of long value with only 2 tetrades
- */
-inline val Long.hex2 get() = "%02X".format(this and 0xFF)
-/**
- * Returns string of hex representation of long value with only 4 tetrades
- */
-inline val Long.hex4 get() = "%04X".format(this and 0xFFFF)
-/**
- * Returns string of hex representation of long value with only 8 tetrades
- */
-inline val Long.hex8 get() = "%08X".format(this and 0xFFFF_FFFF)
-/**
- * Returns string of hex representation of long value with only 16 tetrades
- */
+inline val Long.hex2 get() = "%02X".format(this)
+inline val Long.hex4 get() = "%04X".format(this)
+inline val Long.hex8 get() = "%08X".format(this)
 inline val Long.hex16 get() = "%016X".format(this)
 
-/**
- * Returns lower-case string of hex representation of byte value with only 2 tetrades
- */
 inline val Byte.lhex2 get() = "%02x".format(this)
 
-/**
- * Returns lower-case string of hex representation of short value with only 2 tetrades
- */
-inline val Short.lhex2 get() = "%02x".format(this and 0xFF)
-/**
- * Returns lower-case string of hex representation of short value with only 4 tetrades
- */
-inline val Short.lhex4 get() = "%04x".format(this and -1)
+inline val Short.lhex2 get() = "%02x".format(this)
+inline val Short.lhex4 get() = "%04x".format(this)
 
-/**
- * Returns lower-case string of hex representation of int value with only 2 tetrades
- */
-inline val Int.lhex2 get() = "%02x".format(this and 0xFF)
-/**
- * Returns lower-case string of hex representation of int value with only 4 tetrades
- */
-inline val Int.lhex4 get() = "%04x".format(this and 0xFFFF)
-/**
- * Returns lower-case string of hex representation of int value with only 8 tetrades
- */
-inline val Int.lhex8 get() = "%08x".format(this and -1)
+inline val Int.lhex2 get() = "%02x".format(this)
+inline val Int.lhex4 get() = "%04x".format(this)
+inline val Int.lhex8 get() = "%08x".format(this)
 
-/**
- * Returns lower-case string of hex representation of long value with only 2 tetrades
- */
-inline val Long.lhex2 get() = "%02x".format(this and 0xFF)
-/**
- * Returns lower-case string of hex representation of long value with only 4 tetrades
- */
-inline val Long.lhex4 get() = "%04x".format(this and 0xFFFF)
-/**
- * Returns lower-case string of hex representation of long value with only 8 tetrades
- */
-inline val Long.lhex8 get() = "%08x".format(this and 0xFFFF_FFFF)
-/**
- * Returns lower-case string of hex representation of long value with only 16 tetrades
- */
+inline val Long.lhex2 get() = "%02x".format(this)
+inline val Long.lhex4 get() = "%04x".format(this)
+inline val Long.lhex8 get() = "%08x".format(this)
 inline val Long.lhex16 get() = "%016x".format(this)
 
-inline val ULong.hex get() = toString(16)
 inline val ULong.hex2 get() = "%02X".format(long)
 inline val ULong.hex4 get() = "%04X".format(long)
 inline val ULong.hex8 get() = "%08X".format(long)
 inline val ULong.hex16 get() = "%016X".format(long)
 
-inline val UInt.hex get() = toString(16)
 inline val UInt.hex2 get() = "%02X".format(int)
 inline val UInt.hex4 get() = "%04X".format(int)
 inline val UInt.hex8 get() = "%08X".format(int)
 
-inline val UShort.hex get() = toString(16)
 inline val UShort.hex2 get() = "%02X".format(short)
 inline val UShort.hex4 get() = "%04X".format(short)
 
-inline val UByte.hex get() = toString(16)
 inline val UByte.hex2 get() = "%02X".format(byte)
 
 inline val Long.str get() = toString()
@@ -228,25 +164,30 @@ inline val Int.str get() = toString()
 inline val Short.str get() = toString()
 inline val Byte.str get() = toString()
 
-inline val Long.hex get() = when {
-    this > 0xFFFF_FFFF -> hex16
-    this > 0xFFFF -> hex8
-    this > 0xFF -> hex4
+inline val ULong.hex get() = when {
+    this > 0xFFFF_FFFFu -> hex16
+    this > 0xFFFFu -> hex8
+    this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val Int.hex get() = when {
-    this > 0xFFFF -> hex8
-    this > 0xFF -> hex4
+inline val UInt.hex get() = when {
+    this > 0xFFFFu -> hex8
+    this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val Short.hex get() = when {
-    this > 0xFF -> hex4
+inline val UShort.hex get() = when {
+    this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val Byte.hex get() = hex2
+inline val UByte.hex get() = hex2
+
+inline val Long.hex get() = ulong.hex
+inline val Int.hex get() = uint.hex
+inline val Short.hex get() = ushort.hex
+inline val Byte.hex get() = ubyte.hex
 
 inline fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
 

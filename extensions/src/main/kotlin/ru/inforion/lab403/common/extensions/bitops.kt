@@ -478,6 +478,14 @@ inline infix fun ULong.signext(n: Int): String = throw IllegalStateException("Re
 inline fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
 inline fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
+inline infix fun UInt.signextRenameMeAfter(n: Int) =
+    if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
+
+inline infix fun UInt.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+
+inline fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
+inline fun Int.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+
 // =====================================================================================================================
 // Overflow check operation
 // =====================================================================================================================

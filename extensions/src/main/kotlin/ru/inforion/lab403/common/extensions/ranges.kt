@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
+import java.io.Serializable
 import kotlin.math.max
 import kotlin.math.min
 
@@ -54,3 +55,12 @@ inline val UIntRange.hex2 get() = "${first.hex2}..${last.hex2}"
 inline val IntRange.hex8 get() = "${first.hex8}..${last.hex8}"
 inline val IntRange.hex4 get() = "${first.hex4}..${last.hex4}"
 inline val IntRange.hex2 get() = "${first.hex2}..${last.hex2}"
+
+data class Range<T: Number>(val first: T, val last: T): Serializable
+
+// TODO: uncomment when JB makes ULong and UInt numbers
+//inline fun ULongRange.toSerializable() = Range(first, last)
+//inline fun UIntRange.toSerializable() = Range(first, last)
+
+inline fun LongRange.toSerializable() = Range(first, last)
+inline fun IntRange.toSerializable() = Range(first, last)
