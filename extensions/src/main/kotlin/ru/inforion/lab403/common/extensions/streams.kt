@@ -46,14 +46,25 @@ inline fun DataInputStream.readTribyte(): Int {
 
 inline fun DataOutputStream.writeDate(timestamp: Date) = writeLong(timestamp.time)
 
+inline fun DataOutputStream.writeULong(value: ULong) = writeLong(value.long)
+
 inline fun DataInputStream.readDate(): Date = Date(readLong())
+
+inline fun DataInputStream.readULong() = readLong().ulong
 
 inline fun DataOutputStream.writeLongOptional(value: Long?) {
     writeBoolean(value != null)
     if (value != null) writeLong(value)
 }
 
+inline fun DataOutputStream.writeULongOptional(value: ULong?) {
+    writeBoolean(value != null)
+    if (value != null) writeLong(value.long)
+}
+
 inline fun DataInputStream.readLongOrNull() = if (readBoolean()) readLong() else null
+
+inline fun DataInputStream.readULongOrNull() = if (readBoolean()) readLong().ulong else null
 
 inline fun DataOutputStream.writeIntOptional(value: Int?) {
     writeBoolean(value != null)

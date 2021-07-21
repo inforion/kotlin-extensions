@@ -8,6 +8,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 import org.bson.Document
 import ru.inforion.lab403.common.extensions.sure
+import ru.inforion.lab403.common.extensions.ulong
 import ru.inforion.lab403.common.identifier.Identifier
 import ru.inforion.lab403.common.identifier.toIdentifier
 
@@ -46,3 +47,5 @@ inline fun Document.getIdentifierOrNull(key: String): Identifier? = getObjectId(
 inline fun Document.getIdentifier(key: String) = getIdentifierOrNull(key).sure { "Key $key was not found in document" }
 
 inline fun <reified T : Enum<T>> Document.getEnumValue(key: String) = enumValueOf<T>(getString(key))
+
+inline fun Document.getULong(key: String) = getLong(key).ulong
