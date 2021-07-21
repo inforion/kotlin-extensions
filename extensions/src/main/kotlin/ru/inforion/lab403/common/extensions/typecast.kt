@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
+import java.math.BigInteger
 import kotlin.experimental.and
 
 /**
@@ -18,6 +19,7 @@ inline val Long.ulong get() = toULong()
 inline val Long.uint get() = toUInt()
 inline val Long.ushort get() = toUShort()
 inline val Long.ubyte get() = toUByte()
+inline val Long.big_integer get() = toBigInteger()
 
 inline val Long.float get() = toFloat()
 inline val Long.double get() = toDouble()
@@ -38,6 +40,7 @@ inline val Int.long_s get() = toLong()
 inline val Int.int get() = toInt()
 inline val Int.short get() = toShort()
 inline val Int.byte get() = toByte()
+inline val Int.big_integer get() = toBigInteger()
 
 inline val Int.ulong_s get() = toULong()
 inline val Int.uint get() = toUInt()
@@ -56,6 +59,32 @@ inline val Int.bool get() = this != 0
 
 inline val Int.untruth get() = this == 0
 inline val Int.truth get() = !untruth
+
+/**
+ * BigInteger conversions
+ */
+
+inline val BigInteger.long_s get() = toLong()
+inline val BigInteger.int get() = toInt()
+inline val BigInteger.short get() = toShort()
+inline val BigInteger.byte get() = toByte()
+
+inline val BigInteger.ulong_s get() = long_s.toULong()
+inline val BigInteger.uint get() = int.toUInt()
+inline val BigInteger.ushort get() = short.toUShort()
+inline val BigInteger.ubyte get() = byte.toUByte()
+
+inline val BigInteger.long_z get() = long_s and 0xFFFF_FFFF
+inline val BigInteger.ulong_z get() = ulong_s and 0xFFFF_FFFFu
+
+inline val BigInteger.float get() = toFloat()
+inline val BigInteger.double get() = toDouble()
+inline val BigInteger.char get() = toChar()
+
+inline val BigInteger.bool get() = int != 0
+
+inline val BigInteger.untruth get() = int == 0
+inline val BigInteger.truth get() = !untruth
 
 /**
  * Short conversions
