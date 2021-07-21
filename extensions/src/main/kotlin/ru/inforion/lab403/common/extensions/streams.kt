@@ -62,9 +62,9 @@ inline fun DataOutputStream.writeULongOptional(value: ULong?) {
     if (value != null) writeLong(value.long)
 }
 
-inline fun DataInputStream.readLongOrNull() = if (readBoolean()) readLong() else null
+inline fun DataInputStream.readLongOrNull() = if (readBoolean()) readULong() else null
 
-inline fun DataInputStream.readULongOrNull() = if (readBoolean()) readLong().ulong else null
+inline fun DataInputStream.readULongOrNull() = if (readBoolean()) readULong() else null
 
 inline fun DataOutputStream.writeIntOptional(value: Int?) {
     writeBoolean(value != null)
