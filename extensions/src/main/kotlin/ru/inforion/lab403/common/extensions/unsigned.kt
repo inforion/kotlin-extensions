@@ -2,6 +2,8 @@
 
 package ru.inforion.lab403.common.extensions
 
+import unsigned.types.*
+
 inline operator fun ULong.plus(other: Long) = this + other.ulong
 inline operator fun ULong.plus(other: Int) = this + other.uint
 inline operator fun ULong.plus(other: Short) = this + other.uint_s

@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
+import unsigned.types.*
 import java.util.concurrent.ThreadLocalRandom
 
 // ThreadLocalRandom wrappers

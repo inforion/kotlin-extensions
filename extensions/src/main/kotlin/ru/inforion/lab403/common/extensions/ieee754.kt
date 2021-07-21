@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
+import unsigned.types.*
 import java.lang.Double.doubleToRawLongBits
 import java.lang.Double.longBitsToDouble
 import java.lang.Float.floatToRawIntBits

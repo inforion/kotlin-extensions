@@ -2,6 +2,8 @@
 
 package ru.inforion.lab403.common.extensions
 
+import unsigned.types.*
+import unsigned.ranges.*
 import java.io.Serializable
 import kotlin.math.max
 import kotlin.math.min
