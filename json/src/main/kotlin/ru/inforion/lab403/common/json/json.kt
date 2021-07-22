@@ -45,6 +45,8 @@ inline fun <reified T: Any> InputStream.parseJson(m: ObjectMapper = mappers.rand
 
 inline fun <reified T: Any> File.parseJson(m: ObjectMapper = mappers.random()) = m.readValue<T>(this)
 
+inline fun <reified T: Any> File.writeJson(data: T, m: ObjectMapper = mappers.random()) = m.writeValue(this, data)
+
 inline fun <reified T: Any> Map<String, Any?>.parseJson(m: ObjectMapper = mappers.random()): T = m.convertValue(this, T::class.java)
 
 inline fun <reified T: Any> Any.parseJsonAsMap(m: ObjectMapper = mappers.random()): T = (this as Map<String, Any?>).parseJson(m)

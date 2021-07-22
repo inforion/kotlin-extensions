@@ -1,3 +1,5 @@
+val javaWebSocketVersion: String by project
+
 dependencies {
     implementation(project(":logging"))
     implementation(project(":extensions"))
@@ -5,5 +7,5 @@ dependencies {
     implementation(project(":scripts"))
     implementation(project(":uuid"))
     implementation(project(":json"))
-    implementation("org.java-websocket:Java-WebSocket:1.5.2")
+    implementation("org.java-websocket:Java-WebSocket:$javaWebSocketVersion")
 }

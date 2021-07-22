@@ -1,6 +1,8 @@
+val systemLambdaVersion: String by project
+
 dependencies {
     implementation(project(":extensions"))
     implementation(project(":json"))
 
-    testImplementation("com.github.stefanbirkner:system-lambda:1.2.0")
+    testImplementation("com.github.stefanbirkner:system-lambda:$systemLambdaVersion")
 }
