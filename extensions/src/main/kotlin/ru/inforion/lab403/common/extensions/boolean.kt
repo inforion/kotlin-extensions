@@ -10,10 +10,10 @@ inline val Boolean.short: Short get() = if (this) 1 else 0
 inline val Boolean.int: Int get() = if (this) 1 else 0
 inline val Boolean.long: Long get() = if (this) 1 else 0
 
-inline val Boolean.ubyte: UByte get() = if (this) 1[b] else 0[b]
-inline val Boolean.ushort: UShort get() = if (this) 1[s] else 0[s]
-inline val Boolean.uint: UInt get() = if (this) 1[u] else 0[u]
-inline val Boolean.ulong: ULong get() = if (this) 1[ul] else 0[ul]
+inline val Boolean.ubyte: UByte get() = if (this) Ib else Ob
+inline val Boolean.ushort: UShort get() = if (this) Is else Os
+inline val Boolean.uint: UInt get() = if (this) I else O
+inline val Boolean.ulong: ULong get() = if (this) Il else Ol
 
 fun convertBooleanArrayToNumber(range: IntRange = 0..31, converter: (Int) -> Boolean) =
     range.fold(0) { result, k -> result.insert(converter(k).int, k) }

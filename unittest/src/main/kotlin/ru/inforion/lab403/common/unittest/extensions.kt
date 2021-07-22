@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.unittest
 
+import unsigned.types.*
 import kotlin.test.assertEquals
 
 inline fun assertByte(expected: Byte, actual: Byte) = assertEquals(expected, actual)

@@ -1,4 +1,5 @@
 dependencies {
+    implementation(project(":unsigned"))
     implementation(project(":extensions"))
     implementation(project(":identifier"))
     implementation("org.mongodb:mongo-java-driver:3.12.9")

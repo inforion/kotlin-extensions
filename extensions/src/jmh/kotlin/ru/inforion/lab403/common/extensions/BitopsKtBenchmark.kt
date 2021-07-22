@@ -2,6 +2,8 @@
 
 package ru.inforion.lab403.common.extensions
 
+import unsigned.types.*
+import unsigned.literal.*
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 
@@ -12,23 +14,23 @@ import org.openjdk.jmh.infra.Blackhole
 @State(Scope.Benchmark)
 @Fork(value = 2)
 open class BitopsKtBenchmark {
-    val x: ULong = 0x0400_0000uL
+    val x = ul[0x0400_0000]
 
     inline infix fun ULong.signext2(n: Int): ULong {
         if (n < UINT_BITS) {
             val shift = UINT_BITS - 1 - n
-            return ((this.int shl shift).long_s ashr shift).ulong
+            return ((int shl shift).long_s ashr shift).ulong
         } else TODO()
     }
 
     @Benchmark
     fun signext1Test1(blackhole: Blackhole) {
-        blackhole.consume(x signext 27)
+        blackhole.consume(x signextRenameMeAfter 27)
     }
 
     @Benchmark
     fun signext1Test2(blackhole: Blackhole) {
-        blackhole.consume(x signext 26)
+        blackhole.consume(x signextRenameMeAfter 26)
     }
 
     @Benchmark

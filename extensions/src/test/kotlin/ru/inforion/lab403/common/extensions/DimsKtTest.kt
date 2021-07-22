@@ -58,26 +58,6 @@ internal class DimsKtTest {
     }
 
     @Test
-    fun getS() {
-        assertEquals(1, 1.s)
-    }
-
-    @Test
-    fun getMs() {
-        assertEquals(1, 1_000.ms)
-    }
-
-    @Test
-    fun getUs() {
-        assertEquals(1, 1_000_000.us)
-    }
-
-    @Test
-    fun getNs() {
-        assertEquals(1, 1_000_000_000.ns)
-    }
-
-    @Test
     fun to_s() {
         assertEquals(1, 1.to_s(from = Time.s))
         assertEquals(1, 1_000.to_s(from = Time.ms))

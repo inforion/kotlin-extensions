@@ -41,7 +41,7 @@ fun Number.to_ms(from: Time = Time.s): Long = (toDouble() * Time.ms.divider / fr
 fun Number.to_us(from: Time = Time.s): Long = (toDouble() * Time.us.divider / from.divider).toLong()
 fun Number.to_ns(from: Time = Time.s): Long = (toDouble() * Time.ns.divider / from.divider).toLong()
 
-inline val Number.s get() = this.toLong()
-inline val Number.ms get() = (toDouble() / Time.ms.divider).toLong()
-inline val Number.us get() = (toDouble() / Time.us.divider).toLong()
-inline val Number.ns get() = (toDouble() / Time.ns.divider).toLong()
+//inline val Number.s get() = this.toLong()
+//inline val Number.ms get() = (toDouble() / Time.ms.divider).toLong()
+//inline val Number.us get() = (toDouble() / Time.us.divider).toLong()
+//inline val Number.ns get() = (toDouble() / Time.ns.divider).toLong()

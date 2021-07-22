@@ -56,10 +56,10 @@ inline fun inv(data: UByte) = data.inv()
 
 inline fun UInt.bitrev32(): UInt {
     var x = this
-    x = (((x and 0xAAAAAAAA[u]) ushr 1) or ((x and 0x55555555[u]) shl 1))
-    x = (((x and 0xCCCCCCCC[u]) ushr 2) or ((x and 0x33333333[u]) shl 2))
-    x = (((x and 0xF0F0F0F0[u]) ushr 4) or ((x and 0x0F0F0F0F[u]) shl 4))
-    x = (((x and 0xFF00FF00[u]) ushr 8) or ((x and 0x00FF00FF[u]) shl 8))
+    x = (((x and u[0xAAAAAAAA]) ushr 1) or ((x and u[0x55555555]) shl 1))
+    x = (((x and u[0xCCCCCCCC]) ushr 2) or ((x and u[0x33333333]) shl 2))
+    x = (((x and u[0xF0F0F0F0]) ushr 4) or ((x and u[0x0F0F0F0F]) shl 4))
+    x = (((x and u[0xFF00FF00]) ushr 8) or ((x and u[0x00FF00FF]) shl 8))
     return (x ushr 16) or (x shl 16)
 }
 
@@ -149,7 +149,7 @@ inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
 inline fun Number.bext(n: Int): ULong {
     // used in mips lwl, lwr, swl, swr
     val bit = toInt() and 1
-    return if (bit == 1) ubitMask64(n) else 0[ul]
+    return if (bit == 1) ubitMask64(n) else Ol
 }
 
 // =====================================================================================================================
@@ -158,8 +158,8 @@ inline fun Number.bext(n: Int): ULong {
 // Note: results commonly are Int or UInt for more convinient operations after bit extraction
 // =====================================================================================================================
 
-inline fun ULong.xbits(high: Int, low: Int) = (this ushr low) and ((1[ul] shl (high - low + 1)) - 1[u])
-inline fun UInt.xbits(high: Int, low: Int) = (this ushr low) and ((1[u] shl (high - low + 1)) - 1[u])
+inline fun ULong.xbits(high: Int, low: Int) = (this ushr low) and ((Il shl (high - low + 1)) - I)
+inline fun UInt.xbits(high: Int, low: Int) = (this ushr low) and ((I shl (high - low + 1)) - I)
 inline fun UShort.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
 inline fun UByte.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
 
@@ -168,8 +168,8 @@ inline fun Int.xbits(high: Int, low: Int) = uint.xbits(high, low).int
 inline fun Short.xbits(high: Int, low: Int) = ushort.xbits(high, low).int
 inline fun Byte.xbits(high: Int, low: Int) = ubyte.xbits(high, low).int
 
-inline infix fun ULong.xbit(index: Int) = (this ushr index) and 1[ul]
-inline infix fun UInt.xbit(index: Int) = (this ushr index) and 1[u]
+inline infix fun ULong.xbit(index: Int) = (this ushr index) and Il
+inline infix fun UInt.xbit(index: Int) = (this ushr index) and I
 inline infix fun UShort.xbit(index: Int) = uint_z xbit index
 inline infix fun UByte.xbit(index: Int) = uint_z xbit index
 
@@ -204,13 +204,13 @@ inline operator fun Byte.get(index: Int) = xbit(index)
 
 inline fun insertBit(dst: ULong, value: ULong, index: Int): ULong {
     val ins = value shl index
-    val mask = inv(1[ul] shl index)
+    val mask = inv(Il shl index)
     return dst and mask or ins
 }
 
 inline fun insertBit(dst: UInt, value: UInt, index: Int): UInt {
     val ins = value shl index
-    val mask = inv(1[u] shl index)
+    val mask = inv(I shl index)
     return dst and mask or ins
 }
 
@@ -243,11 +243,11 @@ inline fun Long.insert(data: Long, range: IntRange): Long = insertField(ulong, d
 inline fun Int.insert(data: Int, range: IntRange): Int = insertField(uint, data.uint, range).int
 
 
-inline fun insert(value: ULong, index: Int): ULong = 0[ul].insert(value, index)
-inline fun insert(value: UInt, index: Int): UInt = 0[u].insert(value, index)
+inline fun insert(value: ULong, index: Int): ULong = Ol.insert(value, index)
+inline fun insert(value: UInt, index: Int): UInt = O.insert(value, index)
 
-inline fun insert(data: ULong, range: IntRange): ULong = 0[ul].insert(data, range)
-inline fun insert(data: UInt, range: IntRange): UInt = 0[u].insert(data, range)
+inline fun insert(data: ULong, range: IntRange): ULong = Ol.insert(data, range)
+inline fun insert(data: UInt, range: IntRange): UInt = O.insert(data, range)
 
 inline fun insert(value: Long, index: Int): Long = insert(value.ulong, index).long
 inline fun insert(value: Int, index: Int): Int = insert(value.uint, index).int
@@ -270,8 +270,8 @@ inline infix fun Int.clr(range: IntRange) = this bzero range
 inline infix fun Short.clr(range: IntRange) = this bzero range
 inline infix fun Byte.clr(range: IntRange) = this bzero range
 
-inline infix fun ULong.clr(index: Int) = this and inv(1[ul] shl index)
-inline infix fun UInt.clr(index: Int) = this and inv(1[u] shl index)
+inline infix fun ULong.clr(index: Int) = this and inv(Il shl index)
+inline infix fun UInt.clr(index: Int) = this and inv(I shl index)
 inline infix fun UShort.clr(index: Int) = (uint_z clr index).ushort
 inline infix fun UByte.clr(index: Int) = (uint_z clr index).ubyte
 
@@ -281,8 +281,8 @@ inline infix fun Short.clr(index: Int) = (int_s clr index).short
 inline infix fun Byte.clr(index: Int) = (int_s clr index).byte
 
 
-inline infix fun ULong.set(index: Int) = this or (1[ul] shl index)
-inline infix fun UInt.set(index: Int) = this or (1[u] shl index)
+inline infix fun ULong.set(index: Int) = this or (Il shl index)
+inline infix fun UInt.set(index: Int) = this or (I shl index)
 inline infix fun UShort.set(index: Int) = (uint_z set index).ushort
 inline infix fun UByte.set(index: Int) = (uint_z set index).ubyte
 
@@ -292,8 +292,8 @@ inline infix fun Short.set(index: Int) = (int_s set index).short
 inline infix fun Byte.set(index: Int) = (int_s set index).byte
 
 
-inline infix fun ULong.toggle(index: Int) = this xor (1[ul] shl index)
-inline infix fun UInt.toggle(index: Int) = this xor (1[u] shl index)
+inline infix fun ULong.toggle(index: Int) = this xor (Il shl index)
+inline infix fun UInt.toggle(index: Int) = this xor (I shl index)
 inline infix fun UShort.toggle(index: Int) = (uint_z toggle index).ushort
 inline infix fun UByte.toggle(index: Int) = (uint_z toggle index).ubyte
 
@@ -331,34 +331,34 @@ inline fun cat(left: Int, right: Int, at: Int): Int {
 // =====================================================================================================================
 
 inline fun ULong.swap64() =
-    (this and 0x00000000_000000FF[ul] shl  56) or
-    (this and 0x00000000_0000FF00[ul] shl  40) or
-    (this and 0x00000000_00FF0000[ul] shl  24) or
-    (this and 0x00000000_FF000000[ul] shl   8) or
-    (this and 0x000000FF_00000000[ul] ushr  8) or
-    (this and 0x0000FF00_00000000[ul] ushr 24) or
-    (this and 0x00FF0000_00000000[ul] ushr 40) or
-    (this and 0xFF000000_00000000[ul] ushr 56)
+    (this and ul[0x00000000_000000FF] shl  56) or
+    (this and ul[0x00000000_0000FF00] shl  40) or
+    (this and ul[0x00000000_00FF0000] shl  24) or
+    (this and ul[0x00000000_FF000000] shl   8) or
+    (this and ul[0x000000FF_00000000] ushr  8) or
+    (this and ul[0x0000FF00_00000000] ushr 24) or
+    (this and ul[0x00FF0000_00000000] ushr 40) or
+    (this and ul[0xFF000000_00000000u] ushr 56)
 
 inline fun ULong.swap32() =
-    (this and 0x0000_00FF[ul] shl  24) or
-    (this and 0x0000_FF00[ul] shl   8) or
-    (this and 0x00FF_0000[ul] ushr  8) or
-    (this and 0xFF00_0000[ul] ushr 24)
+    (this and ul[0x0000_00FF] shl  24) or
+    (this and ul[0x0000_FF00] shl   8) or
+    (this and ul[0x00FF_0000] ushr  8) or
+    (this and ul[0xFF00_0000] ushr 24)
 
 inline fun ULong.swap16() =
-    (this and 0x00FF[ul] shl  8) or
-    (this and 0xFF00[ul] ushr 8)
+    (this and ul[0x00FF] shl  8) or
+    (this and ul[0xFF00] ushr 8)
 
 inline fun UInt.swap32() =
-    (this and 0x0000_00FF[u] shl  24) or
-    (this and 0x0000_FF00[u] shl   8) or
-    (this and 0x00FF_0000[u] ushr  8) or
-    (this and 0xFF00_0000[u] ushr 24)
+    (this and u[0x0000_00FF] shl  24) or
+    (this and u[0x0000_FF00] shl   8) or
+    (this and u[0x00FF_0000] ushr  8) or
+    (this and u[0xFF00_0000] ushr 24)
 
 inline fun UInt.swap16() =
-    (this and 0x00FF[u] shl 8) or
-    (this and 0xFF00[u] ushr 8)
+    (this and u[0x00FF] shl 8) or
+    (this and u[0xFF00] ushr 8)
 
 inline fun UShort.swap16() = uint_z.swap16().ushort
 
@@ -466,7 +466,7 @@ inline fun log2(n: Int): Int {
     return INT_BITS - Integer.numberOfLeadingZeros(n) - 1
 }
 
-inline fun pow2(n: Int) = 1uL shl n
+inline fun pow2(n: Int) = Il shl n
 
 // =====================================================================================================================
 // Signed extensions operations

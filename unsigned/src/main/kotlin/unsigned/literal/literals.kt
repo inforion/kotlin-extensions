@@ -4,21 +4,62 @@ package unsigned.literal
 
 import unsigned.types.*
 
-object b
-object s
-object u
-object ul
+object b {
+    inline operator fun get(value: Int) = value.toByte()
+}
 
-inline operator fun Int.get(type: b) = toUByte()
+object s {
+    inline operator fun get(value: Int) = value.toShort()
+}
 
-inline operator fun Int.get(type: s) = toUShort()
+object i {
+    inline operator fun get(value: kotlin.UInt) = value.toInt()
+    inline operator fun get(value: kotlin.ULong) = value.toInt()
 
-inline operator fun Int.get(type: u) = toUInt()
+    inline operator fun get(value: Int) = value
+    inline operator fun get(value: Long) = value.toInt()
+}
 
-inline operator fun Int.get(type: ul) = toULong()
+object l {
+    inline operator fun get(value: kotlin.UInt) = value.toLong()
+    inline operator fun get(value: kotlin.ULong) = value.toLong()
 
-inline operator fun Long.get(type: s) = toUShort()
+    inline operator fun get(value: Int) = value.toLong()
+    inline operator fun get(value: Long) = value
+}
 
-inline operator fun Long.get(type: u) = toUInt()
+object ub {
+    inline operator fun get(value: Int) = value.toUByte()
+}
 
-inline operator fun Long.get(type: ul) = toULong()
+object us {
+    inline operator fun get(value: Int) = value.toUShort()
+}
+
+object u {
+    inline operator fun get(value: kotlin.UInt) = UInt(value.toInt())
+    inline operator fun get(value: kotlin.ULong) = UInt(value.toInt())
+
+    inline operator fun get(value: Int) = value.toUInt()
+    inline operator fun get(value: Long) = value.toUInt()
+}
+
+object ul {
+    inline operator fun get(value: kotlin.UInt) = ULong(value.toLong())
+    inline operator fun get(value: kotlin.ULong) = ULong(value.toLong())
+
+    inline operator fun get(value: Int) = value.toULong()
+    inline operator fun get(value: Long) = value.toULong()
+}
+
+inline val Ib get() = UByte(1)
+inline val Ob get() = UByte(0)
+
+inline val Is get() = UShort(1)
+inline val Os get() = UShort(0)
+
+inline val I get() = UInt(1)
+inline val O get() = UInt(0)
+
+inline val Il get() = ULong(1)
+inline val Ol get() = ULong(0)

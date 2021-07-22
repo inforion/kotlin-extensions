@@ -10,3 +10,9 @@ dependencies {
 
     testImplementation(project(":unittest"))
 }
+
+tasks {
+    compileJmhKotlin {
+        kotlinOptions.jvmTarget = "11"
+    }
+}

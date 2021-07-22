@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.extensions
 
 import unsigned.types.*
+import unsigned.literal.*
 import java.util.concurrent.ThreadLocalRandom
 
 // ThreadLocalRandom wrappers
@@ -70,12 +71,12 @@ inline fun ThreadLocalRandom.uint(origin: UInt, bound: UInt): UInt = long(origin
 /**
  * Get random unsigned integer with exclusive upper boundary
  */
-inline fun ThreadLocalRandom.uint(bound: UInt): UInt = uint(0u, bound)
+inline fun ThreadLocalRandom.uint(bound: UInt): UInt = uint(O, bound)
 
 /**
  * Get random unsigned integer
  */
-inline val ThreadLocalRandom.uint get(): UInt = uint(UINT_MAX + 1u)
+inline val ThreadLocalRandom.uint get(): UInt = uint(UINT_MAX + I)
 
 // Random function simplifier for Signed Short
 
