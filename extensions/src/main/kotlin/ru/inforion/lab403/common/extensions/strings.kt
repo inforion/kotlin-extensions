@@ -53,8 +53,8 @@ fun String.unhexlify(): ByteArray {
     return data
 }
 
-inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
-inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
+inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
 inline fun UShort.binary(n: Int): String = uint_z.binary(n)
 inline fun UByte.binary(n: Int): String = uint_z.binary(n)
 
