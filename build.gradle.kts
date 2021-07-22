@@ -185,9 +185,6 @@ subprojects
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
 
                 testImplementation("junit:junit:4.13.2")
-                testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-                testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.2")
-                testImplementation("org.assertj:assertj-core:3.20.2")
             }
         }
     }
