@@ -147,7 +147,7 @@ inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
 inline fun Number.bext(n: Int): ULong {
     // used in mips lwl, lwr, swl, swr
     val bit = toInt() and 1
-    return if (bit == 1) ubitMask64(n) else 0uL
+    return if (bit == 1) ubitMask64(n) else 0u
 }
 
 // =====================================================================================================================
@@ -222,34 +222,34 @@ inline fun insertField(dst: Long, src: Long, range: IntRange) = insertField(dst.
 inline fun insertField(dst: Int, src: Int, range: IntRange) = insertField(dst.uint, src.uint, range).int
 
 
-inline fun ULong.insert(value: ULong, index: Int) = insertBit(this, value, index)
-inline fun ULong.insert(value: UInt, index: Int) = insert(value.ulong_z, index)
-inline fun ULong.insert(value: Int, index: Int) = insert(value.ulong_z, index)
-inline fun ULong.insert(value: Boolean, index: Int) = insert(value.ulong, index)
+inline fun ULong.insert(value: ULong, index: Int): ULong = insertBit(this, value, index)
+inline fun ULong.insert(value: UInt, index: Int): ULong = insert(value.ulong_z, index)
+inline fun ULong.insert(value: Int, index: Int): ULong = insert(value.ulong_z, index)
+inline fun ULong.insert(value: Boolean, index: Int): ULong = insert(value.ulong, index)
 
-inline fun UInt.insert(value: UInt, index: Int) = insertBit(this, value, index)
-inline fun UInt.insert(value: Int, index: Int) = insert(value.uint, index)
-inline fun UInt.insert(value: Boolean, index: Int) = insert(value.ulong, index)
+inline fun UInt.insert(value: UInt, index: Int): UInt = insertBit(this, value, index)
+inline fun UInt.insert(value: Int, index: Int): UInt = insert(value.uint, index)
+inline fun UInt.insert(value: Boolean, index: Int): UInt = insert(value.uint, index)
 
-inline fun ULong.insert(data: ULong, range: IntRange) = insertField(this, data, range)
-inline fun UInt.insert(data: UInt, range: IntRange) = insertField(this, data, range)
+inline fun ULong.insert(data: ULong, range: IntRange): ULong = insertField(this, data, range)
+inline fun UInt.insert(data: UInt, range: IntRange): UInt = insertField(this, data, range)
 
-inline fun Long.insert(value: Long, index: Int) = insertBit(ulong, value.ulong, index).long
-inline fun Int.insert(value: Int, index: Int) = insertBit(uint, value.uint, index).int
+inline fun Long.insert(value: Long, index: Int): Long = insertBit(ulong, value.ulong, index).long
+inline fun Int.insert(value: Int, index: Int): Int = insertBit(uint, value.uint, index).int
 
-inline fun Long.insert(data: Long, range: IntRange) = insertField(ulong, data.ulong, range).long
-inline fun Int.insert(data: Int, range: IntRange) = insertField(uint, data.uint, range).int
+inline fun Long.insert(data: Long, range: IntRange): Long = insertField(ulong, data.ulong, range).long
+inline fun Int.insert(data: Int, range: IntRange): Int = insertField(uint, data.uint, range).int
 
 
-inline fun insert(value: ULong, index: Int) = 0uL.insert(value, index)
-inline fun insert(value: UInt, index: Int) = 0u.insert(value, index)
+inline fun insert(value: ULong, index: Int): ULong = 0uL.insert(value, index)
+inline fun insert(value: UInt, index: Int): UInt = 0u.insert(value, index)
 
-inline fun insert(data: ULong, range: IntRange) = 0uL.insert(data, range)
-inline fun insert(data: UInt, range: IntRange) = 0u.insert(data, range)
+inline fun insert(data: ULong, range: IntRange): ULong = 0uL.insert(data, range)
+inline fun insert(data: UInt, range: IntRange): UInt = 0u.insert(data, range)
 
-inline fun insert(value: Long, index: Int) = insert(value.ulong, index).long
-inline fun insert(value: Int, index: Int) = insert(value.uint, index).int
-inline fun insert(value: Boolean, index: Int) = insert(value.uint, index).int
+inline fun insert(value: Long, index: Int): Long = insert(value.ulong, index).long
+inline fun insert(value: Int, index: Int): Int = insert(value.uint, index).int
+inline fun insert(value: Boolean, index: Int): Int = insert(value.uint, index).int
 
 inline fun insert(data: Long, range: IntRange): Long = insert(data.ulong, range).long
 inline fun insert(data: Int, range: IntRange): Int = insert(data.uint, range).int

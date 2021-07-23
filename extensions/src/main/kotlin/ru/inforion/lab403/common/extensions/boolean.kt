@@ -1,6 +1,7 @@
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "unused")
 
 package ru.inforion.lab403.common.extensions
+
 
 inline val Boolean.byte: Byte get() = if (this) 1 else 0
 inline val Boolean.short: Short get() = if (this) 1 else 0

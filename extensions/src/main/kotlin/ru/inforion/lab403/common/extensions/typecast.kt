@@ -23,7 +23,7 @@ inline val Long.big_integer get() = toBigInteger()
 
 inline val Long.float get() = toFloat()
 inline val Long.double get() = toDouble()
-inline val Long.char get() = Char(ushort)
+inline val Long.char get() = Char(int)
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val Long.bool get() = this != 0L
@@ -109,7 +109,7 @@ inline val Short.uint_z get() = uint_s and 0xFFFFu
 
 inline val Short.float get() = toFloat()
 inline val Short.double get() = toDouble()
-inline val Short.char get() = Char(ushort)
+inline val Short.char get() = Char(int_z)
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val Short.bool get() = int_s != 0
@@ -142,7 +142,7 @@ inline val Byte.ushort_z get() = ushort_s and 0xFFu
 
 inline val Byte.float get() = toFloat()
 inline val Byte.double get() = toDouble()
-inline val Byte.char get() = Char(ushort_s)
+inline val Byte.char get() = Char(int_z)
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val Byte.bool get() = int_s != 0
@@ -204,7 +204,7 @@ inline val ULong.ubyte get() = toUByte()
 
 inline val ULong.float get() = toFloat()
 inline val ULong.double get() = toDouble()
-inline val ULong.char get() = Char(ushort)
+inline val ULong.char get() = Char(int)
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
 inline val ULong.bool get() = this != 0uL

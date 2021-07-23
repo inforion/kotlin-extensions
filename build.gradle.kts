@@ -1,7 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.21"
@@ -70,10 +68,12 @@ subprojects
 
                 compileKotlin {
                     kotlinOptions.jvmTarget = "11"
+                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
                 }
 
                 compileTestKotlin {
                     kotlinOptions.jvmTarget = "11"
+                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
                 }
 
                 if (findByName("sourcesJar") == null) {
@@ -175,21 +175,16 @@ subprojects
                 sign("publishing.publications.${it.name}")
             }
 
+            val junitVersion: String by project
+            val kotlinxCoroutineVersion: String by project
+
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib")
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
                 implementation("org.jetbrains.kotlin:kotlin-test")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutineVersion")
 
-                implementation("joda-time:joda-time:2.10.10")
-
-                implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.12.4")
-                implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
-
-                testImplementation("junit:junit:4.13.2")
-                testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-                testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.2")
-                testImplementation("org.assertj:assertj-core:3.20.2")
+                testImplementation("junit:junit:$junitVersion")
             }
         }
     }

@@ -7,7 +7,6 @@ import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
-import kotlin.experimental.and
 
 operator fun String.get(range: IntRange): String {
     val tmp = if (range.last < 0) range.first..length + range.last else range
@@ -43,18 +42,20 @@ fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): Strin
 }
 
 fun String.unhexlify(): ByteArray {
-    val tmp = this.replace(" ", "")
-    val data = ByteArray(tmp.length / 2)
-    for (k in 0 until tmp.length step 2) {
-        val ch0 = Character.digit(tmp[k + 0], 16)
-        val ch1 = Character.digit(tmp[k + 1], 16)
-        data[k / 2] = (ch0 shl 4 or ch1).byte
+    var offset = 0
+    val tmp = replace(" ", "")
+    val data = ByteArray(tmp.length ushr 1)
+    for (k in data.indices) {
+        val ch0 = Character.digit(tmp[offset + 0], 16)
+        val ch1 = Character.digit(tmp[offset + 1], 16)
+        data[k] = (ch0 shl 4 or ch1).byte
+        offset += 2
     }
     return data
 }
 
-inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
-inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this[it]) } }
+inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
 inline fun UShort.binary(n: Int): String = uint_z.binary(n)
 inline fun UByte.binary(n: Int): String = uint_z.binary(n)
 

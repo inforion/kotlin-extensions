@@ -7,6 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 inline val ULongRange.length get() = last - first + 1u
+inline val UIntRange.length get() = last - first + 1u
 inline val LongRange.length get() = last - first + 1
 inline val IntRange.length get() = last - first + 1
 
