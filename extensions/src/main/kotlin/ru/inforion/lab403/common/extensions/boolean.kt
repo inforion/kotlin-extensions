@@ -14,7 +14,7 @@ inline val Boolean.uint: UInt get() = if (this) 1u else 0u
 inline val Boolean.ulong: ULong get() = if (this) 1u else 0u
 
 fun convertBooleanArrayToNumber(range: IntRange = 0..31, converter: (Int) -> Boolean) =
-    range.fold(0) { result, k -> result.insert(converter(k).int, k) }
+    range.fold(0uL) { result, k -> result.insert(converter(k).int, k) }
 
-fun convertNumberToBooleanArray(value: Long, range: IntRange = 0..31, converter: (Int, Boolean) -> Unit) =
+fun convertNumberToBooleanArray(value: ULong, range: IntRange = 0..31, converter: (Int, Boolean) -> Unit) =
     range.forEach { converter(it, value[it].truth) }

@@ -130,19 +130,19 @@ fun Class<*>.findFieldRecursive(name: String): Field? {
 }
 
 
-inline fun <T: Number, reified R> T.convert(): R = when (R::class) {
-    ULong::class -> ulong
-    UInt::class -> uint
-    UShort::class -> ushort
-    UByte::class -> ubyte
-    Long::class -> long
-    Int::class -> int
-    Short::class -> short
-    Byte::class -> byte
-    Double::class -> double
-    Float::class -> float
-    Char::class -> char
-    else -> error("")
-} as R
+//inline fun <T: Number, reified R> T.convert(): R = when (R::class) {
+//    ULong::class -> ulong
+//    UInt::class -> uint
+//    UShort::class -> ushort
+//    UByte::class -> ubyte
+//    Long::class -> long
+//    Int::class -> int
+//    Short::class -> short
+//    Byte::class -> byte
+//    Double::class -> double
+//    Float::class -> float
+//    Char::class -> char
+//    else -> error("")
+//} as R
 
 inline fun Class<*>.isKotlinClass() = declaredAnnotations.any { it.annotationClass.java.name == "kotlin.Metadata" }

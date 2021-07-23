@@ -317,17 +317,17 @@ inline val Double.double get() = toDouble()
  * Numbers
  */
 
-inline val Number.double get() = toDouble()
-inline val Number.float get() = toFloat()
-
-inline val Number.char get() = toChar()
-
-inline val Number.long get() = toLong()
-inline val Number.int get() = toInt()
-inline val Number.short get() = toShort()
-inline val Number.byte get() = toByte()
-
-inline val Number.ulong get() = long.ulong
-inline val Number.uint get() = int.uint
-inline val Number.ushort get() = short.ushort
-inline val Number.ubyte get() = byte.ubyte
+//inline val Number.double get() = toDouble()
+//inline val Number.float get() = toFloat()
+//
+//inline val Number.char get() = toChar()
+//
+//inline val Number.long get() = toLong()
+//inline val Number.int get() = toInt()
+//inline val Number.short get() = toShort()
+//inline val Number.byte get() = toByte()
+//
+//inline val Number.ulong get() = long.ulong
+//inline val Number.uint get() = int.uint
+//inline val Number.ushort get() = short.ushort
+//inline val Number.ubyte get() = byte.ubyte
