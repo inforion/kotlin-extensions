@@ -2,8 +2,6 @@
 
 package ru.inforion.lab403.common.extensions
 
-import unsigned.types.*
-import unsigned.literal.*
 import java.io.File
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
@@ -168,20 +166,20 @@ inline val Short.str get() = toString()
 inline val Byte.str get() = toString()
 
 inline val ULong.hex get() = when {
-    this > u[0xFFFF_FFFF] -> hex16
-    this > u[0xFFFF] -> hex8
-    this > u[0xFF] -> hex4
+    this > 0xFFFF_FFFFu -> hex16
+    this > 0xFFFFu -> hex8
+    this > 0xFFu -> hex4
     else -> hex2
 }
 
 inline val UInt.hex get() = when {
-    this > u[0xFFFF] -> hex8
-    this > u[0xFF] -> hex4
+    this > 0xFFFFu -> hex8
+    this > 0xFFu -> hex4
     else -> hex2
 }
 
 inline val UShort.hex get() = when {
-    this > u[0xFF] -> hex4
+    this > 0xFFu -> hex4
     else -> hex2
 }
 

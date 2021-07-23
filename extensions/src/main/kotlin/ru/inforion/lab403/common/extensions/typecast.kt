@@ -2,8 +2,6 @@
 
 package ru.inforion.lab403.common.extensions
 
-import unsigned.types.*
-import unsigned.literal.*
 import java.math.BigInteger
 import kotlin.experimental.and
 
@@ -50,7 +48,7 @@ inline val Int.ushort get() = toUShort()
 inline val Int.ubyte get() = toUByte()
 
 inline val Int.long_z get() = long_s and 0xFFFF_FFFF
-inline val Int.ulong_z get() = ulong_s and ul[0xFFFF_FFFF]
+inline val Int.ulong_z get() = ulong_s and 0xFFFF_FFFFu
 
 inline val Int.float get() = toFloat()
 inline val Int.double get() = toDouble()
@@ -77,7 +75,7 @@ inline val BigInteger.ushort get() = short.toUShort()
 inline val BigInteger.ubyte get() = byte.toUByte()
 
 inline val BigInteger.long_z get() = long_s and 0xFFFF_FFFF
-inline val BigInteger.ulong_z get() = ulong_s and ul[0xFFFF_FFFF]
+inline val BigInteger.ulong_z get() = ulong_s and 0xFFFF_FFFFu
 
 inline val BigInteger.float get() = toFloat()
 inline val BigInteger.double get() = toDouble()
@@ -106,8 +104,8 @@ inline val Short.ubyte get() = toUByte()
 inline val Short.long_z get() = long_s and 0xFFFF
 inline val Short.int_z get() = int_s and 0xFFFF
 
-inline val Short.ulong_z get() = ulong_s and ul[0xFFFF]
-inline val Short.uint_z get() = uint_s and u[0xFFFF]
+inline val Short.ulong_z get() = ulong_s and 0xFFFFu
+inline val Short.uint_z get() = uint_s and 0xFFFFu
 
 inline val Short.float get() = toFloat()
 inline val Short.double get() = toDouble()
@@ -138,9 +136,9 @@ inline val Byte.long_z get() = long_s and 0xFF
 inline val Byte.int_z get() = int_s and 0xFF
 inline val Byte.short_z get() = short_s and 0xFF
 
-inline val Byte.ulong_z get() = ulong_s and ul[0xFF]
-inline val Byte.uint_z get() = uint_s and u[0xFF]
-inline val Byte.ushort_z get() = ushort_s and us[0xFF]
+inline val Byte.ulong_z get() = ulong_s and 0xFFu
+inline val Byte.uint_z get() = uint_s and 0xFFu
+inline val Byte.ushort_z get() = ushort_s and 0xFFu
 
 inline val Byte.float get() = toFloat()
 inline val Byte.double get() = toDouble()
@@ -172,11 +170,11 @@ inline val Char.uint_s get() = code.uint
 inline val Char.ushort get() = code.ushort
 inline val Char.ubyte get() = code.ubyte
 
-inline val Char.ulong_z8 get() = ulong_s and ul[0xFF]
-inline val Char.uint_z8 get() = uint_s and u[0xFF]
+inline val Char.ulong_z8 get() = ulong_s and 0xFFu
+inline val Char.uint_z8 get() = uint_s and 0xFFu
 
-inline val Char.ulong_z16 get() = ulong_s and ul[0xFFFF]
-inline val Char.uint_z16 get() = uint_s and u[0xFFFF]
+inline val Char.ulong_z16 get() = ulong_s and 0xFFFFu
+inline val Char.uint_z16 get() = uint_s and 0xFFFFu
 
 inline val Char.float get() = code.toFloat()
 inline val Char.double get() = code.toDouble()
@@ -209,9 +207,9 @@ inline val ULong.double get() = toDouble()
 inline val ULong.char get() = Char(int)
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
-inline val ULong.bool get() = this != Ol
+inline val ULong.bool get() = this != 0uL
 
-inline val ULong.untruth get() = this == Ol
+inline val ULong.untruth get() = this == 0uL
 inline val ULong.truth get() = !untruth
 
 /**
@@ -230,9 +228,9 @@ inline val UInt.ushort get() = toUShort()
 inline val UInt.ubyte get() = toUByte()
 
 @Deprecated("Use truth/untruth instead", ReplaceWith("this.truth"))
-inline val UInt.bool get() = this != O
+inline val UInt.bool get() = this != 0u
 
-inline val UInt.untruth get() = this == O
+inline val UInt.untruth get() = this == 0u
 inline val UInt.truth get() = !untruth
 
 /**

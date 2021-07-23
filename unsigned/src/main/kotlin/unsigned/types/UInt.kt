@@ -2,6 +2,7 @@
 
 package unsigned.types
 
+import unsigned.interfaces.Unsigned
 import unsigned.internal.*
 import unsigned.ranges.*
 import java.io.Serializable
@@ -9,7 +10,7 @@ import java.io.Serializable
 @JvmInline
 value class UInt @PublishedApi internal constructor(
     @PublishedApi internal val data: Int
-) : Comparable<UInt>, Serializable {
+) : Comparable<UInt>, Serializable, Unsigned {
 
     companion object {
         /**

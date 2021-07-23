@@ -1,6 +1,5 @@
 package ru.inforion.lab403.common.extensions
 
-import unsigned.literal.*
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -9,7 +8,7 @@ internal class StringTest {
 
     private val string = "DEADBEEF"
     private val spacedString = "DE AD BE EF"
-    private val bytes = byteArrayOf(b[0xDE], b[0xAD], b[0xBE], b[0xEF])
+    private val bytes = ubyteArrayOf(0xDEu, 0xADu, 0xBEu, 0xEFu).toByteArray()
     private val list = bytes.toList()
 
     @Test fun unhexlifyTest() = assertEquals(list, string.unhexlify().toList())

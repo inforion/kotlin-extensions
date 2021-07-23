@@ -2,6 +2,7 @@
 
 package unsigned.types
 
+import unsigned.interfaces.Unsigned
 import unsigned.ranges.*
 import java.io.Serializable
 import kotlin.experimental.and
@@ -12,7 +13,7 @@ import kotlin.experimental.xor
 @JvmInline
 value class UByte @PublishedApi internal constructor(
     @PublishedApi internal val data: Byte
-) : Comparable<UByte>, Serializable {
+) : Comparable<UByte>, Serializable, Unsigned {
 
     companion object {
         /**

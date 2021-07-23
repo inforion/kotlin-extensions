@@ -1,7 +1,8 @@
 @file:Suppress("ClassName", "NOTHING_TO_INLINE")
 
-package unsigned.literal
+package unsigned.literals
 
+import unsigned.interfaces.Unsigned
 import unsigned.types.*
 
 object b {

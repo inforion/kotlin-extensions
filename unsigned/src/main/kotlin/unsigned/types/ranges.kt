@@ -2,7 +2,7 @@
 
 package unsigned.types
 
-import unsigned.literal.*
+import unsigned.literals.*
 import unsigned.ranges.*
 
 @PublishedApi

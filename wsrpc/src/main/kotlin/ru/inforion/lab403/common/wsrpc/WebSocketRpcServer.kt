@@ -1,9 +1,6 @@
 package ru.inforion.lab403.common.wsrpc
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.newFixedThreadPoolContext
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -11,13 +8,15 @@ import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import ru.inforion.lab403.common.concurrent.launch
 import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
-import ru.inforion.lab403.common.extensions.*
+import ru.inforion.lab403.common.extensions.associate
+import ru.inforion.lab403.common.extensions.availableProcessors
+import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.jsonParser
-import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
 import ru.inforion.lab403.common.uuid.uuid
+import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Request
 import ru.inforion.lab403.common.wsrpc.descs.Response
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
@@ -26,7 +25,9 @@ import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.set
 
 
 class WebSocketRpcServer constructor(

@@ -2,15 +2,12 @@
 
 package ru.inforion.lab403.common.extensions
 
-import unsigned.types.*
-import unsigned.literal.*
-import unsigned.math.*
-import unsigned.ranges.*
 import java.io.Serializable
 import kotlin.math.max
 import kotlin.math.min
 
-inline val ULongRange.length get() = last - first + I
+inline val ULongRange.length get() = last - first + 1u
+inline val UIntRange.length get() = last - first + 1u
 inline val LongRange.length get() = last - first + 1
 inline val IntRange.length get() = last - first + 1
 

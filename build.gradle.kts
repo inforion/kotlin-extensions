@@ -68,10 +68,12 @@ subprojects
 
                 compileKotlin {
                     kotlinOptions.jvmTarget = "11"
+                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
                 }
 
                 compileTestKotlin {
                     kotlinOptions.jvmTarget = "11"
+                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
                 }
 
                 if (findByName("sourcesJar") == null) {
