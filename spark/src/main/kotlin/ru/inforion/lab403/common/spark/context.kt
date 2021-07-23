@@ -4,13 +4,12 @@ package ru.inforion.lab403.common.spark
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkExecutorInfo
+import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.broadcast.Broadcast
-import org.jetbrains.kotlinx.spark.api.KSparkSession
-import org.jetbrains.kotlinx.spark.api.sparkContext
 
 inline fun <reified T> SparkContext.broadcast(value: T): Broadcast<T> = broadcast(value) { T::class.java }
 
-inline fun <reified T> T.broadcast(session: KSparkSession) = session.spark.sparkContext.broadcast(this)
+inline fun <reified T> T.broadcast(sc: JavaSparkContext): Broadcast<T> = sc.broadcast(this)
 
 inline val SparkContext.executors: List<String> get() = SparkScalaAbstracter.getExecutors(this)
 

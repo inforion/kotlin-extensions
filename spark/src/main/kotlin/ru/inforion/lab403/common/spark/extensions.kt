@@ -3,13 +3,12 @@
 package ru.inforion.lab403.common.spark
 
 import org.apache.spark.api.java.JavaRDD
-import org.apache.spark.sql.SparkSession
-import org.jetbrains.kotlinx.spark.api.dsOf
-import org.jetbrains.kotlinx.spark.api.toDS
+import org.apache.spark.api.java.JavaSparkContext
 
-inline fun <reified T> List<T>.parallelize(session: SparkSession): JavaRDD<T> = session.toDS(this).toJavaRDD()
+inline fun <reified T> List<T>.parallelize(sc: JavaSparkContext): JavaRDD<T> = sc.parallelize(this)
 
-inline fun <reified T> Array<T>.parallelize(session: SparkSession): JavaRDD<T> = session.dsOf(*this).toJavaRDD()
+inline fun <reified T> Array<T>.parallelize(sc: JavaSparkContext): JavaRDD<T> =
+    sc.parallelize(toList())
 
 inline val <T> Iterator<T>.list get() = mutableListOf<T>().apply { while (hasNext()) this += next() }
 

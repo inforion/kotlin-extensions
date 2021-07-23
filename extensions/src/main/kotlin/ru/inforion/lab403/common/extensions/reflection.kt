@@ -144,3 +144,5 @@ inline fun <T: Number, reified R> T.convert(): R = when (R::class) {
     Char::class -> char
     else -> error("")
 } as R
+
+inline fun Class<*>.isKotlinClass() = declaredAnnotations.any { it.annotationClass.java.name == "kotlin.Metadata" }
