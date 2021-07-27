@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output
 import org.junit.Test
 import org.objenesis.strategy.StdInstantiatorStrategy
 import java.io.ByteArrayOutputStream
+import kotlin.test.assertEquals
 
 
 internal class NestedTest {
@@ -14,6 +15,24 @@ internal class NestedTest {
 
         inner class APort(val name: String, val size: ULong, val type: String = "UNK") {
             override fun toString() = "APort(name=$name, size=$size)"
+
+            override fun hashCode(): Int {
+                var result = name.hashCode()
+                result = 31 * result + size.hashCode()
+                result = 31 * result + type.hashCode()
+                return result
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is APort) return false
+
+                if (name != other.name) return false
+                if (size != other.size) return false
+                if (type != other.type) return false
+
+                return true
+            }
         }
     }
 
@@ -48,7 +67,8 @@ internal class NestedTest {
         val input = Input(out)
         val object2 = kryo.readClassAndObject(input) as Module
 
-        println(object2)
-        println(object2.ports.irq)
+        assertEquals(object1.ord, object2.ord)
+        assertEquals(object1.ports.irq, object2.ports.irq)
+        assertEquals(object1.ports.mem, object2.ports.mem)
     }
 }
