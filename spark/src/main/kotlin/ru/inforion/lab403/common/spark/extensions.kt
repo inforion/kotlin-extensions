@@ -5,6 +5,8 @@ package ru.inforion.lab403.common.spark
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.api.java.JavaSparkContext
 
+inline fun <reified T> List<T>.partition(count: Int) = windowed(size / count, partialWindows = true)
+
 inline fun <reified T> List<T>.parallelize(sc: JavaSparkContext): JavaRDD<T> = sc.parallelize(this)
 
 inline fun <reified T> Array<T>.parallelize(sc: JavaSparkContext): JavaRDD<T> =

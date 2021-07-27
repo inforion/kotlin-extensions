@@ -7,8 +7,6 @@ import org.apache.spark.SparkExecutorInfo
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.broadcast.Broadcast
 
-inline fun <reified T> SparkContext.broadcast(value: T): Broadcast<T> = broadcast(value) { T::class.java }
-
 inline fun <reified T> T.broadcast(sc: JavaSparkContext): Broadcast<T> = sc.broadcast(this)
 
 inline val SparkContext.executors: List<String> get() = SparkScalaAbstracter.getExecutors(this)
