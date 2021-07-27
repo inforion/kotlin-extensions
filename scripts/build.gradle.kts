@@ -1,5 +1,5 @@
 val jythonStandaloneVersion: String by project
 
 dependencies {
-    implementation("org.python:jython-standalone:$jythonStandaloneVersion")
+    api("org.python:jython-standalone:$jythonStandaloneVersion")
 }

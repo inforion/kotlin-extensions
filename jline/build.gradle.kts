@@ -1,5 +1,5 @@
 val jlineVersion: String by project
 
 dependencies {
-    implementation("org.jline:jline:$jlineVersion")
+    api("org.jline:jline:$jlineVersion")
 }

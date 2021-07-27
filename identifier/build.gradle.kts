@@ -4,5 +4,5 @@ dependencies {
     implementation(project(":extensions"))
     implementation(project(":serialization"))
 
-    implementation("org.mongodb:bson:$bsonVersion")
+    api("org.mongodb:bson:$bsonVersion")
 }
