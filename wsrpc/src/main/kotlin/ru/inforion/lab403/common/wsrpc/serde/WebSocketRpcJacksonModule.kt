@@ -1,6 +1,7 @@
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.fasterxml.jackson.databind.module.SimpleModule
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.SerializersModuleBuilder
 import ru.inforion.lab403.common.concurrent.events.Event
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
@@ -10,11 +11,11 @@ import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import kotlin.reflect.KClass
 
-class WebSocketRpcJacksonModule constructor(val server: WebSocketRpcServer) : SimpleModule("RpcJacksonModule") {
+class WebSocketRpcJacksonModule constructor(private val server: WebSocketRpcServer) {
     companion object {
         private val serializers = dictionaryOf<KClass<*>, (Any) -> WebSocketRpcEndpoint>()
 
-        fun <T: Any> addMapping(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) {
+        fun <T: Any> mapping(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) {
             check(kClass !in serializers) {
                 "Can't set global serializer for class $kClass because it was already specified"
             }
@@ -23,25 +24,24 @@ class WebSocketRpcJacksonModule constructor(val server: WebSocketRpcServer) : Si
         }
     }
 
-    fun <T: Any> addMapping(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint): SimpleModule =
-        addSerializer(kClass.java, ObjectSerializer(server, kClass, apiGen))
+    fun <T: Any> SerializersModuleBuilder.mapping(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) =
+        contextual(kClass, ObjectSerializer(server, kClass, apiGen))
 
     private val functionDeserializer = FunctionDeserializer(server)
 
     internal fun onUnregister() = functionDeserializer.onUnregister()
 
-    init {
-        serializers.forEach { (cls, gen) -> addMapping(cls, gen) }
+    fun build() = SerializersModule {
+        serializers.forEach { (cls, gen) -> mapping(cls, gen) }
 
-        addMapping(Sequence::class) { SequenceEndpoint(it) }
-        addMapping(SequenceEndpoint::class) { it }
+        mapping(Sequence::class) { SequenceEndpoint(it) }
+        mapping(SequenceEndpoint::class) { it }
 
-        addMapping(Event::class) { EventEndpoint(it) }
-        addMapping(EventEndpoint::class) { it }
+        mapping(Event::class) { EventEndpoint(it) }
+        mapping(EventEndpoint::class) { it }
 
-        addSerializer(ByteArray::class.java, ByteArrayDescriptor.Serializer)
-        addDeserializer(ByteArray::class.java, ByteArrayDescriptor.Deserializer)
+        contextual(ByteArray::class, ByteArrayDescriptor.Serde)
 
-        addDeserializer(Callable::class.java, functionDeserializer)
+        contextual(Callable::class, functionDeserializer)
     }
 }

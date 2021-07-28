@@ -1,13 +1,12 @@
 package ru.inforion.lab403.common.logging.logger
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import ru.inforion.lab403.common.extensions.either
 import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.Messenger
 import ru.inforion.lab403.common.logging.logLevel
 import ru.inforion.lab403.common.extensions.ifNotNull
 import ru.inforion.lab403.common.extensions.otherwise
-import ru.inforion.lab403.common.json.jsonParser
+import ru.inforion.lab403.common.json.parseJson
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import java.io.File
 
@@ -15,8 +14,6 @@ import java.io.File
 object Config {
     const val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
     const val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
-
-    private val parser = jsonParser()
 
     private inline fun <T> info(message: Messenger<T>) = System.err.println(message().toString())
 
@@ -68,7 +65,7 @@ object Config {
     private val config by lazy {
         configurations ifNotNull {
             runCatching {
-                parser.readValue<Map<String, LoggerInfo>>(this)
+                parseJson<Map<String, LoggerInfo>>()
             }.onSuccess {
                 info { "Successfully loading logger configuration file '$this'" }
             }.onFailure { error ->

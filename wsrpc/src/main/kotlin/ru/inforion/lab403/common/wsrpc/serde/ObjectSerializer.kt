@@ -1,9 +1,12 @@
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import ru.inforion.lab403.common.extensions.sure
+import ru.inforion.lab403.common.json.encodeValue
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import java.util.*
@@ -13,13 +16,17 @@ internal class ObjectSerializer<T: Any>(
     val server: WebSocketRpcServer,
     kClass: KClass<T>,
     val apiGen: (T) -> WebSocketRpcEndpoint
-) : JsonSerializer<T>() {
+) : KSerializer<T> {
     data class ObjectDescription(val __rpc__: String, val endpoint: UUID)
 
     val name = kClass.simpleName.sure { "Can't create endpoint for anonymous: $kClass" }
 
-    override fun serialize(value: T, gen: JsonGenerator, serializers: SerializerProvider) {
+    override fun deserialize(decoder: Decoder): T = throw NotImplementedError("Endpoint object not deserializable")
+
+    override val descriptor = PrimitiveSerialDescriptor("Object", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: T) {
         val holder = server.register(apiGen(value))
-        gen.writeObject(ObjectDescription(name, holder.uuid))
+        encoder.encodeValue(ObjectDescription(name, holder.uuid))
     }
 }

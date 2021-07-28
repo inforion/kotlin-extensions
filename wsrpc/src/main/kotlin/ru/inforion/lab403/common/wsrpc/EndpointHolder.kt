@@ -1,10 +1,11 @@
 package ru.inforion.lab403.common.wsrpc
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import ru.inforion.lab403.common.extensions.firstInstance
 import ru.inforion.lab403.common.extensions.hasInstance
-import ru.inforion.lab403.common.extensions.kClassAny
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.jsonParser
+import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
@@ -30,10 +31,11 @@ class EndpointHolder constructor(
 
     val identifier = endpoint.name
 
-    val module = WebSocketRpcJacksonModule(server)
+    private val module = WebSocketRpcJacksonModule(server)
 
-    private val mapper = jsonParser(indent = false)
-        .apply { registerModule(module) }
+    private val mapper = Json {
+        serializersModule = module.build()
+    }
 
     private val methods = endpoint::class.memberFunctions
         .filter { it.annotations.hasInstance(WebSocketRpcMethod::class.java) }
@@ -43,16 +45,16 @@ class EndpointHolder constructor(
             func.name to Method(func, parameters, autoClose)
         }
 
-    private fun Map<String, Any?>.getValueOfParameter(parameter: KParameter) =
-        mapper.convertValue(this[parameter.name], parameter.kClassAny.java)
+    private fun Map<String, JsonElement>.getValueOfParameter(parameter: KParameter) =
+        getValue(parameter.name!!).parseJson(mapper, parameter.type)
 
-    internal fun execute(name: String, values: Map<String, Any?>): String {
+    internal fun execute(name: String, values: Map<String, JsonElement>): String {
         val method = methods[name].sure { "Method $name was not found in $endpoint" }
-        log.finer { "$this.${name}(${values.map { (key, value) -> "$key=${value?.toString()}" }.joinToString()})" }
+//        log.finer { "$this.${name}(${values.map { (key, value) -> "$key=${value?.toString()}" }.joinToString()})" }
         val args = method.parameters.map { values.getValueOfParameter(it) }
         val result = method.function.call(endpoint, *args.toTypedArray())
         if (method.close) server.unregister(uuid)
-        return mapper.writeValueAsString(result)
+        return result.writeJson(mapper)
     }
 
     internal fun onRegister() {

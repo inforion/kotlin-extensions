@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.21"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.21"
     id("org.jetbrains.dokka") version "1.4.0"
     id("signing")
     id("maven")
@@ -26,6 +27,7 @@ subprojects
             apply(plugin = "maven")
             apply(plugin = "maven-publish")
             apply(plugin = "org.jetbrains.kotlin.jvm")
+            apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
             apply(plugin = "org.jetbrains.dokka")
 
             repositories {

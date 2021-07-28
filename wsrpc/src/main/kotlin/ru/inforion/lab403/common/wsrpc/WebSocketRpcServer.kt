@@ -1,6 +1,5 @@
 package ru.inforion.lab403.common.wsrpc
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -11,7 +10,8 @@ import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.associate
 import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.jsonParser
+import ru.inforion.lab403.common.json.parseJson
+import ru.inforion.lab403.common.json.writeJson
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
@@ -75,8 +75,6 @@ class WebSocketRpcServer constructor(
     private val threads = newFixedThreadPoolDispatcher(availableProcessors)
 
     private val server = object : WebSocketServer(address) {
-        private val mapper = jsonParser(indent = false)
-
         override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
             log.config { "Client[port=${conn.remoteSocketAddress.port}] established connection" }
         }
@@ -89,7 +87,7 @@ class WebSocketRpcServer constructor(
             launch(threads) {
                 log.debug { "Client[port=${conn.remoteSocketAddress.port}] message=$message" }
                 runCatching {
-                    mapper.readValue<Request>(message)
+                    message.parseJson<Request>()
                 }.onFailure {
                     log.severe { it.stackTraceToString() }
                 }.onSuccess { request ->
@@ -109,7 +107,7 @@ class WebSocketRpcServer constructor(
                         Response(request.uuid, null, result.toString())
                     }
 
-                    conn.runCatching { send(mapper.writeValueAsBytes(response)) }
+                    conn.runCatching { send(response.writeJson()) }
                         .onFailure { log.severe { "Error during send response: $it" } }
                 }
             }

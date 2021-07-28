@@ -1,25 +1,28 @@
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.extensions.b64encode
+import ru.inforion.lab403.common.json.decodeValue
+import ru.inforion.lab403.common.json.encodeValue
 
+@Serializable
 class ByteArrayDescriptor(val __bytes__: String) {
-    object Serializer : JsonSerializer<ByteArray>() {
-        override fun serialize(value: ByteArray, gen: JsonGenerator, serializers: SerializerProvider) {
-            val descriptor = ByteArrayDescriptor(value.b64encode())
-            gen.writeObject(descriptor)
-        }
-    }
+    object Serde : KSerializer<ByteArray> {
+        override val descriptor = PrimitiveSerialDescriptor("ByteArray", PrimitiveKind.STRING)
 
-    object Deserializer : JsonDeserializer<ByteArray>() {
-        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ByteArray {
-            val descriptor = p.readValueAs(ByteArrayDescriptor::class.java)
+        override fun serialize(encoder: Encoder, value: ByteArray) {
+            val descriptor = ByteArrayDescriptor(value.b64encode())
+            encoder.encodeValue(descriptor)
+        }
+
+        override fun deserialize(decoder: Decoder): ByteArray {
+            val descriptor = decoder.decodeValue<ByteArrayDescriptor>()
             return descriptor.__bytes__.b64decode()
         }
     }

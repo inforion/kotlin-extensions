@@ -1,17 +1,20 @@
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.extensions.dictionaryOf
+import ru.inforion.lab403.common.json.decodeValue
 import ru.inforion.lab403.common.scripts.GenericScriptEngine
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 
 
-class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Callable<*>>() {
+class FunctionDeserializer(val server: WebSocketRpcServer) : KSerializer<Callable<*>> {
     companion object {
         val log = logger()
     }
@@ -29,8 +32,10 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Ca
 
     private val engines = dictionaryOf<String, GenericScriptEngine>()
 
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Callable<*> {
-        val desc = p.readValueAs(FunctionDescription::class.java)
+    override val descriptor = PrimitiveSerialDescriptor("Callable", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): Callable<*> {
+        val desc = decoder.decodeValue<FunctionDescription>()
 
         val engine = engines.getOrPut(desc.engine) { server.resources.checkoutScriptEngine(desc.engine) }
 
@@ -47,6 +52,9 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Ca
 
         return Callable<Any> { engine.invocable.invokeFunction(name, *it) }
     }
+
+    override fun serialize(encoder: Encoder, value: Callable<*>): Unit =
+        throw NotImplementedError("Can't serialize function")
 
     internal fun onUnregister() {
         engines.values.forEach { server.resources.checkinScriptEngine(it) }
