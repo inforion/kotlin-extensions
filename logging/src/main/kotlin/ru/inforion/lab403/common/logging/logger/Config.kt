@@ -6,7 +6,7 @@ import ru.inforion.lab403.common.logging.Messenger
 import ru.inforion.lab403.common.logging.logLevel
 import ru.inforion.lab403.common.extensions.ifNotNull
 import ru.inforion.lab403.common.extensions.otherwise
-import ru.inforion.lab403.common.json.parseJson
+import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import java.io.File
 
@@ -65,7 +65,7 @@ object Config {
     private val config by lazy {
         configurations ifNotNull {
             runCatching {
-                parseJson<Map<String, LoggerInfo>>()
+                fromJson<Map<String, LoggerInfo>>()
             }.onSuccess {
                 info { "Successfully loading logger configuration file '$this'" }
             }.onFailure { error ->

@@ -6,7 +6,7 @@ dependencies {
     implementation(project(":concurrent"))
     implementation(project(":scripts"))
     implementation(project(":uuid"))
-    implementation(project(":json"))
+    implementation(project(":gson-json"))
 
     api("org.java-websocket:Java-WebSocket:$javaWebSocketVersion")
 }

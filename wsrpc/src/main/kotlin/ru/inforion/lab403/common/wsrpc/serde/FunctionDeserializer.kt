@@ -1,27 +1,25 @@
 package ru.inforion.lab403.common.wsrpc.serde
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.extensions.dictionaryOf
-import ru.inforion.lab403.common.json.decodeValue
 import ru.inforion.lab403.common.scripts.GenericScriptEngine
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
+import java.lang.reflect.Type
 
 
-class FunctionDeserializer(val server: WebSocketRpcServer) : KSerializer<Callable<*>> {
+class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Callable<*>> {
     companion object {
         val log = logger()
     }
 
     enum class FunctionType { FUNCTION, LAMBDA }
 
-    data class FunctionDescription(
+    internal data class FunctionDescription(
         val engine: String,
         val code: String,
         val type: FunctionType,
@@ -32,10 +30,8 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : KSerializer<Callabl
 
     private val engines = dictionaryOf<String, GenericScriptEngine>()
 
-    override val descriptor = PrimitiveSerialDescriptor("Callable", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): Callable<*> {
-        val desc = decoder.decodeValue<FunctionDescription>()
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Callable<*> {
+        val desc = context.deserialize<FunctionDescription>(json, typeOfT)
 
         val engine = engines.getOrPut(desc.engine) { server.resources.checkoutScriptEngine(desc.engine) }
 
@@ -52,9 +48,6 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : KSerializer<Callabl
 
         return Callable<Any> { engine.invocable.invokeFunction(name, *it) }
     }
-
-    override fun serialize(encoder: Encoder, value: Callable<*>): Unit =
-        throw NotImplementedError("Can't serialize function")
 
     internal fun onUnregister() {
         engines.values.forEach { server.resources.checkinScriptEngine(it) }

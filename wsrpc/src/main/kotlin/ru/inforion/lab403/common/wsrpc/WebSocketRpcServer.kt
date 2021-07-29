@@ -1,5 +1,7 @@
 package ru.inforion.lab403.common.wsrpc
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -9,9 +11,10 @@ import ru.inforion.lab403.common.concurrent.launch
 import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.associate
 import ru.inforion.lab403.common.extensions.availableProcessors
+import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.parseJson
-import ru.inforion.lab403.common.json.writeJson
+import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
@@ -20,6 +23,7 @@ import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Request
 import ru.inforion.lab403.common.wsrpc.descs.Response
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
+import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.io.Closeable
 import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
@@ -28,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.filter
 import kotlin.collections.forEach
 import kotlin.collections.set
+import kotlin.reflect.KClass
 
 
 class WebSocketRpcServer constructor(
@@ -43,6 +48,16 @@ class WebSocketRpcServer constructor(
         val SERVICE_ENDPOINT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID()
 
         val log = logger(FINER)
+
+        internal val serializers = dictionaryOf<KClass<*>, (Any) -> WebSocketRpcEndpoint>()
+
+        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) {
+            check(kClass !in serializers) {
+                "Can't set global serializer for class $kClass because it was already specified"
+            }
+            @Suppress("UNCHECKED_CAST")
+            serializers[kClass] = apiGen as (Any) -> WebSocketRpcEndpoint
+        }
     }
 
     private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()
@@ -75,6 +90,11 @@ class WebSocketRpcServer constructor(
     private val threads = newFixedThreadPoolDispatcher(availableProcessors)
 
     private val server = object : WebSocketServer(address) {
+        private val mapper = GsonBuilder()
+            .registerBasicClasses()
+            .serializeNulls()
+            .create()
+
         override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
             log.config { "Client[port=${conn.remoteSocketAddress.port}] established connection" }
         }
@@ -87,7 +107,7 @@ class WebSocketRpcServer constructor(
             launch(threads) {
                 log.debug { "Client[port=${conn.remoteSocketAddress.port}] message=$message" }
                 runCatching {
-                    message.parseJson<Request>()
+                    message.fromJson<Request>(mapper)
                 }.onFailure {
                     log.severe { it.stackTraceToString() }
                 }.onSuccess { request ->
@@ -107,7 +127,7 @@ class WebSocketRpcServer constructor(
                         Response(request.uuid, null, result.toString())
                     }
 
-                    conn.runCatching { send(response.writeJson()) }
+                    conn.runCatching { send(response.toJson(mapper)) }
                         .onFailure { log.severe { "Error during send response: $it" } }
                 }
             }

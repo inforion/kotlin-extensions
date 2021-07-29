@@ -1,5 +1,5 @@
 dependencies {
     implementation(project(":extensions"))
 
-    testImplementation(project(":json"))
+    testImplementation(project(":gson-json"))
 }
