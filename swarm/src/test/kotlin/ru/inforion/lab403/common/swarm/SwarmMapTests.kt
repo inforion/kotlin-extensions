@@ -4,9 +4,8 @@ package ru.inforion.lab403.common.swarm
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
-import ru.inforion.lab403.common.extensions.*
+import ru.inforion.lab403.common.extensions.sequence
 import ru.inforion.lab403.common.logging.logger
-import java.security.MessageDigest
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue

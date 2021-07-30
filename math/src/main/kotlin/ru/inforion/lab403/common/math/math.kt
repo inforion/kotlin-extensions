@@ -3,7 +3,6 @@
 package ru.inforion.lab403.common.math
 
 import ru.inforion.lab403.common.extensions.int_z
-import java.util.*
 
 object math {
     data class Bin<out T>(val value: T, val count: Int)

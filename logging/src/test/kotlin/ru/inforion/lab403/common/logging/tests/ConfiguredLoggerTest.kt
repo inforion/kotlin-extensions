@@ -2,10 +2,10 @@ package ru.inforion.lab403.common.logging.tests
 
 import org.junit.Test
 import ru.inforion.lab403.common.logging.*
+import ru.inforion.lab403.common.logging.formatters.Absent
 import ru.inforion.lab403.common.logging.formatters.ColorMultiline
 import ru.inforion.lab403.common.logging.formatters.Informative
 import ru.inforion.lab403.common.logging.formatters.Newline
-import ru.inforion.lab403.common.logging.formatters.Absent
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.io.File
 

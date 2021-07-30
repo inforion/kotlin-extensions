@@ -3,7 +3,9 @@ package ru.inforion.lab403.common.iobuffer
 import org.junit.Test
 import ru.inforion.lab403.common.concurrent.async
 import ru.inforion.lab403.common.concurrent.wait
-import ru.inforion.lab403.common.extensions.*
+import ru.inforion.lab403.common.extensions.byte
+import ru.inforion.lab403.common.extensions.int_s
+import ru.inforion.lab403.common.extensions.int_z
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.expect

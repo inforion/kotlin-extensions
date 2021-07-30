@@ -1,13 +1,11 @@
 package ru.inforion.lab403.common.json
 
 import com.google.gson.*
-import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import org.junit.Test
 import java.lang.reflect.Type
 import java.util.*
-import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
 internal class JsonTest {

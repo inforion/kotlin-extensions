@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.logging.examples
 
-import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.TRACE
+import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.logger.Record
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher

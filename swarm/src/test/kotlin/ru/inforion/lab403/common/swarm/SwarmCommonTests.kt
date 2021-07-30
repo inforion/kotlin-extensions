@@ -2,13 +2,15 @@ package ru.inforion.lab403.common.swarm
 
 
 import org.junit.Test
-import ru.inforion.lab403.common.extensions.*
+import ru.inforion.lab403.common.extensions.bytes
+import ru.inforion.lab403.common.extensions.hexlify
+import ru.inforion.lab403.common.extensions.random
 import ru.inforion.lab403.common.logging.FINE
 import ru.inforion.lab403.common.logging.FINEST
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.swarm.common.Slave
 import ru.inforion.lab403.common.serialization.deserialize
 import ru.inforion.lab403.common.serialization.serialize
+import ru.inforion.lab403.common.swarm.common.Slave
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -18,7 +20,6 @@ import kotlin.concurrent.thread
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
-import kotlin.text.toInt
 
 
 internal class SwarmCommonTests {

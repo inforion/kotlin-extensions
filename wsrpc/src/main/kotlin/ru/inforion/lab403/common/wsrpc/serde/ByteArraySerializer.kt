@@ -2,7 +2,9 @@
 
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.google.gson.*
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonElement
+import com.google.gson.JsonSerializationContext
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.extensions.b64encode
 import ru.inforion.lab403.common.json.JsonSerde

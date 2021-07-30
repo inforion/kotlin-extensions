@@ -19,13 +19,13 @@ object SimpleServer {
 
         var counter = 0
 
-//        val t = thread(isDaemon = true) {
-//            while (true) {
-//                log.info { "Notify: counter = ${counter++}" }
-//                notification.signal()
-//                Thread.sleep(1000)
-//            }
-//        }
+        val t = thread(isDaemon = true) {
+            while (true) {
+                log.info { "Notify: counter = ${counter++}" }
+                notification.signal()
+                Thread.sleep(1000)
+            }
+        }
 
         val developers = listOf(
             Developer("Morgan", "Freeman", "123"),

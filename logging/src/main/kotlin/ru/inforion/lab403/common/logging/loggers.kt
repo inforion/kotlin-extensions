@@ -3,7 +3,6 @@ package ru.inforion.lab403.common.logging
 import ru.inforion.lab403.common.logging.dsl.PublishersArrayConfig
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.util.logging.Level
 import kotlin.reflect.full.companionObject
 

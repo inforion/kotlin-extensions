@@ -3,8 +3,6 @@
 package ru.inforion.lab403.common.json
 
 import com.google.gson.*
-import com.google.gson.internal.bind.MapTypeAdapterFactory
-import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -30,6 +28,8 @@ fun <T: Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde
     registerTypeAdapter(kClass.java, serde)
 
 // Objects encoding extensions
+
+inline fun <T> T.toJson(cls: Class<T>, mapper: Gson = gson): String = mapper.toJson(this, cls)
 
 inline fun <reified T> T.toJson(mapper: Gson = gson): String = mapper.toJson(this, T::class.java)
 

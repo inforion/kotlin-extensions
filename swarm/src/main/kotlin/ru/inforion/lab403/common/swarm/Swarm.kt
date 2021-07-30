@@ -5,9 +5,10 @@ package ru.inforion.lab403.common.swarm
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.swarm.abstracts.IRealm
 import ru.inforion.lab403.common.swarm.common.Slave
+import ru.inforion.lab403.common.swarm.implementations.MPI
+import ru.inforion.lab403.common.swarm.implementations.Threads
 import ru.inforion.lab403.common.swarm.implementations.receiveOrderedAll
 import ru.inforion.lab403.common.swarm.implementations.sendToOthers
-import ru.inforion.lab403.common.swarm.implementations.*
 import ru.inforion.lab403.common.swarm.interfaces.ITask
 import ru.inforion.lab403.common.swarm.wrappers.ParallelIterator
 

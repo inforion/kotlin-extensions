@@ -5,7 +5,6 @@ import org.junit.Before
 import org.junit.Test
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
-import java.util.*
 
 internal class ArraysTest {
     data class TestClass(val int: Int, val long: Long, val string: String)

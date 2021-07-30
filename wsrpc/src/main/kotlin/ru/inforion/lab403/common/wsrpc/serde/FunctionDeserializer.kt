@@ -3,10 +3,9 @@ package ru.inforion.lab403.common.wsrpc.serde
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import ru.inforion.lab403.common.extensions.b64decode
-import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.json.deserialize
+import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.scripts.GenericScriptEngine
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable

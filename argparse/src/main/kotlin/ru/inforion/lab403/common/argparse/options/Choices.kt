@@ -1,8 +1,8 @@
 package ru.inforion.lab403.common.argparse.options
 
 import net.sourceforge.argparse4j.inf.ArgumentParser
-import ru.inforion.lab403.common.argparse.abstracts.AbstractOption
 import ru.inforion.lab403.common.argparse.ValueGetter
+import ru.inforion.lab403.common.argparse.abstracts.AbstractOption
 import kotlin.reflect.KClass
 
 class Choices<E : Enum<E>> constructor(

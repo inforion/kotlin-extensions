@@ -2,9 +2,13 @@ package ru.inforion.lab403.common.wsrpc
 
 import com.google.gson.GsonBuilder
 import ru.inforion.lab403.common.concurrent.events.Event
-import ru.inforion.lab403.common.extensions.*
-import ru.inforion.lab403.common.json.*
-import ru.inforion.lab403.common.logging.ALL
+import ru.inforion.lab403.common.extensions.firstInstance
+import ru.inforion.lab403.common.extensions.hasInstance
+import ru.inforion.lab403.common.extensions.kClassAny
+import ru.inforion.lab403.common.extensions.sure
+import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.registerTypeAdapter
+import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
@@ -17,7 +21,17 @@ import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.util.*
-import kotlin.reflect.KClass
+import kotlin.collections.List
+import kotlin.collections.associate
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.contains
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.getValue
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.toTypedArray
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
@@ -28,7 +42,7 @@ class EndpointHolder constructor(
     val uuid: UUID
 ) {
     companion object {
-        val log = logger(ALL)
+        val log = logger()
 
         fun GsonBuilder.registerModule(server: WebSocketRpcServer) = apply {
             WebSocketRpcServer.serializers.forEach { (cls, gen) ->
@@ -79,9 +93,7 @@ class EndpointHolder constructor(
         val args = method.parameters.map { values.getValueOfParameter(it) }
         val result = method.function.call(endpoint, *args.toTypedArray())
         if (method.close) server.unregister(uuid)
-        val json = result.toJson(mapper)
-        log.info { "$result -> $json" }
-        return json
+        return result.toJson(mapper)
     }
 
     internal fun onRegister() {

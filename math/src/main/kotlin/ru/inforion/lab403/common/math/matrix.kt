@@ -7,7 +7,6 @@ import org.jblas.ComplexDoubleMatrix
 import org.jblas.DoubleMatrix
 import ru.inforion.lab403.common.extensions.DOUBLE_MAX
 import ru.inforion.lab403.common.extensions.DOUBLE_MIN
-import java.util.*
 
 /**
  * Created by Alexei Gladkikh on 11/02/17.

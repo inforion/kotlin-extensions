@@ -3,11 +3,11 @@ package ru.inforion.lab403.common.swarm.implementations
 import mpi.MPI
 import mpi.Request
 import ru.inforion.lab403.common.logging.logger
+import ru.inforion.lab403.common.serialization.deserialize
+import ru.inforion.lab403.common.serialization.serialize
 import ru.inforion.lab403.common.swarm.Swarm
 import ru.inforion.lab403.common.swarm.abstracts.IRealm
 import ru.inforion.lab403.common.swarm.common.Mail
-import ru.inforion.lab403.common.serialization.deserialize
-import ru.inforion.lab403.common.serialization.serialize
 import java.io.Serializable
 import java.nio.ByteBuffer
 import java.util.*

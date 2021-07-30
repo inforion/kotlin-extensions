@@ -5,7 +5,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParser
 import net.sourceforge.argparse4j.inf.Namespace
 import ru.inforion.lab403.common.argparse.ApplicationOptions
 import ru.inforion.lab403.common.argparse.ValueGetter
-import java.lang.NullPointerException
 import kotlin.reflect.KProperty
 
 abstract class AbstractOption<T>(

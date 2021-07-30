@@ -2,7 +2,6 @@
 
 package ru.inforion.lab403.common.wsrpc.serde
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import ru.inforion.lab403.common.extensions.sure

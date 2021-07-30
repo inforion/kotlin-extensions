@@ -1,7 +1,6 @@
 package ru.inforion.lab403.common.swarm
 
 import org.junit.Test
-import java.lang.IllegalArgumentException
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

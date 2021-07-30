@@ -6,7 +6,10 @@ package ru.inforion.lab403.common.extensions
  * Created by Alexei Gladkikh on 28/06/16.
  */
 
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 

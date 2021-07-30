@@ -13,7 +13,7 @@ import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.json.toJson
-import ru.inforion.lab403.common.logging.ALL
+import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
 import ru.inforion.lab403.common.uuid.uuid
@@ -43,7 +43,7 @@ class WebSocketRpcServer constructor(
         const val SERVICE_ENDPOINT_NAME = "Service"
         val SERVICE_ENDPOINT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID()
 
-        val log = logger(ALL)
+        val log = logger(FINER)
 
         internal val serializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
 
