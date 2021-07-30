@@ -3,8 +3,8 @@
 package ru.inforion.lab403.common.krest
 
 import kong.unirest.*
-import ru.inforion.lab403.common.json.parseJson
-import ru.inforion.lab403.common.json.writeJson
+import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.logger
 import java.io.File
 
@@ -38,14 +38,14 @@ class Krest constructor(val url: String, val retries: Int = 10) {
     }
 
     inline fun <reified T : Any> HttpRequest<*>.executeAndGetResult(retries: Int): T =
-        executeAs(retries) { asString() }.throwIfFailure().body.parseJson()
+        executeAs(retries) { asString() }.throwIfFailure().body.fromJson()
 
     inline fun HttpRequest<*>.executeAndGetFile(retries: Int, path: String): File =
         executeAs(retries) { asFile(path) }.throwIfFailure().body
 
     // :E method body doesn't set body ... it returns new request-object, eee... happy-debugging!
     // standard unirest serializer drops types id -> may required
-    inline fun HttpRequestWithBody.json(body: Any?): HttpRequest<*> = if (body == null) this else body(body.writeJson())
+    inline fun HttpRequestWithBody.json(body: Any?): HttpRequest<*> = if (body == null) this else body(body.toJson())
 
     inline fun <T : HttpRequest<*>> T.headers(vararg headers: Pair<String, String?>) =
         apply { headers.filter { it.second != null }.forEach { header(it.first, it.second) } }
