@@ -4,11 +4,12 @@ import ru.inforion.lab403.common.concurrent.locks.PhonyLock
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
+import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence
 import java.util.concurrent.locks.Lock
 import kotlin.concurrent.withLock
 
 class SequenceEndpoint<T>(
-    sequence: Sequence<T>,
+    sequence: SerializableSequence<T>,
     private val lock: Lock = PhonyLock,
     override val name: String = "Sequence"
 ) : WebSocketRpcEndpoint {

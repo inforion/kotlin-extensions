@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import ru.inforion.lab403.common.concurrent.events.Event
 import ru.inforion.lab403.common.extensions.*
 import ru.inforion.lab403.common.json.*
+import ru.inforion.lab403.common.logging.ALL
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
@@ -11,6 +12,7 @@ import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
+import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence
 import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
@@ -26,24 +28,18 @@ class EndpointHolder constructor(
     val uuid: UUID
 ) {
     companion object {
-        val log = logger()
+        val log = logger(ALL)
 
-        private fun <T: Any> GsonBuilder.registerTypeAdapter(
-            server: WebSocketRpcServer,
-            kClass: KClass<T>,
-            apiGen: (T) -> WebSocketRpcEndpoint
-        ) = registerTypeAdapter(kClass, ObjectSerializer(server, kClass, apiGen))
+        fun GsonBuilder.registerModule(server: WebSocketRpcServer) = apply {
+            WebSocketRpcServer.serializers.forEach { (cls, gen) ->
+                registerTypeAdapter(cls, ObjectSerializer(server, cls, gen))
+            }
 
-        fun GsonBuilder.registerModule(server: WebSocketRpcServer): GsonBuilder {
-            WebSocketRpcServer.serializers.forEach { (cls, gen) -> registerTypeAdapter(server, cls, gen) }
+            registerTypeAdapter(SerializableSequence::class, ObjectSerializer(server, "Sequence") { SequenceEndpoint(it) })
+            registerTypeAdapter(SequenceEndpoint::class, ObjectSerializer(server) { it })
 
-            registerTypeAdapter(server, Sequence::class) { SequenceEndpoint(it) }
-            registerTypeAdapter(server, SequenceEndpoint::class) { it }
-
-            registerTypeAdapter(server, Event::class) { EventEndpoint(it) }
-            registerTypeAdapter(server, EventEndpoint::class) { it }
-
-            return this
+            registerTypeAdapter(Event::class, ObjectSerializer(server) { EventEndpoint(it) })
+            registerTypeAdapter(EventEndpoint::class, ObjectSerializer(server) { it })
         }
     }
 
@@ -74,8 +70,7 @@ class EndpointHolder constructor(
     private fun Parameters.getValueOfParameter(parameter: KParameter): Any? {
         val name = parameter.name ?: error("Something wrong with signature of RPC function -> parameter has no name")
         require(parameter.name in this) { "Required parameter $name not found in received data" }
-        val value = getValue(name)
-        return mapper.fromJson(value, parameter.type.javaClass)
+        return getValue(name).fromJson(parameter.kClassAny.java, mapper)
     }
 
     internal fun execute(name: String, values: Parameters): String {
@@ -84,7 +79,9 @@ class EndpointHolder constructor(
         val args = method.parameters.map { values.getValueOfParameter(it) }
         val result = method.function.call(endpoint, *args.toTypedArray())
         if (method.close) server.unregister(uuid)
-        return result.toJson(mapper)
+        val json = result.toJson(mapper)
+        log.info { "$result -> $json" }
+        return json
     }
 
     internal fun onRegister() {

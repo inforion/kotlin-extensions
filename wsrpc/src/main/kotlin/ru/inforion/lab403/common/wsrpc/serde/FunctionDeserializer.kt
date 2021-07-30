@@ -6,6 +6,7 @@ import com.google.gson.JsonElement
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.extensions.dictionaryOf
+import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.scripts.GenericScriptEngine
 import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
@@ -23,7 +24,7 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Ca
         val engine: String,
         val code: String,
         val type: FunctionType,
-        val closure: Map<String, String>
+        val closure: Map<String, ByteArray>
     )
 
     private var lambdaIndex = 0
@@ -31,13 +32,13 @@ class FunctionDeserializer(val server: WebSocketRpcServer) : JsonDeserializer<Ca
     private val engines = dictionaryOf<String, GenericScriptEngine>()
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Callable<*> {
-        val desc = context.deserialize<FunctionDescription>(json, typeOfT)
+        val desc = json.deserialize<FunctionDescription>(context)
 
         val engine = engines.getOrPut(desc.engine) { server.resources.checkoutScriptEngine(desc.engine) }
 
         val name = when (desc.type) {
             FunctionType.LAMBDA -> {
-                desc.closure.forEach { (name, data) -> engine.deserializeAndSet(name, data.b64decode()) }
+                desc.closure.forEach { (name, data) -> engine.deserializeAndSet(name, data) }
                 engine.evalAndSet("anonymous${lambdaIndex++}", desc.code)
             }
             FunctionType.FUNCTION -> {

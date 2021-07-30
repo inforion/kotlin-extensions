@@ -31,23 +31,34 @@ fun <T: Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde
 
 // Objects encoding extensions
 
-inline fun <T: Any?> T.toJson(mapper: Gson = gson): String = mapper.toJson(this)
+inline fun <reified T> T.toJson(mapper: Gson = gson): String = mapper.toJson(this, T::class.java)
 
-inline fun <T: Any?> T.toJson(stream: OutputStream, mapper: Gson = gson) =
-    stream.writer().use { mapper.toJson(this, it) }
+inline fun <reified T> T.toJson(stream: OutputStream, mapper: Gson = gson) =
+    stream.writer().use { mapper.toJson(this, T::class.java, it) }
 
-inline fun <T: Any?> T.toJson(file: File, mapper: Gson = gson) = toJson(file.outputStream(), mapper)
+inline fun <reified T> T.toJson(file: File, mapper: Gson = gson) =
+    toJson(file.outputStream(), mapper)
+
+inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonElement =
+    context.serialize(this, T::class.java)
 
 // Objects decoding extensions
 
-inline fun <T> String.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(this, cls)
+inline fun <T> String.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper.fromJson(this, cls)
 
-inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls)
+inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper.fromJson(this, cls)
 
-inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls)
+inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper.fromJson(reader(), cls)
+
+inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper.fromJson(reader(), cls)
 
 inline fun <reified T> String.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+
+inline fun <reified T> JsonElement.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
 
 inline fun <reified T> InputStream.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
 
 inline fun <reified T> File.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+
+inline fun <reified T> JsonElement.deserialize(context: JsonDeserializationContext): T =
+    context.deserialize(this, T::class.java)

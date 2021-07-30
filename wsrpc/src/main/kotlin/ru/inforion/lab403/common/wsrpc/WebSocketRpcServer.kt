@@ -1,6 +1,5 @@
 package ru.inforion.lab403.common.wsrpc
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
@@ -9,19 +8,18 @@ import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import ru.inforion.lab403.common.concurrent.launch
 import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
-import ru.inforion.lab403.common.extensions.associate
 import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.json.toJson
-import ru.inforion.lab403.common.logging.FINER
+import ru.inforion.lab403.common.logging.ALL
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
 import ru.inforion.lab403.common.uuid.uuid
-import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Request
 import ru.inforion.lab403.common.wsrpc.descs.Response
+import ru.inforion.lab403.common.wsrpc.endpoints.ServiceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.io.Closeable
@@ -29,8 +27,6 @@ import java.lang.reflect.InvocationTargetException
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.filter
-import kotlin.collections.forEach
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -42,20 +38,20 @@ class WebSocketRpcServer constructor(
     val pingTimeout: Int = 10, // in seconds
     val isReuseAddress: Boolean = true,
     val isTcpNoDelayActive: Boolean = false
-) : Closeable {
+) : Iterable<EndpointHolder>, Closeable {
     companion object {
         const val SERVICE_ENDPOINT_NAME = "Service"
         val SERVICE_ENDPOINT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID()
 
-        val log = logger(FINER)
+        val log = logger(ALL)
 
-        internal val serializers = dictionaryOf<KClass<*>, (Any) -> WebSocketRpcEndpoint>()
+        internal val serializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
 
+        @Suppress("UNCHECKED_CAST")
         fun <T: Any> registerTypeAdapter(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) {
-            check(kClass !in serializers) {
+            check(kClass as KClass<Any> !in serializers) {
                 "Can't set global serializer for class $kClass because it was already specified"
             }
-            @Suppress("UNCHECKED_CAST")
             serializers[kClass] = apiGen as (Any) -> WebSocketRpcEndpoint
         }
     }
@@ -165,26 +161,9 @@ class WebSocketRpcServer constructor(
 
     internal val resources = ResourceManager()
 
-    inner class ServiceEndpoint(override val name: String = SERVICE_ENDPOINT_NAME) : WebSocketRpcEndpoint {
-        @WebSocketRpcMethod
-        fun endpoints() = myEndpoints.associate { it.key to it.value.identifier }
-
-        @WebSocketRpcMethod
-        fun clear() = myEndpoints.values
-            .filter { it.endpoint != this }
-            .forEach { this@WebSocketRpcServer.unregister(it.uuid) }
-
-        @WebSocketRpcMethod
-        fun unregister(uuid: UUID) = this@WebSocketRpcServer.unregister(uuid)
-
-        @WebSocketRpcMethod
-        fun address() = server.address
-
-        @WebSocketRpcMethod
-        fun port() = server.port
-    }
-
     init {
-        register(ServiceEndpoint(), SERVICE_ENDPOINT_UUID)
+        register(ServiceEndpoint(this), SERVICE_ENDPOINT_UUID)
     }
+
+    override fun iterator() = myEndpoints.values.iterator()
 }

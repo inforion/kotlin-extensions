@@ -4,6 +4,7 @@ import ru.inforion.lab403.common.concurrent.events.SimpleEvent
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
+import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence.Companion.asSerializableSequence
 import kotlin.concurrent.thread
 
 object SimpleServer {
@@ -18,13 +19,13 @@ object SimpleServer {
 
         var counter = 0
 
-        val t = thread(isDaemon = true) {
-            while (true) {
-                log.info { "Notify: counter = ${counter++}" }
-                notification.signal()
-                Thread.sleep(1000)
-            }
-        }
+//        val t = thread(isDaemon = true) {
+//            while (true) {
+//                log.info { "Notify: counter = ${counter++}" }
+//                notification.signal()
+//                Thread.sleep(1000)
+//            }
+//        }
 
         val developers = listOf(
             Developer("Morgan", "Freeman", "123"),
@@ -35,10 +36,13 @@ object SimpleServer {
         )
 
         @WebSocketRpcMethod
+        fun length(array: ByteArray) = array.size
+
+        @WebSocketRpcMethod
         fun event() = notification
 
         @WebSocketRpcMethod
-        fun developers() = developers.asSequence()
+        fun developers() = developers.asSerializableSequence()
     }
 
     @JvmStatic
