@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 
 @PublishedApi internal val mappers = Array(16) {
     GsonBuilder()
-//    .registerTypeAdapter(UInt::class.java, UIntAdapter())
+        .serializeNulls()
         .create()
 }
 
@@ -31,13 +31,21 @@ fun <T: Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde
 
 inline fun <T> T.toJson(cls: Class<T>, mapper: Gson = gson): String = mapper.toJson(this, cls)
 
-inline fun <reified T> T.toJson(mapper: Gson = gson): String = mapper.toJson(this, T::class.java)
+inline fun <T> T.toJson(cls: Class<T>, stream: OutputStream, mapper: Gson = gson): Unit =
+    stream.writer().use { mapper.toJson(this, cls, it) }
 
-inline fun <reified T> T.toJson(stream: OutputStream, mapper: Gson = gson) =
-    stream.writer().use { mapper.toJson(this, T::class.java, it) }
+inline fun <reified T> T.toJson(cls: Class<T>, file: File, mapper: Gson = gson): Unit =
+    toJson(cls, file.outputStream(), mapper)
 
-inline fun <reified T> T.toJson(file: File, mapper: Gson = gson) =
-    toJson(file.outputStream(), mapper)
+
+
+inline fun <reified T> T.toJson(mapper: Gson = gson): String = toJson(T::class.java, mapper)
+
+inline fun <reified T> T.toJson(stream: OutputStream, mapper: Gson = gson) = toJson(T::class.java, stream, mapper)
+
+inline fun <reified T> T.toJson(file: File, mapper: Gson = gson) = toJson(T::class.java, file, mapper)
+
+
 
 inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonElement =
     context.serialize(this, T::class.java)
@@ -52,6 +60,8 @@ inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper
 
 inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson) = mapper.fromJson(reader(), cls)
 
+
+
 inline fun <reified T> String.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
 
 inline fun <reified T> JsonElement.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
@@ -60,5 +70,19 @@ inline fun <reified T> InputStream.fromJson(mapper: Gson = gson): T = fromJson(T
 
 inline fun <reified T> File.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
 
+
+
 inline fun <reified T> JsonElement.deserialize(context: JsonDeserializationContext): T =
     context.deserialize(this, T::class.java)
+
+
+
+
+
+// Other json helpers
+
+@PublishedApi internal val commentsRegex = Regex("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)")
+
+inline fun String.removeJsonComments() = replace(commentsRegex, " ")
+
+inline fun InputStream.removeJsonComments() = bufferedReader().readText().removeJsonComments()
