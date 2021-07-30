@@ -16,7 +16,6 @@ import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
-import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence
 import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
@@ -51,7 +50,6 @@ class EndpointHolder constructor(
                 registerTypeAdapter(cls, ObjectSerializer(server, cls, gen))
             }
 
-            registerTypeAdapter(SerializableSequence::class, ObjectSerializer(server, "Sequence") { SequenceEndpoint(it) })
             registerTypeAdapter(SequenceEndpoint::class, ObjectSerializer(server) { it })
 
             registerTypeAdapter(Event::class, ObjectSerializer(server) { EventEndpoint(it) })

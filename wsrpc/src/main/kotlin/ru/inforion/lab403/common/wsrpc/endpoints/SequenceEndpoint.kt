@@ -1,18 +1,24 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ru.inforion.lab403.common.wsrpc.endpoints
 
 import ru.inforion.lab403.common.concurrent.locks.PhonyLock
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
-import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence
 import java.util.concurrent.locks.Lock
 import kotlin.concurrent.withLock
 
-class SequenceEndpoint<T>(
-    sequence: SerializableSequence<T>,
+class SequenceEndpoint<T> constructor(
+    sequence: Sequence<T>,
     private val lock: Lock = PhonyLock,
     override val name: String = "Sequence"
 ) : WebSocketRpcEndpoint {
+    companion object {
+        inline fun <T> Iterable<T>.toSequenceEndpoint(lock: Lock = PhonyLock, name: String = "Sequence") =
+            SequenceEndpoint(asSequence(), lock, name)
+    }
+
     private var state: Sequence<*> = sequence
 
     @WebSocketRpcMethod
