@@ -4,12 +4,12 @@ import com.google.gson.GsonBuilder
 import ru.inforion.lab403.common.concurrent.events.Event
 import ru.inforion.lab403.common.extensions.firstInstance
 import ru.inforion.lab403.common.extensions.hasInstance
-import ru.inforion.lab403.common.extensions.kClassAny
 import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.json.registerTypeAdapter
 import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.logger
+import ru.inforion.lab403.common.reflection.kClassAny
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
 import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
@@ -45,7 +45,9 @@ class EndpointHolder constructor(
         val log = logger()
 
         fun GsonBuilder.registerModule(server: WebSocketRpcServer) = apply {
-            WebSocketRpcServer.serializers.forEach { (cls, gen) ->
+            WebSocketRpcServer.typesSerializers.forEach { registerTypeAdapter(it.first, it.second) }
+
+            WebSocketRpcServer.endpointsSerializers.forEach { (cls, gen) ->
                 registerTypeAdapter(cls, ObjectSerializer(server, cls, gen))
             }
 

@@ -1,6 +1,10 @@
+@file:Suppress("unused")
+
 package ru.inforion.lab403.common.wsrpc
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonSerializer
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -24,6 +28,7 @@ import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.io.Closeable
 import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Type
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -45,15 +50,23 @@ class WebSocketRpcServer constructor(
 
         val log = logger(FINER)
 
-        internal val serializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
+        internal val endpointsSerializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
+
+        internal val typesSerializers = mutableListOf<Pair<Type, Any>>()
 
         @Suppress("UNCHECKED_CAST")
-        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, apiGen: (T) -> WebSocketRpcEndpoint) {
-            check(kClass as KClass<Any> !in serializers) {
+        fun <T: Any> registerTypeAdapter(kClass: KClass<out T>, apiGen: (T) -> WebSocketRpcEndpoint) {
+            check(kClass as KClass<Any> !in endpointsSerializers) {
                 "Can't set global serializer for class $kClass because it was already specified"
             }
-            serializers[kClass] = apiGen as (Any) -> WebSocketRpcEndpoint
+            endpointsSerializers[kClass] = apiGen as (Any) -> WebSocketRpcEndpoint
         }
+
+        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>) =
+            typesSerializers.add(kClass.java to deserializer)
+
+        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>) =
+            typesSerializers.add(kClass.java to serializer)
     }
 
     private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()

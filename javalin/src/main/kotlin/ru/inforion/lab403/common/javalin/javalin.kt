@@ -2,14 +2,30 @@
 
 package ru.inforion.lab403.common.javalin
 
-import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.google.gson.GsonBuilder
 import io.javalin.Javalin
 import io.javalin.core.plugin.Plugin
 import io.javalin.http.Context
-import io.javalin.plugin.json.JavalinJackson
+import io.javalin.plugin.json.FromJsonMapper
+import io.javalin.plugin.json.JavalinJson
+import io.javalin.plugin.json.ToJsonMapper
+import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.toJson
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+
+var jsonFactory = {
+    GsonBuilder()
+        .serializeNulls()
+        .create()
+}
+
+internal class Mapper : FromJsonMapper, ToJsonMapper {
+    private val gson = jsonFactory.invoke()
+    override fun <T> map(json: String, targetClass: Class<T>) = json.fromJson(targetClass, gson)
+    override fun map(obj: Any) = obj.toJson(gson)
+}
 
 inline fun Context.errorResponse(status: Int, result: String) {
     status(status)
@@ -64,7 +80,6 @@ inline fun Javalin.getAnyExclusive(
 }
 
 
-
 inline fun Javalin.applyRoutes(crossinline block: Javalin.() -> Unit) {
     routes {
         block(this)
@@ -94,8 +109,12 @@ fun JavalinServer(
         it.serverStarted { lock.add(0) }
     }
 
-    // register module to serialize JodaTime
-    JavalinJackson.getObjectMapper().registerModule(JodaModule())
+    val mapper = Mapper()
+
+    JavalinJson.apply {
+        fromJsonMapper = mapper
+        toJsonMapper = mapper
+    }
 
     if (start) start(port)
 

@@ -8,13 +8,13 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlin.reflect.KClass
 
-@PublishedApi internal val mappers = Array(16) {
-    GsonBuilder()
-        .serializeNulls()
-        .create()
-}
+fun defaultGsonBuilder(): GsonBuilder = GsonBuilder().serializeNulls()
+
+@PublishedApi internal val mappers = Array(16) { defaultGsonBuilder().create() }
 
 inline val gson: Gson get() = mappers.random()
+
+
 
 interface JsonSerde<T> : JsonSerializer<T>, JsonDeserializer<T>
 
@@ -26,6 +26,23 @@ fun <T: Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, deserializer: Js
 
 fun <T: Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>): GsonBuilder =
     registerTypeAdapter(kClass.java, serde)
+
+
+
+inline fun <T: Any> polymorphicTypesAdapter(
+    classes: Collection<Class<out T>>,
+    field: String = "type",
+    selector: (Class<out T>) -> String = { it.simpleName }
+): JsonDeserializer<T> {
+    val inherited = classes.associateBy(selector)
+    return JsonDeserializer { json, _, context ->
+        val obj = json as JsonObject
+        val type = obj[field].asString
+        val cls = inherited[type] ?: throw IllegalArgumentException("Unknown type: '$type'")
+        json.deserialize(cls, context)
+    }
+}
+
 
 // Objects encoding extensions
 
@@ -72,10 +89,9 @@ inline fun <reified T> File.fromJson(mapper: Gson = gson): T = fromJson(T::class
 
 
 
-inline fun <reified T> JsonElement.deserialize(context: JsonDeserializationContext): T =
-    context.deserialize(this, T::class.java)
+inline fun <T> JsonElement.deserialize(cls: Class<T>, context: JsonDeserializationContext): T = context.deserialize(this, cls)
 
-
+inline fun <reified T> JsonElement.deserialize(context: JsonDeserializationContext): T = deserialize(T::class.java, context)
 
 
 
