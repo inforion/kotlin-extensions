@@ -8,7 +8,7 @@ import java.lang.reflect.Type
 import java.util.*
 import kotlin.test.assertEquals
 
-internal class JsonTest {
+internal class GsonJsonTest {
 
     class UIntAdapter : TypeAdapter<UInt>() {
         override fun write(out: JsonWriter, value: UInt) {

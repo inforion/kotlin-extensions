@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import org.junit.Test
 import kotlin.test.assertEquals
 
-internal class JsonTest {
+internal class KotlinxJsonTest {
 
     @Serializable
     data class Testik(val data: UInt)
