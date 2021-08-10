@@ -15,7 +15,9 @@ import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
+import ru.inforion.lab403.common.json.JsonSerde
 import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.registerBasicClasses
 import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
@@ -25,7 +27,6 @@ import ru.inforion.lab403.common.wsrpc.descs.Request
 import ru.inforion.lab403.common.wsrpc.descs.Response
 import ru.inforion.lab403.common.wsrpc.endpoints.ServiceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
-import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.io.Closeable
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Type
@@ -67,6 +68,9 @@ class WebSocketRpcServer constructor(
 
         fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>) =
             typesSerializers.add(kClass.java to serializer)
+
+        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>) =
+            typesSerializers.add(kClass.java to serde)
     }
 
     private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()

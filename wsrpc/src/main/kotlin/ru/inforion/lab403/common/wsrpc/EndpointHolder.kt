@@ -6,6 +6,7 @@ import ru.inforion.lab403.common.extensions.firstInstance
 import ru.inforion.lab403.common.extensions.hasInstance
 import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.registerBasicClasses
 import ru.inforion.lab403.common.json.registerTypeAdapter
 import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.logger
@@ -18,7 +19,6 @@ import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
-import ru.inforion.lab403.common.wsrpc.serde.registerBasicClasses
 import java.util.*
 import kotlin.collections.List
 import kotlin.collections.associate
