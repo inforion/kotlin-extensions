@@ -7,4 +7,5 @@ dependencies {
 
     api("com.google.code.gson:gson:$gsonVersion")
     api("org.danilopianini:gson-extras:$gsonExtrasVersion")
+    api("joda-time:joda-time:$jodaTimeVersion")
 }

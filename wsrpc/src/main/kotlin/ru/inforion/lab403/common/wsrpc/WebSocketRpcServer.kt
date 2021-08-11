@@ -5,6 +5,7 @@ package ru.inforion.lab403.common.wsrpc
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
+import com.google.gson.TypeAdapterFactory
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -55,6 +56,8 @@ class WebSocketRpcServer constructor(
 
         internal val typesSerializers = mutableListOf<Pair<Type, Any>>()
 
+        internal val typesFactories = mutableListOf<TypeAdapterFactory>()
+
         @Suppress("UNCHECKED_CAST")
         fun <T: Any> registerTypeAdapter(kClass: KClass<out T>, apiGen: (T) -> WebSocketRpcEndpoint) {
             check(kClass as KClass<Any> !in endpointsSerializers) {
@@ -71,6 +74,8 @@ class WebSocketRpcServer constructor(
 
         fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>) =
             typesSerializers.add(kClass.java to serde)
+
+        fun registerTypeFactory(factory: TypeAdapterFactory) = typesFactories.add(factory)
     }
 
     private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()

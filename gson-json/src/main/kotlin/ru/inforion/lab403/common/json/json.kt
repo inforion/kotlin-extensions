@@ -3,7 +3,6 @@
 package ru.inforion.lab403.common.json
 
 import com.google.gson.*
-import com.google.gson.reflect.TypeToken
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
 import java.io.File
 import java.io.InputStream
@@ -75,10 +74,10 @@ inline fun <reified T : Any> polymorphicTypesFactory(
 // Objects encoding extensions
 
 inline fun <T> T.toJson(cls: Class<T>, mapper: Gson = gson): String =
-    mapper.toJson(this, if (cls.isGeneric) cls.token.type else cls)
+    mapper.toJson(this, cls.classOrTokenType)
 
 inline fun <T> T.toJson(cls: Class<T>, stream: OutputStream, mapper: Gson = gson): Unit =
-        stream.writer().use { mapper.toJson(this, if (cls.isGeneric) cls.token.type else cls, it) }
+        stream.writer().use { mapper.toJson(this, cls.classOrTokenType, it) }
 
 inline fun <reified T> T.toJson(cls: Class<T>, file: File, mapper: Gson = gson): Unit =
     toJson(cls, file.outputStream(), mapper)
@@ -96,18 +95,13 @@ inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonEleme
 
 // Objects decoding extensions
 
-inline fun <T> String.fromJson(cls: Class<T>, mapper: Gson = gson): T =
-    mapper.fromJson(this, if (cls.isGeneric) cls.token.type else cls)
+inline fun <T> String.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(this, cls.classOrTokenType)
 
-inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Gson = gson): T =
-    mapper.fromJson(this, if (cls.isGeneric) cls.token.type else cls)
+inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(this, cls.classOrTokenType)
 
-inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson): T =
-    mapper.fromJson(reader(), if (cls.isGeneric) cls.token.type else cls)
+inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls.classOrTokenType)
 
-inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson): T =
-    mapper.fromJson(reader(), if (cls.isGeneric) cls.token.type else cls)
-
+inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls.classOrTokenType)
 
 inline fun <reified T> String.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
 

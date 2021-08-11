@@ -17,6 +17,7 @@ import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
+import ru.inforion.lab403.common.wsrpc.serde.ByteArraySerializer
 import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import java.util.*
@@ -45,15 +46,17 @@ class EndpointHolder constructor(
 
         fun GsonBuilder.registerModule(server: WebSocketRpcServer) = apply {
             WebSocketRpcServer.typesSerializers.forEach { registerTypeAdapter(it.first, it.second) }
+            WebSocketRpcServer.typesFactories.forEach { registerTypeAdapterFactory(it) }
 
             WebSocketRpcServer.endpointsSerializers.forEach { (cls, gen) ->
                 registerTypeAdapter(cls, ObjectSerializer(server, cls, gen))
             }
 
             registerTypeAdapter(SequenceEndpoint::class, ObjectSerializer(server) { it })
-
             registerTypeAdapter(Event::class, ObjectSerializer(server) { EventEndpoint(it) })
             registerTypeAdapter(EventEndpoint::class, ObjectSerializer(server) { it })
+
+            registerTypeAdapter(ByteArray::class, ByteArraySerializer)
         }
     }
 
