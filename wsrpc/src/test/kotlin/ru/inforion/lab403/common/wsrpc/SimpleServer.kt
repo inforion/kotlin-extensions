@@ -5,7 +5,6 @@ import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint.Companion.toSequenceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
-import ru.inforion.lab403.common.wsrpc.sequence.SerializableSequence.Companion.asSerializableSequence
 import kotlin.concurrent.thread
 
 object SimpleServer {

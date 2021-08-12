@@ -1,5 +1,3 @@
-@file:Suppress("NOTHING_TO_INLINE")
-
 package ru.inforion.lab403.common.wsrpc.serde
 
 import com.google.gson.JsonDeserializationContext
@@ -15,9 +13,9 @@ import java.lang.reflect.Type
 object ByteArraySerializer : JsonSerde<ByteArray> {
     internal data class ByteArrayDescriptor(val __bytes__: String)
 
-    private inline fun ByteArray.toDescriptor() = ByteArrayDescriptor(b64encode())
+    private fun ByteArray.toDescriptor() = ByteArrayDescriptor(b64encode())
 
-    private inline fun ByteArrayDescriptor.toByteArray() = __bytes__.b64decode()
+    private fun ByteArrayDescriptor.toByteArray() = __bytes__.b64decode()
 
     override fun serialize(src: ByteArray, typeOfSrc: Type, context: JsonSerializationContext) =
         src.toDescriptor().serialize(context)
