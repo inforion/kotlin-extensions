@@ -5,5 +5,6 @@ dependencies {
     implementation(project(":extensions"))
 
     api("com.squareup.moshi:moshi:$moshiVersion")
-//    api("joda-time:joda-time:$jodaTimeVersion")
+    api("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    api("com.squareup.moshi:moshi-adapters:$moshiVersion")
 }

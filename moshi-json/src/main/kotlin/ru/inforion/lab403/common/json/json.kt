@@ -2,9 +2,9 @@
 
 package ru.inforion.lab403.common.json
 
-import com.google.gson.*
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import okio.*
 import java.io.File
 import java.io.InputStream
@@ -15,6 +15,7 @@ typealias Json = Moshi
 typealias JsonBuilder = Moshi.Builder
 
 fun defaultJsonBuilder(): JsonBuilder = Moshi.Builder()
+    .addLast(KotlinJsonAdapterFactory())
 
 fun JsonBuilder.create(): Json = build()
 
@@ -35,15 +36,15 @@ inline val json get() = mappers.random()
 //    registerTypeAdapter(kClass.java, serde)
 
 
-//inline fun <reified T : Any> polymorphicTypesFactory(
-//    classes: Collection<Class<out T>>,
-//    field: String = "type",
-//    selector: (Class<out T>) -> String = { it.simpleName }
-//): RuntimeTypeAdapterFactory<T> = RuntimeTypeAdapterFactory
-//    .of(T::class.java, field)
-//    .apply {
-//        classes.forEach { registerSubtype(it, selector(it)) }
-//    }
+inline fun <reified T : Any> polymorphicTypesFactory(
+    classes: Collection<Class<out T>>,
+    field: String = "type",
+    selector: (Class<out T>) -> String = { it.simpleName }
+): PolymorphicJsonAdapterFactory<T> = PolymorphicJsonAdapterFactory
+    .of(T::class.java, field)
+    .apply {
+        classes.forEach { withSubtype(it, selector(it)) }
+    }
 
 
 // Objects encoding extensions

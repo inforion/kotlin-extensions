@@ -1,22 +1,28 @@
 package ru.inforion.lab403.common.json
 
-import com.google.gson.*
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
+import com.squareup.moshi.*
 import org.junit.Test
-import java.lang.reflect.Type
 import java.util.*
 import kotlin.test.assertEquals
 
-internal class GsonJsonTest {
 
-    class UIntAdapter : TypeAdapter<UInt>() {
-        override fun write(out: JsonWriter, value: UInt) {
-            out.value(value.toInt())
+internal class MoshiJsonTest {
+
+    object UIntAdapter : JsonAdapter<UInt>() {
+        override fun fromJson(reader: JsonReader) = reader.nextInt().toUInt()
+
+        override fun toJson(writer: JsonWriter, value: UInt?) {
+            writer.value(value?.toInt())
         }
+    }
 
-        override fun read(`in`: JsonReader): UInt {
-            return `in`.nextInt().toUInt()
+    object ObjectSerializer : JsonAdapter<Iterator<*>>() {
+        data class ObjectDescription(val __rpc__: String, val endpoint: UUID)
+
+        override fun fromJson(reader: JsonReader) = throw NotImplementedError()
+
+        override fun toJson(writer: JsonWriter, value: Iterator<*>?) {
+            writer.jsonValue(ObjectDescription("RPC", UUID.randomUUID()))
         }
     }
 
@@ -30,12 +36,16 @@ internal class GsonJsonTest {
 
     @Test
     fun unsignedTest() {
-        val expected = Testik(0xFFFF_FFFFu)
-        val json = expected.toJson()
+        val mapper = defaultJsonBuilder()
+            .addLast(UInt::class.java, UIntAdapter)
+            .create()
+
+        val expected = Testik(1u)
+        val json = expected.toJson(mapper)
 
         println(json)
 
-        val actual = json.fromJson<Testik>()
+        val actual = json.fromJson<Testik>(mapper)
 
         println(actual)
         assertEquals(expected, actual)
@@ -59,15 +69,6 @@ internal class GsonJsonTest {
         assertEquals(obj2, obj1)
     }
 
-    class ObjectSerializer : JsonSerializer<Iterator<*>> {
-        data class ObjectDescription(val __rpc__: String, val endpoint: UUID)
-
-        override fun serialize(src: Iterator<*>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-//            val holder = server.register(apiGen(src))
-            return context.serialize(ObjectDescription("111", UUID.randomUUID()))
-        }
-    }
-
     abstract class AbstractAnimal(val name: String, val type: String)
 
     data class Cat(val cat: String) : AbstractAnimal("pushok", "Cat")
@@ -76,8 +77,8 @@ internal class GsonJsonTest {
 
     @Test
     fun polymorphicDeserializationTest() {
-        val gson = defaultGsonBuilder()
-            .registerTypeAdapterFactory(polymorphicTypesFactory(listOf(Cat::class.java, Dog::class.java)))
+        val gson = defaultJsonBuilder()
+            .add(polymorphicTypesFactory(listOf(Cat::class.java, Dog::class.java)))
             .create()
 
         val string = """ { "cat": "meow", "type": "Cat" } """
@@ -95,10 +96,8 @@ internal class GsonJsonTest {
 
     @Test
     fun sequenceCustomSerializerTest() {
-        val gson = GsonBuilder()
-            .enableComplexMapKeySerialization()
-            .serializeNulls()
-            .registerTypeAdapter(Iterator::class.java, ObjectSerializer())
+        val gson = defaultJsonBuilder()
+            .add(Iterator::class.java, ObjectSerializer)
             .create()
 
         var sequence = List(100) { it }.asIterable()
