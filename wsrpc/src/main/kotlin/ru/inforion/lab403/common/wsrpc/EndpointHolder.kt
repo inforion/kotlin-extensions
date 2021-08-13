@@ -6,7 +6,7 @@ import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.reflection.kClassAny
-import ru.inforion.lab403.common.wsrpc.JsonConfig.registerModule
+import ru.inforion.lab403.common.wsrpc.WebSocketTypes.registerModule
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable

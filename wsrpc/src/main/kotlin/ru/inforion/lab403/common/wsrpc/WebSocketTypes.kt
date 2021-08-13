@@ -9,21 +9,15 @@ import ru.inforion.lab403.common.concurrent.events.Event
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.json.interfaces.JsonSerde
-import ru.inforion.lab403.common.wsrpc.JsonConfig.registerModule
 import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint
-import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import ru.inforion.lab403.common.wsrpc.serde.ByteArraySerializer
-import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
-object JsonConfig {
-    private val mapper = defaultJsonBuilder()
-        .registerBasicClasses()
-
+object WebSocketTypes {
     @PublishedApi internal val endpointsSerializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
 
     @PublishedApi internal val typesSerializers = mutableListOf<Pair<Type, Any>>()
