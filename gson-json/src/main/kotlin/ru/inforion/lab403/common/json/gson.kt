@@ -4,29 +4,24 @@ package ru.inforion.lab403.common.json
 
 import com.google.gson.*
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
+import ru.inforion.lab403.common.json.interfaces.JsonSerde
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
-fun defaultGsonBuilder(): GsonBuilder = GsonBuilder().serializeNulls().registerBasicClasses()
 
-@PublishedApi
-internal val mappers = Array(16) { defaultGsonBuilder().create() }
-
-inline val gson: Gson get() = mappers.random()
-
-interface JsonSerde<T> : JsonSerializer<T>, JsonDeserializer<T>
-
-fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>): GsonBuilder =
+fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>): JsonBuilder =
     registerTypeAdapter(kClass.java, serializer)
 
-fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>): GsonBuilder =
+fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>): JsonBuilder =
     registerTypeAdapter(kClass.java, deserializer)
 
-fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>): GsonBuilder =
+fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>): JsonBuilder =
     registerTypeAdapter(kClass.java, serde)
+
+
 
 
 inline fun <T : Any> polymorphicTypesAdapter(
@@ -71,23 +66,38 @@ inline fun <reified T : Any> polymorphicTypesFactory(
     }
 
 
+
+inline fun <reified T : Any> JsonBuilder.registerPolymorphicAdapter(
+    classes: Collection<Class<out T>>,
+    field: String = "type",
+    selector: (Class<out T>) -> String = { it.simpleName }
+): JsonBuilder = registerTypeAdapter(T::class.java, polymorphicTypesAdapter(classes, field, selector))
+
+
+inline fun <reified T: Any> JsonBuilder.registerPolymorphicFactory(
+    classes: Collection<Class<out T>>,
+    field: String = "type",
+    selector: (Class<out T>) -> String = { it.simpleName }
+): JsonBuilder = registerTypeAdapterFactory(polymorphicTypesFactory(classes, field, selector))
+
+
 // Objects encoding extensions
 
-inline fun <T> T.toJson(cls: Class<T>, mapper: Gson = gson): String =
-    mapper.toJson(this, cls.classOrTokenType)
+inline fun <T> T.toJson(cls: Class<T>, mapper: Json = json): String =
+    mapper.toJson(this, cls.classOrType)
 
-inline fun <T> T.toJson(cls: Class<T>, stream: OutputStream, mapper: Gson = gson): Unit =
-        stream.writer().use { mapper.toJson(this, cls.classOrTokenType, it) }
+inline fun <T> T.toJson(cls: Class<T>, stream: OutputStream, mapper: Json = json): Unit =
+        stream.writer().use { mapper.toJson(this, cls.classOrType, it) }
 
-inline fun <reified T> T.toJson(cls: Class<T>, file: File, mapper: Gson = gson): Unit =
+inline fun <reified T> T.toJson(cls: Class<T>, file: File, mapper: Json = json): Unit =
     toJson(cls, file.outputStream(), mapper)
 
 
-inline fun <reified T> T.toJson(mapper: Gson = gson): String = toJson(T::class.java, mapper)
+inline fun <reified T> T.toJson(mapper: Json = json): String = toJson(T::class.java, mapper)
 
-inline fun <reified T> T.toJson(stream: OutputStream, mapper: Gson = gson) = toJson(T::class.java, stream, mapper)
+inline fun <reified T> T.toJson(stream: OutputStream, mapper: Json = json) = toJson(T::class.java, stream, mapper)
 
-inline fun <reified T> T.toJson(file: File, mapper: Gson = gson) = toJson(T::class.java, file, mapper)
+inline fun <reified T> T.toJson(file: File, mapper: Json = json) = toJson(T::class.java, file, mapper)
 
 
 inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonElement =
@@ -95,21 +105,21 @@ inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonEleme
 
 // Objects decoding extensions
 
-inline fun <T> String.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(this, cls.classOrTokenType)
+inline fun <T> String.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(this, cls.classOrType)
 
-inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(this, cls.classOrTokenType)
+inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(this, cls.classOrType)
 
-inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls.classOrTokenType)
+inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(reader(), cls.classOrType)
 
-inline fun <T> File.fromJson(cls: Class<T>, mapper: Gson = gson): T = mapper.fromJson(reader(), cls.classOrTokenType)
+inline fun <T> File.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(reader(), cls.classOrType)
 
-inline fun <reified T> String.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+inline fun <reified T> String.fromJson(mapper: Json = json): T = fromJson(T::class.java, mapper)
 
-inline fun <reified T> JsonElement.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+inline fun <reified T> JsonElement.fromJson(mapper: Json = json): T = fromJson(T::class.java, mapper)
 
-inline fun <reified T> InputStream.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+inline fun <reified T> InputStream.fromJson(mapper: Json = json): T = fromJson(T::class.java, mapper)
 
-inline fun <reified T> File.fromJson(mapper: Gson = gson): T = fromJson(T::class.java, mapper)
+inline fun <reified T> File.fromJson(mapper: Json = json): T = fromJson(T::class.java, mapper)
 
 
 inline fun <T> JsonElement.deserialize(cls: Class<T>, context: JsonDeserializationContext): T =

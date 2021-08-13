@@ -59,7 +59,7 @@ internal class JacksonJsonTest {
         object InlineAnnotationIntrospector : NopAnnotationIntrospector() {
             override fun findCreatorAnnotation(config: MapperConfig<*>, a: Annotated): JsonCreator.Mode? {
 //                if (a is AnnotatedMethod && a.name == "box-impl") {
-                    return JsonCreator.Mode.PROPERTIES
+                    return JsonCreator.Mode.DEFAULT
 //                }
 //                return null
             }
@@ -74,9 +74,9 @@ internal class JacksonJsonTest {
 
         val mapper = jsonParser()
 //            .registerModule(module)
-//            .registerModule(InlineModule)
+            .registerModule(InlineModule)
 
-        val expected = Testik(0xFFFF_FFFFu)
+        val expected = Testik(10u)
         val json = expected.toJson(mapper)
 
         println(json)
@@ -93,17 +93,17 @@ internal class JacksonJsonTest {
 //        assertEquals(Testik(UInt.MAX_VALUE), actual)
     }
 
-    @Test
-    fun anySerializationTest() {
-        fun getAny(): Any = Testik(100u)
-
-        val obj1 = getAny()
-        val json = obj1.toJson()
-        println(json)
-        val obj2 = json.fromJson<Testik>()
-
-        assertEquals(obj2, obj1)
-    }
+//    @Test
+//    fun anySerializationTest() {
+//        fun getAny(): Any = Testik(100u)
+//
+//        val obj1 = getAny()
+//        val json = obj1.toJson()
+//        println(json)
+//        val obj2 = json.fromJson<Testik>()
+//
+//        assertEquals(obj2, obj1)
+//    }
 
     class SequenceSerializer : JsonSerializer<Sequence<*>>() {
         data class ObjectDescriptor(val __rpc__: String, val id: Int)

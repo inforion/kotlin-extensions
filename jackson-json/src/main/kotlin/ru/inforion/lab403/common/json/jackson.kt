@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.cfg.ConstructorDetector.USE_PROPERTIES_BASED
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -26,6 +27,7 @@ fun jsonParser(
     typing: Boolean = false,
     trailingComma: Boolean = true
 ) = ObjectMapper().apply {
+//    setConstructorDetector(USE_PROPERTIES_BASED)
     configure(JsonParser.Feature.ALLOW_COMMENTS, comments)
     configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, trailingComma)
     configure(SerializationFeature.INDENT_OUTPUT, indent)

@@ -1,30 +1,12 @@
 package ru.inforion.lab403.common.json
 
 import com.google.gson.*
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
 import org.junit.Test
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.test.assertEquals
 
 internal class GsonJsonTest {
-
-    class UIntAdapter : TypeAdapter<UInt>() {
-        override fun write(out: JsonWriter, value: UInt) {
-            out.value(value.toInt())
-        }
-
-        override fun read(`in`: JsonReader): UInt {
-            return `in`.nextInt().toUInt()
-        }
-    }
-
-//    class TestikDeserializer : JsonDeserializer<Testik> {
-//        override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Testik {
-//            TODO("Not yet implemented")
-//        }
-//    }
 
     data class Testik(val data: UInt)
 
@@ -74,10 +56,17 @@ internal class GsonJsonTest {
 
     data class Dog(val dog: String) : AbstractAnimal("bobik", "Dog")
 
+    object CatInstanceCreator : InstanceCreator<Cat> {
+        override fun createInstance(type: Type): Cat {
+            return Cat("")
+        }
+    }
+
     @Test
     fun polymorphicDeserializationTest() {
-        val gson = defaultGsonBuilder()
-            .registerTypeAdapterFactory(polymorphicTypesFactory(listOf(Cat::class.java, Dog::class.java)))
+        val gson = defaultJsonBuilder()
+//            .registerTypeAdapter(Cat::class.java, CatInstanceCreator)
+            .registerPolymorphicAdapter(listOf(Cat::class.java, Dog::class.java))
             .create()
 
         val string = """ { "cat": "meow", "type": "Cat" } """

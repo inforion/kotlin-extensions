@@ -16,7 +16,7 @@ import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.JsonSerde
+import ru.inforion.lab403.common.json.interfaces.JsonSerde
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.json.registerBasicClasses
 import ru.inforion.lab403.common.json.toJson

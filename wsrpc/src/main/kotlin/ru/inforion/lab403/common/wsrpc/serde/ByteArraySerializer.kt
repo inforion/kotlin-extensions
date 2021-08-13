@@ -5,7 +5,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import ru.inforion.lab403.common.extensions.b64decode
 import ru.inforion.lab403.common.extensions.b64encode
-import ru.inforion.lab403.common.json.JsonSerde
+import ru.inforion.lab403.common.json.interfaces.JsonSerde
 import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.json.serialize
 import java.lang.reflect.Type
