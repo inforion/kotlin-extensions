@@ -2,13 +2,13 @@
 
 package ru.inforion.lab403.common.javalin
 
-import com.google.gson.GsonBuilder
 import io.javalin.Javalin
 import io.javalin.core.plugin.Plugin
 import io.javalin.http.Context
 import io.javalin.plugin.json.FromJsonMapper
 import io.javalin.plugin.json.JavalinJson
 import io.javalin.plugin.json.ToJsonMapper
+import ru.inforion.lab403.common.json.defaultJsonBuilder
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.json.toJson
 import java.util.concurrent.LinkedBlockingQueue
@@ -16,8 +16,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 var jsonFactory = {
-    GsonBuilder()
-        .serializeNulls()
+    defaultJsonBuilder()
         .create()
 }
 

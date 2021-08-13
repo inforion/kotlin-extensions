@@ -84,9 +84,8 @@ internal class GsonJsonTest {
 
     @Test
     fun sequenceCustomSerializerTest() {
-        val gson = GsonBuilder()
+        val gson = defaultJsonBuilder()
             .enableComplexMapKeySerialization()
-            .serializeNulls()
             .registerTypeAdapter(Iterator::class.java, ObjectSerializer())
             .create()
 

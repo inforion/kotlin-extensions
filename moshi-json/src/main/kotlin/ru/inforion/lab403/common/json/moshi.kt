@@ -24,17 +24,6 @@ internal val mappers = Array(16) { defaultJsonBuilder().create() }
 
 inline val json get() = mappers.random()
 
-//interface JsonSerde<T> : JsonSerializer<T>, JsonDeserializer<T>
-//
-//fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>): GsonBuilder =
-//    registerTypeAdapter(kClass.java, serializer)
-//
-//fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>): GsonBuilder =
-//    registerTypeAdapter(kClass.java, deserializer)
-//
-//fun <T : Any> GsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>): GsonBuilder =
-//    registerTypeAdapter(kClass.java, serde)
-
 
 inline fun <reified T : Any> polymorphicTypesFactory(
     classes: Collection<Class<out T>>,

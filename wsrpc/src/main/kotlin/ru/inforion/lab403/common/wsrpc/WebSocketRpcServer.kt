@@ -2,10 +2,6 @@
 
 package ru.inforion.lab403.common.wsrpc
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonSerializer
-import com.google.gson.TypeAdapterFactory
 import org.java_websocket.WebSocket
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
@@ -14,12 +10,8 @@ import org.java_websocket.server.WebSocketServer
 import ru.inforion.lab403.common.concurrent.launch
 import ru.inforion.lab403.common.concurrent.newFixedThreadPoolDispatcher
 import ru.inforion.lab403.common.extensions.availableProcessors
-import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.interfaces.JsonSerde
-import ru.inforion.lab403.common.json.fromJson
-import ru.inforion.lab403.common.json.registerBasicClasses
-import ru.inforion.lab403.common.json.toJson
+import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.logging.FINER
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.uuid.toUUID
@@ -30,12 +22,10 @@ import ru.inforion.lab403.common.wsrpc.endpoints.ServiceEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import java.io.Closeable
 import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Type
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
-import kotlin.reflect.KClass
 
 
 class WebSocketRpcServer constructor(
@@ -51,31 +41,6 @@ class WebSocketRpcServer constructor(
         val SERVICE_ENDPOINT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff".toUUID()
 
         val log = logger(FINER)
-
-        internal val endpointsSerializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
-
-        internal val typesSerializers = mutableListOf<Pair<Type, Any>>()
-
-        internal val typesFactories = mutableListOf<TypeAdapterFactory>()
-
-        @Suppress("UNCHECKED_CAST")
-        fun <T: Any> registerTypeAdapter(kClass: KClass<out T>, apiGen: (T) -> WebSocketRpcEndpoint) {
-            check(kClass as KClass<Any> !in endpointsSerializers) {
-                "Can't set global serializer for class $kClass because it was already specified"
-            }
-            endpointsSerializers[kClass] = apiGen as (Any) -> WebSocketRpcEndpoint
-        }
-
-        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>) =
-            typesSerializers.add(kClass.java to deserializer)
-
-        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>) =
-            typesSerializers.add(kClass.java to serializer)
-
-        fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>) =
-            typesSerializers.add(kClass.java to serde)
-
-        fun registerTypeFactory(factory: TypeAdapterFactory) = typesFactories.add(factory)
     }
 
     private val myEndpoints = ConcurrentHashMap<UUID, EndpointHolder>()
@@ -108,9 +73,8 @@ class WebSocketRpcServer constructor(
     private val threads = newFixedThreadPoolDispatcher(availableProcessors)
 
     private val server = object : WebSocketServer(address) {
-        private val mapper = GsonBuilder()
+        private val mapper = defaultJsonBuilder()
             .registerBasicClasses()
-            .serializeNulls()
             .create()
 
         override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
