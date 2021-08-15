@@ -10,6 +10,9 @@ internal val mappers = Array(16) { defaultJsonBuilder().create() }
 inline val json: Json get() = mappers.random()
 
 fun JsonBuilder.registerBasicClasses() = apply {
+    registerTypeAdapter(Map::class, MapDeserializer)
+    registerTypeAdapter(List::class, ListDeserializer)
+
     registerTypeAdapter(ULong::class, ULongSerializer)
     registerTypeAdapter(UInt::class, UIntSerializer)
     registerTypeAdapter(UShort::class, UShortSerializer)

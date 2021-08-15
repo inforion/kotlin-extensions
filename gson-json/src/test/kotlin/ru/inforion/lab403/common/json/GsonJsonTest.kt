@@ -105,4 +105,12 @@ internal class GsonJsonTest {
         println(json)
         println(sequence.joinToString())
     }
+
+    @Test
+    fun listOfObjectsDeserializeTest() {
+        val gson = defaultJsonBuilder().create()
+        val json = "[1, 2, 3, 4]"
+        val actual = json.fromJson<List<Any>>(gson)
+        assertEquals(listOf(1, 2, 3, 4), actual)
+    }
 }
