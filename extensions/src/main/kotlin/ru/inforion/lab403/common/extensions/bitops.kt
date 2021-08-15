@@ -12,13 +12,17 @@ inline infix fun Long.ashr(n: Int) = this shr n
 
 inline infix fun Int.ashr(n: Int) = this shr n
 
-inline infix fun Short.shl(n: Int) = (int_s shl n).short
-inline infix fun Short.ashr(n: Int) = (int_s shr n).short
-inline infix fun Short.ushr(n: Int) = (int_z shr n).short
+// shl should not be convert to byte because i.e. 0xFF shl 16 return 0 in this case
+// which may be not obvious at first glance
+inline infix fun Short.shl(n: Int) = int_z shl n
+inline infix fun Short.ashr(n: Int) = int_s ashr n
+inline infix fun Short.ushr(n: Int) = int_z shr n
 
-inline infix fun Byte.shl(count: Int) = (int_s shl count).byte
-inline infix fun Byte.ashr(count: Int) = (int_s shr count).byte
-inline infix fun Byte.ushr(count: Int) = (int_z ushr count).byte
+// shl should not be convert to byte because i.e. 0xFF shl 8 return 0 in this case
+// which may be not obvious at first glance
+inline infix fun Byte.shl(count: Int) = int_z shl count
+inline infix fun Byte.ashr(count: Int) = int_s ashr count
+inline infix fun Byte.ushr(count: Int) = int_z ushr count
 
 inline infix fun ULong.ashr(n: Int) = (long shr n).ulong
 inline infix fun ULong.ushr(n: Int) = this shr n
@@ -26,13 +30,17 @@ inline infix fun ULong.ushr(n: Int) = this shr n
 inline infix fun UInt.ashr(n: Int) = (int shr n).uint
 inline infix fun UInt.ushr(n: Int) = this shr n
 
-inline infix fun UShort.shl(n: Int) = (uint_z shl n).ushort
-inline infix fun UShort.ashr(n: Int) = (int_s ashr n).ushort
-inline infix fun UShort.ushr(n: Int) = (uint_z shr n).ushort
+// shl should not be convert to byte because i.e. 0xFFu shl 16 return 0 in this case
+// which may be not obvious at first glance
+inline infix fun UShort.shl(n: Int) = uint_z shl n
+inline infix fun UShort.ashr(n: Int) = int_s ashr n
+inline infix fun UShort.ushr(n: Int) = uint_z shr n
 
-inline infix fun UByte.shl(n: Int) = (uint_z shr n).ubyte
-inline infix fun UByte.ashr(n: Int) = (int_s shr n).ubyte
-inline infix fun UByte.ushr(n: Int) = (uint_z shr n).ubyte
+// shl should not be convert to byte because i.e. 0xFFu shl 8 return 0 in this case
+// which may be not obvious at first glance
+inline infix fun UByte.shl(n: Int) = uint_z shl n
+inline infix fun UByte.ashr(n: Int) = int_s ashr n
+inline infix fun UByte.ushr(n: Int) = uint_z shr n
 
 // =====================================================================================================================
 // Bit inverse operations
@@ -492,3 +500,11 @@ inline fun Int.signext(n: Int): String = throw IllegalStateException("Refactor i
 
 inline fun isIntegerOverflow(op1: Int, op2: Int, res: Int): Boolean =
     (op1 < 0 && op2 < 0 && res >= 0) || (op1 > 0 && op2 > 0 && res < 0)
+
+
+inline fun uint16(b: UByte, a: UByte) = (b shl 8) or (a shl 0)
+inline fun uint32(d: UByte, c: UByte, b: UByte, a: UByte) = (d shl 24) or (c shl 16) or (b shl 8) or (a shl 0)
+inline fun uint64(
+    h: UByte, g: UByte, f: UByte, e: UByte,
+    d: UByte, c: UByte, b: UByte, a: UByte
+) = (h shl 56) or (g shl 48) or (f shl 40) or (e shl 32) or (d shl 24) or (c shl 16) or (b shl 8) or (a shl 0)

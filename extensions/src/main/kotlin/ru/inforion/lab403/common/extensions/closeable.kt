@@ -17,9 +17,9 @@ class ResourceManager : Iterable<Closeable> {
 
     operator fun <T : Closeable?> plus(closeable: T) = add { closeable }
 
-    inline operator fun invoke(action: ResourceManager.() -> Unit) {
+    inline operator fun <R> invoke(action: ResourceManager.() -> R): R {
         try {
-            action()
+            return action()
         } finally {
             close()
         }
@@ -41,7 +41,7 @@ class ResourceManager : Iterable<Closeable> {
     override fun iterator() = context.iterator()
 }
 
-inline fun scope(
+inline fun <R> scope(
     manager: ResourceManager = ResourceManager(),
-    action: ResourceManager.() -> Unit
+    action: ResourceManager.() -> R
 ) = manager.invoke(action)
