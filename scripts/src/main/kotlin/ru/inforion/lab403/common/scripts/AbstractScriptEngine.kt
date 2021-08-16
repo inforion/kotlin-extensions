@@ -22,9 +22,7 @@ abstract class AbstractScriptEngine<E : ScriptEngine>(private val engine: E) : S
 
     val invocable = engine as Invocable
 
-    inline fun <reified T> getInterface(obj: Any): T = invocable.getInterface(obj, T::class.java)
-
-    inline fun <reified T> getObjectAs(name: String): T = getInterface(get(name))
+    abstract fun <T> toInterface(obj: Any, cls: Class<out T>, default: T?): T
 
     fun evalGetNames(script: String): Set<String> {
         val namesBefore = engineScope.keys.toSet()
@@ -35,9 +33,15 @@ abstract class AbstractScriptEngine<E : ScriptEngine>(private val engine: E) : S
 
     fun evalAndSet(name: String, script: String) = name.also { engine.put(it, eval(script)) }
 
+    abstract fun serialize(value: Any): ByteArray
+
     abstract fun deserialize(bytes: ByteArray): Any
 
     fun deserializeAndSet(name: String, bytes: ByteArray) = name.also { put(it, deserialize(bytes)) }
 
-    inline fun <reified T> deserializeAsInterface(bytes: ByteArray) = getInterface<T>(deserialize(bytes))
+    inline fun <reified T> deserializeAsInterface(bytes: ByteArray) =
+        toInterface(deserialize(bytes), T::class.java, null)
+
+    inline fun <reified T> deserializeWithDefaultImpl(bytes: ByteArray, default: T) =
+        toInterface(deserialize(bytes), T::class.java, default)
 }
