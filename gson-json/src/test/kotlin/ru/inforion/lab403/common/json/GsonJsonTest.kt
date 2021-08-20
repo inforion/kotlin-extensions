@@ -113,4 +113,22 @@ internal class GsonJsonTest {
         val actual = json.fromJson<List<Any>>(gson)
         assertEquals(listOf(1, 2, 3, 4), actual)
     }
+
+    @Test
+    fun deserializeJsonElements() {
+        val json = """
+           {
+              "obj": {
+                "name": "cat",
+                "action": "meow",
+                "value": 10
+               }
+           }
+        """
+
+        val result = json.fromJson<Map<String, JsonElement>>()
+
+
+        println(result)
+    }
 }

@@ -8,11 +8,10 @@ import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.json.serialize
 import java.lang.reflect.Type
 
-object UByteSerializer : JsonSerde<UByte> {
-    override fun serialize(src: UByte, typeOfSrc: Type, context: JsonSerializationContext) =
-        src.toByte().serialize(context)
+object UIntSerde : JsonSerde<UInt> {
+    override fun serialize(src: UInt, typeOfSrc: Type, context: JsonSerializationContext) =
+        src.toInt().serialize(context)
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext) =
-        json.deserialize<Byte>(context).toUByte()
+        json.deserialize<Int>(context).toUInt()
 }
-
