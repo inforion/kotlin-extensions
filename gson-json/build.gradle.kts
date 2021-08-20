@@ -3,6 +3,7 @@ val gsonVersion: String by project
 val gsonExtrasVersion: String by project
 
 dependencies {
+    implementation(project(":optional"))
     implementation(project(":extensions"))
 
     api("com.google.code.gson:gson:$gsonVersion")

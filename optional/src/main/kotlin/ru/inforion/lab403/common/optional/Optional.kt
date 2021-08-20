@@ -1,26 +1,17 @@
+@file:Suppress("unused")
+
 package ru.inforion.lab403.common.optional
 
 import java.io.Serializable
 
-class Optional<T: Any> private constructor(@PublishedApi internal val data: T) : Serializable {
-    companion object {
-        private val EMPTY: Optional<*> = Optional(Unit as Any)
-
-        fun <T: Any> of(value: T) = Optional(value)
-
-        @Suppress("UNCHECKED_CAST")
-        fun <T: Any> empty() = EMPTY as Optional<T>
-    }
-
+class Optional<T: Any> constructor(@PublishedApi internal val data: T) : Serializable {
     inline val isPresent get() = data != Unit
 
     inline val isEmpty get() = data == Unit
 
-    inline val valueOrNull get() = data.takeIf { isPresent }
+    inline val get: T get() = checkNotNull(orNull) { "No value present" }
 
-    inline val value get() = check(isPresent) { "No value present" }
-
-    inline fun orElse(action: () -> T) = valueOrNull ?: action()
+    inline val orNull: T? get() = data.takeIf { isPresent }
 
     override fun hashCode() = data.hashCode()
 
