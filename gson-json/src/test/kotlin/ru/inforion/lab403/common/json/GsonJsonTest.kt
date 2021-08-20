@@ -2,6 +2,7 @@ package ru.inforion.lab403.common.json
 
 import com.google.gson.*
 import org.junit.Test
+import ru.inforion.lab403.common.json.sysinfo.FullSystemInfo
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.test.assertEquals
@@ -130,5 +131,30 @@ internal class GsonJsonTest {
 
 
         println(result)
+    }
+
+    @Test
+    fun mapOfLiteralsDeserializeTest() {
+        val gson = defaultJsonBuilder().create()
+        val json = "{keyField = valueField}"
+        val actual = json.fromJson<Map<String, String>>(gson)
+        assertEquals(mapOf("keyField" to "valueField"), actual)
+    }
+
+    @Test
+    fun mapOfJsonElementsDeserializeTest() {
+        val gson = defaultJsonBuilder().create()
+        val json = "{keyField = valueField}"
+        val actual = json.fromJson<Map<String, JsonElement>>(gson)
+    }
+
+    @Test
+    fun deserializeJsonSerializedStringShouldValid() {
+        val fingerprint = FullSystemInfo()
+
+        val json = fingerprint.toJson()
+        val actual = json.fromJson<FullSystemInfo>()
+
+        assertEquals(fingerprint.toString(), actual.toString())
     }
 }

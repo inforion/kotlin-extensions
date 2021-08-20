@@ -4,7 +4,6 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-
 @PublishedApi internal inline val <T> Class<T>.token get() = object : TypeToken<T>() {
 
 }
@@ -25,14 +24,18 @@ internal fun JsonPrimitive.deserialize(): Any = when {
     else -> error("Can't deserialize json primitive: $this")
 }
 
-internal fun JsonArray.deserialize(context: JsonDeserializationContext) = map { it.deserialize(context) }
+internal fun JsonArray.deserialize(context: JsonDeserializationContext, typeOfE: Type?) =
+    map { it.deserialize(context, typeOfE) }
 
-internal fun JsonObject.deserialize(context: JsonDeserializationContext) =
-    entrySet().associate { it.key to it.value.deserialize(context) }
+internal fun JsonObject.deserialize(context: JsonDeserializationContext, typeOfV: Type?) =
+    entrySet().associate { it.key to it.value.deserialize(context, typeOfV) }
 
-internal fun JsonElement.deserialize(context: JsonDeserializationContext): Any? = when {
+internal fun JsonElement.deserialize(context: JsonDeserializationContext, type: Type?): Any? = when {
     isJsonNull -> null
-    isJsonObject -> deserialize<Map<String, *>>(context)
+    isJsonObject -> when(type) {
+        null -> deserialize<Map<String, *>>(context)
+        else -> context.deserialize<Any?>(this, type)
+    }
     isJsonArray -> deserialize<List<*>>(context)
     isJsonPrimitive -> (this as JsonPrimitive).deserialize()
     else -> error("Can't parse json element: $this")

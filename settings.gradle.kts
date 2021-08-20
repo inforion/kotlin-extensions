@@ -1,5 +1,6 @@
 rootProject.name = "kotlin-extensions"
 
+include(":jodatime")
 include(":argparse")
 include(":extensions")
 include(":identifier")
