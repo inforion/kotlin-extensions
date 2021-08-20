@@ -4,3 +4,5 @@ import org.python.core.PyClass
 import org.python.core.PyException
 
 val PyException.pyClass get(): PyClass = type as PyClass
+
+val PyException.pyClassOrNull get(): PyClass? = type as? PyClass
