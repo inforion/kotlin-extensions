@@ -4,5 +4,5 @@ val javalinVersion: String by project
 dependencies {
     implementation(project(":gson-json"))
 
-    api("io.javalin:javalin:$javalinVersion") { isTransitive = false }
+    api("io.javalin:javalin:$javalinVersion")
 }

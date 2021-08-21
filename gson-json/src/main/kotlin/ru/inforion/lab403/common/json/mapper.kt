@@ -2,7 +2,6 @@ package ru.inforion.lab403.common.json
 
 import org.joda.time.DateTime
 import ru.inforion.lab403.common.json.serializers.*
-import ru.inforion.lab403.common.optional.Optional
 import kotlin.reflect.KType
 
 @PublishedApi

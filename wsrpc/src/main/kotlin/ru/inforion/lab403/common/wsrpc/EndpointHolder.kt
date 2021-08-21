@@ -18,6 +18,7 @@ import kotlin.collections.component2
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.javaType
 
 class EndpointHolder constructor(
     val server: WebSocketRpcServer,
@@ -54,7 +55,7 @@ class EndpointHolder constructor(
     private fun Parameters.getValueOfParameter(parameter: KParameter): Any? {
         val name = parameter.name ?: error("Something wrong with signature of RPC function -> parameter has no name")
         require(parameter.name in this) { "Required parameter $name not found in received data" }
-        return getValue(name).fromJson(parameter.kClassAny.java, mapper)
+        return getValue(name).fromJson(parameter.type, mapper)
     }
 
     internal fun execute(name: String, values: Parameters): String {

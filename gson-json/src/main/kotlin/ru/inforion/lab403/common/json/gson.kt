@@ -10,6 +10,8 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.javaType
 
 
 fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>): JsonBuilder =
@@ -108,6 +110,9 @@ inline fun <reified T> T.serialize(context: JsonSerializationContext): JsonEleme
 inline fun <T> String.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(this, cls.classOrType)
 
 inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(this, cls.classOrType)
+
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <T> JsonElement.fromJson(type: KType, mapper: Json = json): T = mapper.fromJson(this, type.javaType)
 
 inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(reader(), cls.classOrType)
 
