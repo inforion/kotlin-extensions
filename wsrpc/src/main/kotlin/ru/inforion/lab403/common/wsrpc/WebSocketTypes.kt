@@ -8,6 +8,7 @@ import com.google.gson.TypeAdapterFactory
 import ru.inforion.lab403.common.concurrent.events.Event
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.json.*
+import ru.inforion.lab403.common.json.dontimport.identifierOrName
 import ru.inforion.lab403.common.json.interfaces.JsonSerde
 import ru.inforion.lab403.common.wsrpc.endpoints.EventEndpoint
 import ru.inforion.lab403.common.wsrpc.endpoints.SequenceEndpoint
@@ -46,7 +47,7 @@ object WebSocketTypes {
     inline fun <reified T: Any> registerPolymorphicAdapter(
         classes: Collection<Class<out T>>,
         field: String = "type",
-        selector: (Class<out T>) -> String = { it.simpleName }
+        selector: (Class<out T>) -> String = { it.identifierOrName }
     ) = typesSerializers.add(T::class.java to polymorphicTypesAdapter(classes, field, selector))
 
     fun JsonBuilder.registerModule(server: WebSocketRpcServer) = apply {

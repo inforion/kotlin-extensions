@@ -1,8 +1,17 @@
-package ru.inforion.lab403.common.json
+package ru.inforion.lab403.common.json.dontimport
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
+import ru.inforion.lab403.common.extensions.either
+import ru.inforion.lab403.common.extensions.ifNotNull
+import ru.inforion.lab403.common.json.annotations.Identifier
+import ru.inforion.lab403.common.json.deserialize
 import java.lang.reflect.Type
+
+inline val <T> Class<out T>.identifierOrName: String get() =
+    annotations.filterIsInstance<Identifier>().firstOrNull() ifNotNull { name } either { simpleName }
+
+
 
 @PublishedApi internal inline val <T> Class<T>.token get() = object : TypeToken<T>() {
 
@@ -13,6 +22,8 @@ import java.lang.reflect.Type
 @PublishedApi internal inline val <T> Class<T>.isGeneric: Boolean get() = typeParameters.isNotEmpty()
 
 @PublishedApi internal inline val <T> Class<T>.classOrType: Type get() = if (isGeneric) token.type else this
+
+
 
 internal fun JsonPrimitive.deserialize(): Any = when {
     isBoolean -> asBoolean

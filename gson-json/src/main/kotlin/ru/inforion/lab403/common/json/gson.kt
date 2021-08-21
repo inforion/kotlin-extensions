@@ -4,6 +4,8 @@ package ru.inforion.lab403.common.json
 
 import com.google.gson.*
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
+import ru.inforion.lab403.common.json.dontimport.classOrType
+import ru.inforion.lab403.common.json.dontimport.identifierOrName
 import ru.inforion.lab403.common.json.interfaces.JsonSerde
 import java.io.File
 import java.io.InputStream
@@ -29,7 +31,7 @@ fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, serde: JsonSerd
 inline fun <T : Any> polymorphicTypesAdapter(
     classes: Collection<Class<out T>>,
     field: String = "type",
-    selector: (Class<out T>) -> String = { it.simpleName }
+    selector: (Class<out T>) -> String = { it.identifierOrName }
 ): JsonSerde<T> {
     val name2cls = classes.associateBy(selector)
     val cls2name = classes.associateWith(selector)
@@ -40,7 +42,6 @@ inline fun <T : Any> polymorphicTypesAdapter(
             requireNotNull(type) { "Can't serialize object $src -> unknown name for class '${src::class.java}" }
             return (context.serialize(src) as JsonObject).apply {
                 val property = get(field)
-                require(property != null) { "Type field with name '$field' must exist" }
                 require(property.isJsonNull) { "Type field with name '$field' must be null after serialization" }
                 addProperty(field, type)
             }
@@ -60,7 +61,7 @@ inline fun <T : Any> polymorphicTypesAdapter(
 inline fun <reified T : Any> polymorphicTypesFactory(
     classes: Collection<Class<out T>>,
     field: String = "type",
-    selector: (Class<out T>) -> String = { it.simpleName }
+    selector: (Class<out T>) -> String = { it.identifierOrName }
 ): RuntimeTypeAdapterFactory<T> = RuntimeTypeAdapterFactory
     .of(T::class.java, field)
     .apply {
@@ -72,14 +73,14 @@ inline fun <reified T : Any> polymorphicTypesFactory(
 inline fun <reified T : Any> JsonBuilder.registerPolymorphicAdapter(
     classes: Collection<Class<out T>>,
     field: String = "type",
-    selector: (Class<out T>) -> String = { it.simpleName }
+    selector: (Class<out T>) -> String = { it.identifierOrName }
 ): JsonBuilder = registerTypeAdapter(T::class.java, polymorphicTypesAdapter(classes, field, selector))
 
 
 inline fun <reified T: Any> JsonBuilder.registerPolymorphicFactory(
     classes: Collection<Class<out T>>,
     field: String = "type",
-    selector: (Class<out T>) -> String = { it.simpleName }
+    selector: (Class<out T>) -> String = { it.identifierOrName }
 ): JsonBuilder = registerTypeAdapterFactory(polymorphicTypesFactory(classes, field, selector))
 
 
