@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken
 import ru.inforion.lab403.common.extensions.either
 import ru.inforion.lab403.common.extensions.ifNotNull
 import ru.inforion.lab403.common.json.annotations.JsonPolymorphicType
-import ru.inforion.lab403.common.json.deserialize
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -36,6 +35,11 @@ internal inline fun Type.getParameterOrNull(index: Int) = if (this is Parameteri
 // workaround to check type as JsonElement
 internal inline val Type.isJsonElement get() = typeName.contains("JsonElement")
 
+internal inline val Type.isAny get() = typeName == "?"
+
+internal inline infix fun <T> Type?.orIfAnyOrNull(value: Class<out T>) =
+    if (this == null || isAny) value else this
+
 
 internal inline fun JsonPrimitive.parse(): Any = when {
     isBoolean -> asBoolean
@@ -49,8 +53,8 @@ internal inline fun JsonPrimitive.parse(): Any = when {
 
 internal inline fun JsonElement.parse(context: JsonDeserializationContext, type: Type?): Any? = when {
     isJsonNull -> null
-    isJsonObject -> context.deserialize(this, type ?: Map::class.java)
-    isJsonArray -> context.deserialize(this, type ?: List::class.java)
+    isJsonObject -> context.deserialize(this, type orIfAnyOrNull Map::class.java)
+    isJsonArray -> context.deserialize(this, type orIfAnyOrNull List::class.java)
     isJsonPrimitive -> asJsonPrimitive.parse()
     else -> error("Can't parse json element: $this")
 }

@@ -13,7 +13,11 @@ object MapDeserializer : JsonDeserializer<Map<*, *>> {
         val type = typeOfT.getParameterOrNull(1)
         val isJsonElement = type?.isJsonElement ?: false
         return with (json.asJsonObject.entrySet()) {
-            if (!isJsonElement) associate { it.key to it.value.parse(context, type) } else associate { it.key to it.value }
+            if (!isJsonElement) associate {
+                it.key to it.value.parse(context, type)
+            } else associate {
+                it.key to it.value
+            }
         }
     }
 }
