@@ -42,6 +42,7 @@ internal fun JsonObject.deserialize(context: JsonDeserializationContext, typeOfV
     entrySet().associate { it.key to it.value.deserialize(context, typeOfV) }
 
 internal fun JsonElement.deserialize(context: JsonDeserializationContext, type: Type?): Any? = when {
+    "JsonElement" in type!!.typeName  -> this
     isJsonNull -> null
     isJsonObject -> when(type) {
         null -> deserialize<Map<String, *>>(context)
