@@ -47,9 +47,12 @@ internal inline fun JsonPrimitive.parse(): Any = when {
     else -> error("Can't deserialize json primitive: $this")
 }
 
-internal inline fun JsonElement.parse(context: JsonDeserializationContext): Any? = when {
+internal inline fun JsonElement.parse(context: JsonDeserializationContext, type: Type?): Any? = when {
     isJsonNull -> null
-    isJsonObject -> deserialize<Map<String, *>>(context)
+    isJsonObject ->  when(type) {
+        null -> deserialize<Map<String, *>>(context)
+        else -> context.deserialize<Any?>(this, type)
+    }
     isJsonArray -> deserialize<List<*>>(context)
     isJsonPrimitive -> asJsonPrimitive.parse()
     else -> error("Can't parse json element: $this")

@@ -10,9 +10,10 @@ import java.lang.reflect.Type
 
 object ListDeserializer : JsonDeserializer<List<*>> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): List<*> {
-        val isJsonElement = typeOfT.getParameterOrNull(0)?.isJsonElement ?: false
+        val parameterType = typeOfT.getParameterOrNull(0)
+        val isJsonElement = parameterType?.isJsonElement ?: false
         return with (json.asJsonArray) {
-            if (!isJsonElement) map { it.parse(context) } else map { it }
+            if (!isJsonElement) map { it.parse(context, parameterType) } else map { it }
         }
     }
 }

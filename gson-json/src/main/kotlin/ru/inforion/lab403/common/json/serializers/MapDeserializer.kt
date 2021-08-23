@@ -10,9 +10,10 @@ import java.lang.reflect.Type
 
 object MapDeserializer : JsonDeserializer<Map<*, *>> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Map<*, *> {
-        val isJsonElement = typeOfT.getParameterOrNull(1)?.isJsonElement ?: false
+        val parameterType = typeOfT.getParameterOrNull(1)
+        val isJsonElement = parameterType?.isJsonElement ?: false
         return with (json.asJsonObject.entrySet()) {
-            if (!isJsonElement) associate { it.key to it.value.parse(context) } else associate { it.key to it.value }
+            if (!isJsonElement) associate { it.key to it.value.parse(context, parameterType) } else associate { it.key to it.value }
         }
     }
 }
