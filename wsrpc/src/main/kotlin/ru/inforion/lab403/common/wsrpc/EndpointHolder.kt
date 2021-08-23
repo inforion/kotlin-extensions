@@ -5,7 +5,6 @@ import ru.inforion.lab403.common.extensions.hasInstance
 import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.reflection.kClassAny
 import ru.inforion.lab403.common.wsrpc.WebSocketTypes.registerModule
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
@@ -18,7 +17,6 @@ import kotlin.collections.component2
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
-import kotlin.reflect.javaType
 
 class EndpointHolder constructor(
     val server: WebSocketRpcServer,
@@ -47,9 +45,8 @@ class EndpointHolder constructor(
     private val methods = endpoint::class.memberFunctions
         .filter { it.annotations.hasInstance(WebSocketRpcMethod::class.java) }
         .associate { func ->
-            val parameters = func.parameters.filter { it.name != null }
             val autoClose = func.annotations.firstInstance(WebSocketRpcMethod::class.java).close
-            func.name to Method(func, parameters, autoClose)
+            func.name to Method(func, func.parameters, autoClose)
         }
 
     private fun Parameters.getValueOfParameter(parameter: KParameter): Any? {
@@ -61,8 +58,10 @@ class EndpointHolder constructor(
     internal fun execute(name: String, values: Parameters): String {
         val method = methods[name].sure { "Method $name was not found in $endpoint" }
         log.finer { "$this.${name}(${values.map { (key, value) -> "$key=$value" }.joinToString()})" }
-        val args = method.parameters.map { values.getValueOfParameter(it) }
-        val result = method.function.call(endpoint, *args.toTypedArray())
+        val args = method.parameters
+            .filter { it.name in values || !it.isOptional }  // leave parameter in list if it is not optional to throw an error
+            .associateWith { if (it.name == null) endpoint else values.getValueOfParameter(it) }
+        val result = method.function.callBy(args)
         if (method.close) server.unregister(uuid)
         return result.toJson(mapper)
     }
