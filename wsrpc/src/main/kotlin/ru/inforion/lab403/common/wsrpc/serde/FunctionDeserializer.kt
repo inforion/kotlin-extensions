@@ -13,14 +13,14 @@ import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import java.lang.reflect.Type
 
 
-class FunctionDeserializer(val resources: ResourceManager) : JsonDeserializer<Callable<*>> {
+internal class FunctionDeserializer(private val resources: ResourceManager) : JsonDeserializer<Callable<*>> {
     companion object {
         val log = logger()
     }
 
     enum class FunctionType { FUNCTION, LAMBDA }
 
-    internal data class FunctionDescription(
+    data class FunctionDescription(
         val engine: String,
         val code: String,
         val type: FunctionType,

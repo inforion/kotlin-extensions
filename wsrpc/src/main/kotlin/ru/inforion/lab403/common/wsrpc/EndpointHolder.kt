@@ -25,25 +25,14 @@ class EndpointHolder constructor(
         val log = logger()
     }
 
-    private data class Method<R>(
-        val function: KFunction<R>,
-        val parameters: List<KParameter>,
-        val close: Boolean)
-
-    val identifier = endpoint.name
+    val identifier get() = endpoint.name
 
     private val mapper = server.resources.checkoutJsonMapper()
 
-    private val methods = endpoint::class.memberFunctions
-        .filter { it.annotations.hasInstance(WebSocketRpcMethod::class.java) }
-        .associate { func ->
-            val autoClose = func.annotations.firstInstance(WebSocketRpcMethod::class.java).close
-            func.name to Method(func, func.parameters, autoClose)
-        }
+    private val methods = server.resources.checkoutObjectMethods(endpoint::class)
 
     private fun Parameters.getValueOfParameter(parameter: KParameter): Any? {
-        val name = parameter.name ?: error("Something wrong with signature of RPC function -> parameter has no name")
-        require(parameter.name in this) { "Required parameter $name not found in received data" }
+        val name = parameter.name ?: return endpoint
         return getValue(name).fromJson(parameter.type, mapper)
     }
 
@@ -51,8 +40,8 @@ class EndpointHolder constructor(
         val method = methods[name].sure { "Method $name was not found in $endpoint" }
         log.finer { "$this.${name}(${values.map { (key, value) -> "$key=$value" }.joinToString()})" }
         val args = method.parameters
-            .filter { it.name in values || !it.isOptional }  // leave parameter in list if it is not optional to throw an error
-            .associateWith { if (it.name == null) endpoint else values.getValueOfParameter(it) }
+            .filter { it.name == null || it.name in values }
+            .associateWith { values.getValueOfParameter(it) }
         val result = method.function.callBy(args)
         if (method.close) server.unregister(uuid)
         return result.toJson(mapper)
@@ -64,6 +53,7 @@ class EndpointHolder constructor(
 
     internal fun onUnregister() {
         server.resources.checkinJsonMapper(mapper)
+        server.resources.checkinObjectMethods()
     }
 
     override fun toString() = "$identifier[$uuid]"

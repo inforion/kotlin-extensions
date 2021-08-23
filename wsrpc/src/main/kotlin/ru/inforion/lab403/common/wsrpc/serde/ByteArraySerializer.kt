@@ -10,7 +10,7 @@ import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.json.serialize
 import java.lang.reflect.Type
 
-object ByteArraySerializer : JsonSerde<ByteArray> {
+internal object ByteArraySerializer : JsonSerde<ByteArray> {
     internal data class ByteArrayDescriptor(val __bytes__: String)
 
     private fun ByteArray.toDescriptor() = ByteArrayDescriptor(b64encode())
