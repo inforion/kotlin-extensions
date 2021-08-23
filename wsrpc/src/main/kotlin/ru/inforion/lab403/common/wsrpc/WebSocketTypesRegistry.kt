@@ -18,7 +18,9 @@ import ru.inforion.lab403.common.wsrpc.serde.ObjectSerializer
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
-object WebSocketTypes {
+class WebSocketTypesRegistry constructor(init: WebSocketTypesRegistry.() -> Unit) {
+    @PublishedApi internal var isServerInitialized = false
+
     @PublishedApi internal val endpointsSerializers = dictionaryOf<KClass<Any>, (Any) -> WebSocketRpcEndpoint>()
 
     @PublishedApi internal val typesSerializers = mutableListOf<Pair<Type, Any>>()
@@ -26,7 +28,7 @@ object WebSocketTypes {
     @PublishedApi internal val typesFactories = mutableListOf<TypeAdapterFactory>()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T: Any> registerTypeAdapter(kClass: KClass<out T>, apiGen: (T) -> WebSocketRpcEndpoint) {
+    fun <T: Any> registerTypeAdapter(kClass: KClass<out T>, apiGen: (T) -> WebSocketRpcEndpoint) = withCheck {
         check(kClass as KClass<Any> !in endpointsSerializers) {
             "Can't set global serializer for class $kClass because it was already specified"
         }
@@ -34,13 +36,13 @@ object WebSocketTypes {
     }
 
     fun <T: Any> registerTypeAdapter(kClass: KClass<T>, deserializer: JsonDeserializer<T>) =
-        typesSerializers.add(kClass.java to deserializer)
+        withCheck { typesSerializers.add(kClass.java to deserializer) }
 
     fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>) =
-        typesSerializers.add(kClass.java to serializer)
+        withCheck { typesSerializers.add(kClass.java to serializer) }
 
     fun <T: Any> registerTypeAdapter(kClass: KClass<T>, serde: JsonSerde<T>) =
-        typesSerializers.add(kClass.java to serde)
+        withCheck { typesSerializers.add(kClass.java to serde) }
 
     fun registerTypeFactory(factory: TypeAdapterFactory) = typesFactories.add(factory)
 
@@ -48,9 +50,16 @@ object WebSocketTypes {
         classes: Collection<Class<out T>>,
         field: String = "type",
         selector: (Class<out T>) -> String = { it.identifierOrName }
-    ) = typesSerializers.add(T::class.java to polymorphicTypesAdapter(classes, field, selector))
+    ) = withCheck { typesSerializers.add(T::class.java to polymorphicTypesAdapter(classes, field, selector)) }
 
-    fun JsonBuilder.registerModule(server: WebSocketRpcServer) = apply {
+    inline fun withCheck(action: () -> Unit) {
+        require(!isServerInitialized) { "Server already initialized and types can't be registered" }
+        action()
+    }
+
+    internal fun setupJsonBuilder(builder: JsonBuilder, server: WebSocketRpcServer) = builder.apply {
+        isServerInitialized = true
+
         typesSerializers.forEach { registerTypeAdapter(it.first, it.second) }
         typesFactories.forEach { registerTypeAdapterFactory(it) }
 
@@ -63,5 +72,9 @@ object WebSocketTypes {
         registerTypeAdapter(EventEndpoint::class, ObjectSerializer(server) { it })
 
         registerTypeAdapter(ByteArray::class, ByteArraySerializer)
+    }
+
+    init {
+        init(this)
     }
 }

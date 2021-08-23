@@ -32,9 +32,11 @@ class WebSocketRpcServer constructor(
     val host: String = "localhost",
     val port: Int,
 
+    registry: WebSocketTypesRegistry = WebSocketTypesRegistry {  },
+
     val pingTimeout: Int = 10, // in seconds
     val isReuseAddress: Boolean = true,
-    val isTcpNoDelayActive: Boolean = false
+    val isTcpNoDelayActive: Boolean = false,
 ) : Iterable<EndpointHolder>, Closeable {
     companion object {
         const val SERVICE_ENDPOINT_NAME = "Service"
@@ -73,9 +75,7 @@ class WebSocketRpcServer constructor(
     private val threads = newFixedThreadPoolDispatcher(availableProcessors)
 
     private val server = object : WebSocketServer(address) {
-        private val mapper = defaultJsonBuilder()
-            .registerBasicClasses()
-            .create()
+        private val mapper = defaultJsonBuilder().create()
 
         override fun onOpen(conn: WebSocket, handshake: ClientHandshake) {
             log.config { "Client[port=${conn.remoteSocketAddress.port}] established connection" }
@@ -145,7 +145,7 @@ class WebSocketRpcServer constructor(
 
     override fun close() = stop()
 
-    internal val resources = ResourceManager()
+    internal val resources = ResourceManager(this, registry)
 
     init {
         register(ServiceEndpoint(this), SERVICE_ENDPOINT_UUID)

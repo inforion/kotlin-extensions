@@ -3,14 +3,12 @@ package ru.inforion.lab403.common.wsrpc
 import ru.inforion.lab403.common.extensions.firstInstance
 import ru.inforion.lab403.common.extensions.hasInstance
 import ru.inforion.lab403.common.extensions.sure
-import ru.inforion.lab403.common.json.*
+import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.wsrpc.WebSocketTypes.registerModule
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.descs.Parameters
-import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
-import ru.inforion.lab403.common.wsrpc.serde.FunctionDeserializer
 import java.util.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -34,13 +32,7 @@ class EndpointHolder constructor(
 
     val identifier = endpoint.name
 
-    private val functionDeserializer = FunctionDeserializer(server)
-
-    private val mapper = defaultJsonBuilder()
-        .registerBasicClasses()
-        .registerTypeAdapter(Callable::class, functionDeserializer)
-        .registerModule(server)
-        .create()
+    private val mapper = server.resources.checkoutJsonMapper()
 
     private val methods = endpoint::class.memberFunctions
         .filter { it.annotations.hasInstance(WebSocketRpcMethod::class.java) }
@@ -71,7 +63,7 @@ class EndpointHolder constructor(
     }
 
     internal fun onUnregister() {
-        functionDeserializer.onUnregister()
+        server.resources.checkinJsonMapper(mapper)
     }
 
     override fun toString() = "$identifier[$uuid]"
