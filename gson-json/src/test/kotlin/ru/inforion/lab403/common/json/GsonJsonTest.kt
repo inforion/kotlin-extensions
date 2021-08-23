@@ -119,6 +119,8 @@ internal class GsonJsonTest {
     fun deserializeJsonElements() {
         val json = """
            {
+              "string": "MyString",
+              "value": 10,
               "obj": {
                 "name": "cat",
                 "action": "meow",

@@ -3,16 +3,16 @@ package ru.inforion.lab403.common.json.serializers
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import ru.inforion.lab403.common.json.dontimport.deserialize
-import java.lang.reflect.ParameterizedType
+import ru.inforion.lab403.common.json.dontimport.getParameterOrNull
+import ru.inforion.lab403.common.json.dontimport.isJsonElement
+import ru.inforion.lab403.common.json.dontimport.parse
 import java.lang.reflect.Type
 
 object MapDeserializer : JsonDeserializer<Map<*, *>> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Map<*, *> {
-        val typeOfV = if (typeOfT is ParameterizedType) {
-            require(typeOfT.actualTypeArguments.size == 2) { "Parametrized Map must have exactly 2 parameters" }
-             typeOfT.actualTypeArguments[1]
-        } else null
-        return json.asJsonObject.deserialize(context, typeOfV)
+        val isJsonElement = typeOfT.getParameterOrNull(1)?.isJsonElement ?: false
+        return with (json.asJsonObject.entrySet()) {
+            if (!isJsonElement) associate { it.key to it.value.parse(context) } else associate { it.key to it.value }
+        }
     }
 }

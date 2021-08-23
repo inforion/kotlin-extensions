@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE", "unused")
+@file:Suppress("NOTHING_TO_INLINE", "unused", "EXPERIMENTAL_IS_NOT_ENABLED")
 
 package ru.inforion.lab403.common.json
 

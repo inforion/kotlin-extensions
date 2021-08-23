@@ -1,21 +1,23 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ru.inforion.lab403.common.json.dontimport
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import ru.inforion.lab403.common.extensions.either
 import ru.inforion.lab403.common.extensions.ifNotNull
-import ru.inforion.lab403.common.json.annotations.Identifier
+import ru.inforion.lab403.common.json.annotations.JsonPolymorphicType
 import ru.inforion.lab403.common.json.deserialize
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 inline val <T> Class<out T>.identifierOrName: String get() =
-    annotations.filterIsInstance<Identifier>().firstOrNull() ifNotNull { name } either { simpleName }
+    annotations
+        .filterIsInstance<JsonPolymorphicType>()
+        .firstOrNull() ifNotNull { name } either { simpleName }
 
 
-
-@PublishedApi internal inline val <T> Class<T>.token get() = object : TypeToken<T>() {
-
-}
+@PublishedApi internal inline val <T> Class<T>.token get() = object : TypeToken<T>() { }
 
 @PublishedApi internal inline val <T> Class<T>.type: Type get() = token.type
 
@@ -25,7 +27,17 @@ inline val <T> Class<out T>.identifierOrName: String get() =
 
 
 
-internal fun JsonPrimitive.deserialize(): Any = when {
+internal inline fun Type.getParameterOrNull(index: Int) = if (this is ParameterizedType) {
+    require(actualTypeArguments.size > index) { "Index of parameter out of bound" }
+    actualTypeArguments[index]
+} else null
+
+
+// workaround to check type as JsonElement
+internal inline val Type.isJsonElement get() = typeName.contains("JsonElement")
+
+
+internal inline fun JsonPrimitive.parse(): Any = when {
     isBoolean -> asBoolean
     isNumber -> with(asString) {
         toIntOrNull() ?: toLongOrNull() ?: toFloatOrNull() ?: toDoubleOrNull()
@@ -35,20 +47,10 @@ internal fun JsonPrimitive.deserialize(): Any = when {
     else -> error("Can't deserialize json primitive: $this")
 }
 
-internal fun JsonArray.deserialize(context: JsonDeserializationContext, typeOfE: Type?) =
-    map { it.deserialize(context, typeOfE) }
-
-internal fun JsonObject.deserialize(context: JsonDeserializationContext, typeOfV: Type?) =
-    entrySet().associate { it.key to it.value.deserialize(context, typeOfV) }
-
-internal fun JsonElement.deserialize(context: JsonDeserializationContext, type: Type?): Any? = when {
-    "JsonElement" in type!!.typeName  -> this
+internal inline fun JsonElement.parse(context: JsonDeserializationContext): Any? = when {
     isJsonNull -> null
-    isJsonObject -> when(type) {
-        null -> deserialize<Map<String, *>>(context)
-        else -> context.deserialize<Any?>(this, type)
-    }
+    isJsonObject -> deserialize<Map<String, *>>(context)
     isJsonArray -> deserialize<List<*>>(context)
-    isJsonPrimitive -> (this as JsonPrimitive).deserialize()
+    isJsonPrimitive -> asJsonPrimitive.parse()
     else -> error("Can't parse json element: $this")
 }
