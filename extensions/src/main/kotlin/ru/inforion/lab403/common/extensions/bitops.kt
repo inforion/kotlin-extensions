@@ -33,13 +33,13 @@ inline infix fun UInt.ushr(n: Int) = this shr n
 // shl should not be convert to byte because i.e. 0xFFu shl 16 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UShort.shl(n: Int) = uint_z shl n
-inline infix fun UShort.ashr(n: Int) = int_s ashr n
+inline infix fun UShort.ashr(n: Int) = (int_s ashr n).uint
 inline infix fun UShort.ushr(n: Int) = uint_z shr n
 
 // shl should not be convert to byte because i.e. 0xFFu shl 8 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UByte.shl(n: Int) = uint_z shl n
-inline infix fun UByte.ashr(n: Int) = int_s ashr n
+inline infix fun UByte.ashr(n: Int) = (int_s ashr n).uint
 inline infix fun UByte.ushr(n: Int) = uint_z shr n
 
 // =====================================================================================================================

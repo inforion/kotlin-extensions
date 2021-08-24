@@ -25,7 +25,7 @@ internal class UnsignedTest {
     }
 
     class TestikRegistrator : KryoRegistrator {
-        private val unsigned = UnsignedRegistrator()
+        private val unsigned = BasicClassesRegistrator()
 
         override fun registerClasses(kryo: Kryo) {
             unsigned.registerClasses(kryo)

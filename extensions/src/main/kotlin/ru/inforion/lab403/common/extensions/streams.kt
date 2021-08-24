@@ -4,14 +4,25 @@ package ru.inforion.lab403.common.extensions
 
 import java.io.*
 import java.nio.ByteBuffer
+import java.nio.ByteOrder.BIG_ENDIAN
+import java.nio.ByteOrder.LITTLE_ENDIAN
 import java.util.*
 
-inline fun InputStream.readByteBuffer(dst: ByteBuffer, offset: Int = 0, bufferSize: Int = 0x800000): Int {
+val emptyInputStream = ByteArray(0).inputStream()
+
+const val DEFAULT_BYTE_BUFFER_CHUNK = 0x80_0000
+const val DEFAULT_BYTE_BUFFER_MARKER = 0x6EADBEEF
+
+inline fun InputStream.readBufferData(
+    dst: ByteBuffer,
+    offset: Int = 0,
+    chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK
+): Int {
     var total = 0
-    val buf = ByteArray(bufferSize)
+    val buf = ByteArray(chunk)
     dst.position(offset)
     do {
-        val count = read(buf, 0, bufferSize)
+        val count = read(buf, 0, chunk)
         if (count > 0) {
             dst.put(buf, 0, count)
             total += count
@@ -20,15 +31,81 @@ inline fun InputStream.readByteBuffer(dst: ByteBuffer, offset: Int = 0, bufferSi
     return total
 }
 
-inline fun OutputStream.writeByteBuffer(src: ByteBuffer, offset: Int = 0, bufferSize: Int = 0x800000) {
+inline fun OutputStream.writeBufferData(
+    src: ByteBuffer,
+    offset: Int = 0,
+    chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK
+) {
     src.position(offset)
-    val buffer = ByteArray(bufferSize)
+    val buffer = ByteArray(chunk)
     do {
-        val count = bufferSize.coerceAtMost(src.remaining())
+        val count = chunk.coerceAtMost(src.remaining())
         src.get(buffer, 0, count)
         write(buffer, 0, count)
     } while (src.remaining() != 0)
 }
+
+inline fun DataInputStream.readByteBuffer(
+    chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK,
+    marker: Int = DEFAULT_BYTE_BUFFER_MARKER
+): ByteBuffer {
+    val isLittle = readBoolean()
+    val isDirect = readBoolean()
+    val limit = readInt()
+    val position = readInt()
+
+    val obj = byteBuffer(limit, isDirect, if (isLittle) LITTLE_ENDIAN else BIG_ENDIAN)
+
+    val array = ByteArray(chunk)
+    while (obj.remaining() != 0) {
+        val remain = obj.remaining()
+        val size = if (remain > array.size) array.size else remain
+        val count = read(array, 0, size)
+        obj.put(array, 0, count)
+    }
+
+    check(readInt() == marker) { "Serialization marker != $marker" }
+
+    return obj.position(position)
+}
+
+inline fun DataOutputStream.writeByteBuffer(
+    obj: ByteBuffer,
+    chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK,
+    marker: Int = DEFAULT_BYTE_BUFFER_MARKER
+) {
+    writeBoolean(obj.order() == LITTLE_ENDIAN)
+    writeBoolean(obj.isDirect)
+    writeInt(obj.limit())
+    writeInt(obj.position())
+    val oldPosition = obj.position()
+    obj.position(0)
+    val array = ByteArray(chunk)
+    while (obj.remaining() != 0) {
+        val size = minOf(array.size, obj.remaining())
+        obj.get(array, 0, size)
+        write(array, 0, size)
+    }
+    writeInt(marker)
+    obj.position(oldPosition)
+}
+
+
+inline fun DataOutputStream.writeLongRange(range: LongRange) {
+    writeLong(range.first)
+    writeLong(range.last)
+}
+
+inline fun DataInputStream.readLongRange() = LongRange(readLong(), readLong())
+
+
+inline fun DataOutputStream.writeIntRange(range: IntRange) {
+    writeInt(range.first)
+    writeInt(range.last)
+}
+
+inline fun DataInputStream.readIntRange() = IntRange(readInt(), readInt())
+
 
 inline fun DataOutputStream.writeTribyte(v: Int) {
     write(v ushr 16 and 0xFF)

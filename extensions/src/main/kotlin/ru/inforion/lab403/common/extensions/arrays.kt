@@ -162,8 +162,10 @@ inline val ByteBuffer.uint get() = int.uint
 inline val ByteBuffer.ushort get() = short.ushort
 inline val ByteBuffer.ubyte get() = byte.ubyte
 
-inline fun byteBuffer(size: Int, directed: Boolean): ByteBuffer =
-    if (directed) ByteBuffer.allocateDirect(size) else ByteBuffer.allocate(size)
+inline fun byteBuffer(size: Int, directed: Boolean, order: ByteOrder = LITTLE_ENDIAN): ByteBuffer {
+    val result = if (directed) ByteBuffer.allocateDirect(size) else ByteBuffer.allocate(size)
+    return result.order(order)
+}
 
 inline operator fun <T, E : Enum<E>> Array<T>.get(e: Enum<E>): T = this[e.ordinal]
 

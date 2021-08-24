@@ -1,5 +1,8 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ru.inforion.lab403.common.logging
 
+import ru.inforion.lab403.common.extensions.emptyString
 import ru.inforion.lab403.common.logging.logger.Logger
 
 /**
@@ -29,3 +32,6 @@ fun String.loggerConfigure() = when {
         }
     }
 }
+
+inline fun Throwable.logStackTrace(logger: Logger, prefix: String = emptyString, level: LogLevel = SEVERE) =
+    logger.log(level) { "$prefix: $this\n${stackTraceToString()}" }

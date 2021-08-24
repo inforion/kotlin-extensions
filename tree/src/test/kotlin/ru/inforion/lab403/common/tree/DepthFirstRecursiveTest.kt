@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.tree
 
 import org.junit.Test
-import ru.inforion.lab403.common.json.writeJson
+import ru.inforion.lab403.common.json.toJson
 import ru.inforion.lab403.common.tree.DepthFirstIterator.Companion.dfs
 import ru.inforion.lab403.common.tree.TrackIterator.Companion.track
 import ru.inforion.lab403.common.tree.Tree.Companion.toTreeMapValue
@@ -260,7 +260,7 @@ internal class DepthFirstRecursiveTest {
         val actual = flowRoot.toTreeMapValue {
             this["value"] = it.content
             this["depth"] = it.depth()
-        }.writeJson()
+        }.toJson()
         assertEquals(expected, actual)
     }
 

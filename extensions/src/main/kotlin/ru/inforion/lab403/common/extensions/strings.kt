@@ -505,3 +505,10 @@ inline fun String.toInetSocketAddress(): InetSocketAddress {
     val port = substringAfter(":").int()
     return InetSocketAddress(host, port)
 }
+
+@PublishedApi internal val orders = mapOf(
+    ByteOrder.BIG_ENDIAN.toString() to ByteOrder.BIG_ENDIAN,
+    ByteOrder.LITTLE_ENDIAN.toString() to ByteOrder.LITTLE_ENDIAN
+)
+
+inline fun String.toByteOrder(): ByteOrder = orders[this] ?: throw IllegalArgumentException(this)

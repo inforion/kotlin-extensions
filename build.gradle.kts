@@ -1,6 +1,8 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
+val jvmTestsOptions: String by project
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.21"
     id("org.jetbrains.dokka") version "1.4.0"
@@ -42,29 +44,19 @@ subprojects
         it.afterEvaluate {
             tasks {
 
-                filterIsInstance<Test>()
-                    .forEach { task ->
-                        task.jvmArgs!!.plusAssign(
-                            "-server " +
-                                    "-Xms2G " +
-                                    "-Xmx5G " +
-                                    "-XX:MaxDirectMemorySize=2g " +
-                                    "-XX:+UseParallelGC " +
-                                    "-XX:SurvivorRatio=6 " +
-                                    "-XX:-UseGCOverheadLimit"
-                                        .split(" ")
-                        )
+                withType<Test>().all {
+                    jvmArgs!!.plusAssign(jvmTestsOptions.split(" "))
 
-                        task.testLogging {
-                            events = setOf(PASSED, SKIPPED, FAILED)
+                    testLogging {
+                        events = setOf(PASSED, SKIPPED, FAILED)
 
-                            showExceptions = true
-                            exceptionFormat = FULL
-                            showCauses = true
-                            showStackTraces = true
-                            // showStandardStreams = false
-                        }
+                        showExceptions = true
+                        exceptionFormat = FULL
+                        showCauses = true
+                        showStackTraces = true
+                        // showStandardStreams = false
                     }
+                }
 
                 compileKotlin {
                     kotlinOptions.jvmTarget = "11"
