@@ -46,8 +46,9 @@ internal class FunctionDeserializer(private val resources: ResourceManager) : Js
         }
 
         return Callable<Any> {
-            engine.invocable.invokeFunction(name, *it)
-            resources.checkinScriptEngine(engine)
+            engine.invocable.invokeFunction(name, *it).also {
+                resources.checkinScriptEngine(engine)
+            }
         }
     }
 }
