@@ -16,8 +16,6 @@ val PyException.pyBaseExceptionDerivedValue get(): PyBaseExceptionDerived = valu
 
 val PyException.pyValueString get(): PyString = value as PyString
 
-val PyObjectDerived.message get(): String = __findattr__("message").toString()
-
 val PyType.pyBase get(): PyJavaType = base as PyJavaType
 
 val PyJavaType.pyBase get(): PyJavaType = base as PyJavaType
