@@ -5,7 +5,7 @@ package ru.inforion.lab403.common.wsrpc
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonSerializer
 import com.google.gson.TypeAdapterFactory
-import ru.inforion.lab403.common.concurrent.events.Event
+import ru.inforion.lab403.common.concurrent.events.SimpleEvent
 import ru.inforion.lab403.common.extensions.dictionaryOf
 import ru.inforion.lab403.common.json.*
 import ru.inforion.lab403.common.json.dontimport.identifierOrName
@@ -68,7 +68,10 @@ class WebSocketTypesRegistry constructor(init: WebSocketTypesRegistry.() -> Unit
         }
 
         registerTypeAdapter(SequenceEndpoint::class, ObjectSerializer(server) { it })
-        registerTypeAdapter(Event::class, ObjectSerializer(server) { EventEndpoint(it) })
+        // Simple solutions for simple Event.
+        // Gson somehow can't find type adapter for SimpleEvent,
+        // which realises interface from Event.
+        registerTypeAdapter(SimpleEvent::class, ObjectSerializer(server) { EventEndpoint(it) })
         registerTypeAdapter(EventEndpoint::class, ObjectSerializer(server) { it })
 
         registerTypeAdapter(ByteArray::class, ByteArraySerializer)
