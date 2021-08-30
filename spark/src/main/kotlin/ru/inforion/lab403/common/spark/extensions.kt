@@ -6,8 +6,31 @@ import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.api.java.JavaSparkContext
 
 inline fun <reified T> List<T>.partition(count: Int): List<List<T>> {
-    val sizeAndStep = size / count
-    return windowed(sizeAndStep, sizeAndStep, partialWindows = true)
+    require(size > 0) { "List is empty" }
+
+    if (size == 1)
+        return listOf(this)
+
+    val chunked = chunked(size / count)
+
+    if (chunked.size > count) {
+        val tail = chunked.last()
+        val body = chunked.dropLast(1)
+
+        val result = ArrayList<ArrayList<T>>()
+
+        tail.forEachIndexed { index, element ->
+            val part = ArrayList<T>()
+            part.addAll(body[index])
+            part.add(element)
+            result.add(part)
+        }
+        body.takeLast(size % count).forEach { part ->
+            result.add(part as ArrayList<T>)
+        }
+        return result.toList()
+    }
+    return chunked
 }
 
 inline fun <reified T> List<T>.parallelize(sc: JavaSparkContext): JavaRDD<T> = sc.parallelize(this)
