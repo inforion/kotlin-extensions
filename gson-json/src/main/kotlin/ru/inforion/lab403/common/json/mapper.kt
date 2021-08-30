@@ -1,6 +1,7 @@
 package ru.inforion.lab403.common.json
 
 import org.joda.time.DateTime
+import ru.inforion.lab403.common.identifier.Identifier
 import ru.inforion.lab403.common.json.serializers.*
 import kotlin.reflect.KType
 
@@ -20,6 +21,7 @@ fun JsonBuilder.registerBasicClasses() = apply {
 
     registerTypeAdapter(KType::class, KTypeSerializer)
     registerTypeAdapter(DateTime::class, DateTimeSerde)
+    registerTypeAdapter(Identifier::class, IdentifierSerde)
 }
 
 fun defaultJsonBuilder(): JsonBuilder = JsonBuilder()

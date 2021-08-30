@@ -6,6 +6,7 @@ val oshiVersion: String by project
 dependencies {
     implementation(project(":optional"))
     implementation(project(":extensions"))
+    implementation(project(":identifier"))
 
     api("com.google.code.gson:gson:$gsonVersion")
     api("org.danilopianini:gson-extras:$gsonExtrasVersion")
