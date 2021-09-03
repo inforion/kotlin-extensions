@@ -31,7 +31,7 @@ abstract class AbstractScriptEngine<E : ScriptEngine>(private val engine: E) : S
         return namesAfter - namesBefore
     }
 
-    fun evalAndSet(name: String, script: String) = name.also { engine.put(it, eval(script)) }
+    fun evalAndSet(name: String, script: String) = name.also { put(it, eval(script)) }
 
     abstract fun serialize(value: Any): ByteArray
 

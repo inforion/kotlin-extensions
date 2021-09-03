@@ -55,7 +55,7 @@ class WebSocketRpcServer constructor(
         return EndpointHolder(this, endpoint, actual).also {
             myEndpoints[actual] = it
             it.onRegister()
-            log.finest { "Endpoint $it registered" }
+            log.finer { "Endpoint $it registered" }
         }
     }
 
@@ -66,7 +66,7 @@ class WebSocketRpcServer constructor(
             .sure { "Endpoint with $uuid not registered!" }
             .also {
                 it.onUnregister()
-                log.finest { "Endpoint $it unregistered" }
+                log.finer { "Endpoint $it unregistered" }
             }
     }
 

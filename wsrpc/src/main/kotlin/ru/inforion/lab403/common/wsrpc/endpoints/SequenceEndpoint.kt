@@ -2,6 +2,8 @@
 
 package ru.inforion.lab403.common.wsrpc.endpoints
 
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 import ru.inforion.lab403.common.concurrent.locks.PhonyLock
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
@@ -111,7 +113,9 @@ class SequenceEndpoint<T> constructor(
     fun count() = lock.withLock { state.count() }
 
     @WebSocketRpcMethod(close = true)
-    fun collect() = lock.withLock { state.toList() }
+    fun collect() = lock.withLock {
+        runBlocking { state.asFlow().toList() }
+    }
 
     @WebSocketRpcMethod(close = true)
     fun <K, V> collectAsMap() = lock.withLock {

@@ -45,3 +45,9 @@ fun Number.to_ns(from: Time = Time.s): Long = (toDouble() * Time.ns.divider / fr
 //inline val Number.ms get() = (toDouble() / Time.ms.divider).toLong()
 //inline val Number.us get() = (toDouble() / Time.us.divider).toLong()
 //inline val Number.ns get() = (toDouble() / Time.ns.divider).toLong()
+
+const val KILOBYTE = 1024
+
+val Int.kb get() = this * KILOBYTE
+val Int.mb get() = kb * KILOBYTE
+val Int.gb get() = mb * KILOBYTE

@@ -3,19 +3,16 @@ package ru.inforion.lab403.common.wsrpc.serde
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import ru.inforion.lab403.common.extensions.dictionaryOf
-import ru.inforion.lab403.common.extensions.ifNotNull
+import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.scripts.AbstractScriptEngine
-import ru.inforion.lab403.common.scripts.GenericScriptEngine
-import ru.inforion.lab403.common.wsrpc.ResourceManager
-import ru.inforion.lab403.common.wsrpc.WebSocketRpcServer
+import ru.inforion.lab403.common.scripts.ScriptingManager
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import java.lang.reflect.Type
+import java.util.concurrent.LinkedBlockingQueue
 
 
-internal class FunctionDeserializer(private val resources: ResourceManager) : JsonDeserializer<Callable<*>> {
+internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
     companion object {
         val log = logger()
     }
@@ -31,26 +28,42 @@ internal class FunctionDeserializer(private val resources: ResourceManager) : Js
 
     private var lambdaIndex = 0
 
-    private lateinit var engine: AbstractScriptEngine<*>
+    private inline fun <T> Collection<T>.toLinkedBlockingQueue() = LinkedBlockingQueue(this)
+
+    init {
+        log.info { "Create new engine pool" }
+    }
+
+    private inline fun <E, T> LinkedBlockingQueue<E>.acquire(action: E.() -> T): T {
+        val engine = take()
+        return action(engine).also { put(engine) }
+    }
+
+    private val engines by lazy {
+        List(availableProcessors) {
+            ScriptingManager.engine("python")
+        }.toLinkedBlockingQueue()
+    }
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Callable<*> {
         val desc = json.deserialize<FunctionDescription>(context)
 
-        if (!::engine.isInitialized) {
-            engine =  resources.checkoutScriptEngine(desc.engine)
+        val index = lambdaIndex++
+        val name = "anonymous$index"
+
+        engines.forEach { engine ->
+            when (desc.type) {
+                FunctionType.LAMBDA -> {
+                    desc.closure.forEach { (name, data) -> engine.deserializeAndSet(name, data) }
+                    engine.evalAndSet(name, desc.code)
+                }
+                FunctionType.FUNCTION -> {
+                    log.severe { "Function closure variables currently not implemented!" }
+                    engine.evalGetNames(desc.code).first()
+                }
+            }
         }
 
-        val name = when (desc.type) {
-            FunctionType.LAMBDA -> {
-                desc.closure.forEach { (name, data) -> engine.deserializeAndSet(name, data) }
-                engine.evalAndSet("anonymous${lambdaIndex++}", desc.code)
-            }
-            FunctionType.FUNCTION -> {
-                log.severe { "Function closure variables currently not implemented!" }
-                engine.evalGetNames(desc.code).first()
-            }
-        }
-
-        return Callable<Any> { engine.invocable.invokeFunction(name, *it) }
+        return Callable<Any> { engines.acquire { invocable.invokeFunction(name, *it) } }
     }
 }
