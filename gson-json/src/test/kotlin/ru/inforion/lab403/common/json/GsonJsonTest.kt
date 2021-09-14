@@ -57,6 +57,33 @@ internal class GsonJsonTest {
 
     data class Dog(val dog: String) : AbstractAnimal("bobik", "Dog")
 
+    internal enum class AnimalsColors { brown, black, white }
+
+    internal enum class HamstersBreeds { Syrian, Chinese, RussianDwarFampbell, DwarfRoborovski }
+
+    data class AnimalInfo(
+        val hasHairline: Boolean,
+        val limbsCount: Int = 4,
+        val coloration: AnimalsColors = AnimalsColors.black,
+    )
+
+    data class Hamster(
+        val hamster: String = "nuf-nuf",
+        val hasBigCheeks: Boolean = true,
+        val hasFriends: Boolean = false,
+        val breed: HamstersBreeds = HamstersBreeds.RussianDwarFampbell,
+        val age: Int = 1,
+    ) : AbstractAnimal("homie", "Hamster")
+
+    data class HamsterWithInfo(
+        val info: AnimalInfo,
+        val hamster: String = "nuf-nuf",
+        val hasBigCheeks: Boolean = true,
+        val hasFriends: Boolean = false,
+        val breed: HamstersBreeds = HamstersBreeds.DwarfRoborovski,
+        val age: Int = 2
+    ) : AbstractAnimal("homie", "Hamster")
+
     object CatInstanceCreator : InstanceCreator<Cat> {
         override fun createInstance(type: Type): Cat {
             return Cat("")
@@ -158,5 +185,35 @@ internal class GsonJsonTest {
         val actual = json.fromJson<FullSystemInfo>()
 
         assertEquals(fingerprint.toString(), actual.toString())
+    }
+
+    @Test
+    fun deserializeDefaultVals() {
+        val json = "{}"
+
+        val actualHamster = json.fromJson<Hamster>()
+
+        println(actualHamster)
+        val expectedHamster = Hamster()
+        assertEquals(expectedHamster, actualHamster)
+    }
+
+    @Test
+    fun deserializeDefaultValsWithNestedDataClass() {
+        // Fails with nested data classes
+        val json = """
+            {
+                "info": {
+                    "hasHairline": true
+                }
+            }
+        """
+        val actualHamster = json.fromJson<HamsterWithInfo>()
+
+        println(actualHamster)
+
+        val expectedHamster = HamsterWithInfo(AnimalInfo(hasHairline = true))
+
+        assertEquals(expectedHamster, actualHamster)
     }
 }
