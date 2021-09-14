@@ -143,7 +143,10 @@ class WebSocketRpcServer constructor(
 
     fun stop() = server.stop()
 
-    override fun close() = stop()
+    override fun close() {
+        stop()
+        threads.close()
+    }
 
     internal val resources = ResourceManager(this, registry)
 

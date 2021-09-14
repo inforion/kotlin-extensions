@@ -72,5 +72,16 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         }
     }
 
+    /**
+     * Returns true if kafka is available and all topics have been read by consumer, otherwise returns false
+     */
+    fun kafkaIsAvailable(groups: Collection<String>) = with(consumersInfo(groups)) {
+        !any { (_, topicInfo) ->
+            topicInfo == null
+        } and !any { (_, topicInfo) ->
+            topicInfo!!.partitions.any { it.size != it.offset }
+        }
+    }
+
     override fun close() = client.close()
 }

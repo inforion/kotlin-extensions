@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.mongo
 
+import com.mongodb.MongoClient
 import com.mongodb.client.model.ReplaceOptions
 import com.mongodb.client.model.UpdateOptions
 import org.bson.BsonReader
@@ -11,6 +12,8 @@ import ru.inforion.lab403.common.extensions.sure
 import ru.inforion.lab403.common.extensions.ulong
 import ru.inforion.lab403.common.identifier.Identifier
 import ru.inforion.lab403.common.identifier.toIdentifier
+
+val nonUserCollections = listOf("admin", "config", "local")
 
 inline fun BsonWriter.writeDocument(action: BsonWriter.() -> Unit) {
     writeStartDocument()
@@ -49,3 +52,6 @@ inline fun Document.getIdentifier(key: String) = getIdentifierOrNull(key).sure {
 inline fun <reified T : Enum<T>> Document.getEnumValue(key: String) = enumValueOf<T>(getString(key))
 
 inline fun Document.getULong(key: String) = getLong(key).ulong
+
+inline fun MongoClient.filteredMongoBases() =
+    mutableListOf(*listDatabaseNames().toList().toTypedArray()).also { it.removeAll(nonUserCollections) }
