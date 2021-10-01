@@ -19,7 +19,7 @@ inline val Long.ulong get() = toULong()
 inline val Long.uint get() = toUInt()
 inline val Long.ushort get() = toUShort()
 inline val Long.ubyte get() = toUByte()
-inline val Long.big_integer get() = toBigInteger()
+inline val Long.bigint get() = toBigInteger()
 
 inline val Long.float get() = toFloat()
 inline val Long.double get() = toDouble()
@@ -40,7 +40,7 @@ inline val Int.long_s get() = toLong()
 inline val Int.int get() = toInt()
 inline val Int.short get() = toShort()
 inline val Int.byte get() = toByte()
-inline val Int.big_integer get() = toBigInteger()
+inline val Int.bigint get() = toBigInteger()
 
 inline val Int.ulong_s get() = toULong()
 inline val Int.uint get() = toUInt()
@@ -64,26 +64,23 @@ inline val Int.truth get() = !untruth
  * BigInteger conversions
  */
 
-inline val BigInteger.long_s get() = toLong()
+inline val BigInteger.long get() = toLong()
 inline val BigInteger.int get() = toInt()
 inline val BigInteger.short get() = toShort()
 inline val BigInteger.byte get() = toByte()
 
-inline val BigInteger.ulong_s get() = long_s.toULong()
+inline val BigInteger.ulong get() = long.toULong()
 inline val BigInteger.uint get() = int.toUInt()
 inline val BigInteger.ushort get() = short.toUShort()
 inline val BigInteger.ubyte get() = byte.toUByte()
-
-inline val BigInteger.long_z get() = long_s and 0xFFFF_FFFF
-inline val BigInteger.ulong_z get() = ulong_s and 0xFFFF_FFFFu
 
 inline val BigInteger.float get() = toFloat()
 inline val BigInteger.double get() = toDouble()
 inline val BigInteger.char get() = toChar()
 
-inline val BigInteger.bool get() = int != 0
+inline val BigInteger.bool get() = this != BigInteger.ZERO
 
-inline val BigInteger.untruth get() = int == 0
+inline val BigInteger.untruth get() = this == BigInteger.ZERO
 inline val BigInteger.truth get() = !untruth
 
 /**
@@ -95,6 +92,7 @@ inline val Short.int_s get() = toInt()
 @Deprecated("Conversion from Short to Short is useless", ReplaceWith("this"))
 inline val Short.short get() = toShort()
 inline val Short.byte get() = toByte()
+inline val Short.bigint get() = int_z.toBigInteger()
 
 inline val Short.ulong_s get() = toULong()
 inline val Short.uint_s get() = toUInt()
@@ -126,6 +124,7 @@ inline val Byte.int_s get() = toInt()
 inline val Byte.short_s get() = toShort()
 @Deprecated("Conversion from Byte to Byte is useless", ReplaceWith("this"))
 inline val Byte.byte get() = toByte()
+inline val Byte.bigint get() = int_z.toBigInteger()
 
 inline val Byte.ulong_s get() = toULong()
 inline val Byte.uint_s get() = toUInt()
@@ -195,6 +194,7 @@ inline val ULong.long get() = toLong()
 inline val ULong.int get() = toInt()
 inline val ULong.short get() = toShort()
 inline val ULong.byte get() = toByte()
+inline val ULong.bigint get() = long.bigint
 
 @Deprecated("Conversion from ULong to ULong is useless", ReplaceWith("this"))
 inline val ULong.ulong get() = toULong()
@@ -220,6 +220,7 @@ inline val UInt.long_z get() = toLong()
 inline val UInt.int get() = toInt()
 inline val UInt.short get() = toShort()
 inline val UInt.byte get() = toByte()
+inline val UInt.bigint get() = int.bigint
 
 inline val UInt.ulong_z get() = toULong()
 @Deprecated("Conversion from UInt to UInt is useless", ReplaceWith("this"))
@@ -241,6 +242,7 @@ inline val UShort.long_z get() = toLong()
 inline val UShort.int_z get() = toInt()
 inline val UShort.short get() = toShort()
 inline val UShort.byte get() = toByte()
+inline val UShort.bigint get() = short.bigint
 
 inline val UShort.ulong_z get() = toULong()
 inline val UShort.uint_z get() = toUInt()
@@ -268,6 +270,7 @@ inline val UByte.long_z get() = toLong()
 inline val UByte.int_z get() = toInt()
 inline val UByte.short_z get() = toShort()
 inline val UByte.byte get() = toByte()
+inline val UByte.bigint get() = byte.bigint
 
 inline val UByte.ulong_z get() = toULong()
 inline val UByte.uint_z get() = toUInt()

@@ -2,6 +2,7 @@
 
 package ru.inforion.lab403.common.extensions
 
+import java.math.BigInteger
 import kotlin.experimental.inv
 
 // =====================================================================================================================
@@ -41,6 +42,9 @@ inline infix fun UShort.ushr(n: Int) = uint_z shr n
 inline infix fun UByte.shl(n: Int) = uint_z shl n
 inline infix fun UByte.ashr(n: Int) = (int_s ashr n).uint
 inline infix fun UByte.ushr(n: Int) = uint_z shr n
+
+inline infix fun BigInteger.ashr(n: Int): BigInteger { throw NotImplementedError("Arithmetic shift isn't implemented") }
+inline infix fun BigInteger.ushr(n: Int) = this shr n
 
 // =====================================================================================================================
 // Bit inverse operations
