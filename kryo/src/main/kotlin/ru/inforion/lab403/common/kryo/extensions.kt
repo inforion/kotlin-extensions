@@ -6,28 +6,21 @@ import com.esotericsoftware.kryo.io.Output
 import ru.inforion.lab403.common.extensions.cast
 import java.io.*
 
-val Input.stream get() = DataInputStream(this)
+inline val Input.stream get() = DataInputStream(this)
 
-val Output.stream get() = DataOutputStream(this)
+inline val Output.stream get() = DataOutputStream(this)
 
-val ByteArray.input get() = Input(this)
+inline val ByteArray.input get() = Input(this)
 
-val InputStream.input get() = Input(this)
+inline val InputStream.input get() = Input(this)
 
-fun <T> Kryo.writeClassAndObject(stream: OutputStream, obj: T) {
-    val output = Output(stream)
-    writeClassAndObject(output, obj)
-    output.flush()
+inline val OutputStream.output get() = Output(this)
+
+fun <T> Kryo.writeClassAndObject(stream: OutputStream, obj: T)= stream.output.apply {
+    writeClassAndObject(this, obj)
+    flush()
 }
 
-fun <T> Kryo.readClassAndObject(stream: InputStream): T {
-    val input = Input(stream)
-    val obj = readClassAndObject(input)
-    return obj.cast()
-}
+fun <T> Kryo.readClassAndObject(stream: InputStream): T = readClassAndObject(stream.input).cast()
 
-fun <T> Kryo.readClassAndObject(bytes: ByteArray): T {
-    val input = Input(bytes)
-    val obj = readClassAndObject(input)
-    return obj.cast()
-}
+fun <T> Kryo.readClassAndObject(bytes: ByteArray): T = readClassAndObject(bytes.input).cast()

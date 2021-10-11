@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.*
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 import com.esotericsoftware.kryo.util.DefaultClassResolver
 import com.esotericsoftware.kryo.util.MapReferenceResolver
+import com.esotericsoftware.minlog.Log
 import com.twitter.chill.ObjectSerializer
 import org.objenesis.strategy.InstantiatorStrategy
 import org.objenesis.strategy.StdInstantiatorStrategy
@@ -27,7 +28,10 @@ class ExtendedKryo(
             references = true
 
             if (cl != null) classLoader = cl
+
         }
+
+        fun setLogLevel(level: Int) = Log.set(level)
     }
 
     private val objSer by lazy { ObjectSerializer<Any>() }

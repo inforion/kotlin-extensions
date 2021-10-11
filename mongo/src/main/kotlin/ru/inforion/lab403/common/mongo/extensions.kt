@@ -54,4 +54,4 @@ inline fun <reified T : Enum<T>> Document.getEnumValue(key: String) = enumValueO
 inline fun Document.getULong(key: String) = getLong(key).ulong
 
 inline fun MongoClient.filteredMongoBases() =
-    mutableListOf(*listDatabaseNames().toList().toTypedArray()).also { it.removeAll(nonUserCollections) }
+    listDatabaseNames().toMutableSet().also { it.removeAll(nonUserCollections) }
