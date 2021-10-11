@@ -1,23 +1,14 @@
-package ru.inforion.lab403.common.spark
+package ru.inforion.lab403.common.kryo
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
+import org.joda.time.DateTime
 import ru.inforion.lab403.common.extensions.*
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.lang.IllegalArgumentException
+import ru.inforion.lab403.common.jodatime.readDateTime
+import ru.inforion.lab403.common.jodatime.writeDateTime
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.system.exitProcess
-
-
-// TODO: arrays, ranges
-
-internal val Input.stream get() = DataInputStream(this)
-
-internal val Output.stream get() = DataOutputStream(this)
 
 object UByteSerializer : Serializer<UByte>() {
     override fun write(kryo: Kryo, output: Output, obj: UByte) = output.writeByte(obj.int_s)
@@ -54,18 +45,7 @@ object ByteBufferSerializer : Serializer<ByteBuffer>() {
     override fun read(kryo: Kryo, input: Input, type: Class<ByteBuffer>) = input.stream.readByteBuffer()
 }
 
-fun Kryo.registerUnsigned() {
-    register(UByte::class.java, UByteSerializer)
-    register(UShort::class.java, UShortSerializer)
-    register(UInt::class.java, UIntSerializer)
-    register(ULong::class.java, ULongSerializer)
-}
-
-fun Kryo.registerRanges() {
-    register(IntRange::class.java, IntRangeSerializer)
-    register(LongRange::class.java, LongRangeSerializer)
-}
-
-fun Kryo.registerByteBuffer() {
-    register(ByteBuffer::class.java, ByteBufferSerializer)
+object DateTimeSerializer : Serializer<DateTime>() {
+    override fun write(kryo: Kryo, output: Output, obj: DateTime) = output.stream.writeDateTime(obj)
+    override fun read(kryo: Kryo, input: Input, type: Class<DateTime>) = input.stream.readDateTime()
 }

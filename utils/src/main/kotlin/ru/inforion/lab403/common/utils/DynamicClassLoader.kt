@@ -21,6 +21,13 @@ object DynamicClassLoader : URLClassLoader(arrayOf(), ClassLoader.getSystemClass
         sysPathsField.set(null, null)
     }
 
+    private val onLoadIntoClasspath = mutableSetOf<OnUrlLoadCallback>()
+
+    /**
+     * {EN} Executes specified callback when new url loaded {EN}
+     */
+    fun onLoadIntoClasspath(action: OnUrlLoadCallback) = onLoadIntoClasspath.add(action)
+
     /**
      * {EN} Add new class path for e.i. JAR-file {EN}
      */
@@ -29,6 +36,7 @@ object DynamicClassLoader : URLClassLoader(arrayOf(), ClassLoader.getSystemClass
 
         if (newUrl !in urLs) {
             addURL(newUrl)
+            onLoadIntoClasspath.forEach { it(newUrl) }
             log.finer { "Added to classloader: $newUrl" }
         }
     }
