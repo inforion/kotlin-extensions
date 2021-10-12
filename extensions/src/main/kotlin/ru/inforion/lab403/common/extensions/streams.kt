@@ -9,6 +9,7 @@ import java.nio.ByteOrder.LITTLE_ENDIAN
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 val emptyInputStream = ByteArray(0).inputStream()
@@ -215,6 +216,6 @@ inline fun <T : Enum<T>> DataOutputStream.writeEnumValue(value: T) = writeString
 
 inline fun <reified T : Enum<T>> DataInputStream.readEnumValue() = enumValueOf<T>(readStringIso())
 
-inline fun OutputStream.toBufferedOutputStream() = BufferedOutputStream(this)
+inline fun OutputStream.toZipOutputStream() = if (this is ZipOutputStream) this else ZipOutputStream(this)
 
-inline fun OutputStream.toZipOutputStream() = ZipOutputStream(this)
+inline fun InputStream.toZipInputStream() = if (this is ZipInputStream) this else ZipInputStream(this)
