@@ -5,12 +5,15 @@ package ru.inforion.lab403.common.kafka
 import org.apache.kafka.clients.admin.*
 import org.apache.kafka.clients.admin.OffsetSpec
 import org.apache.kafka.clients.consumer.OffsetAndMetadata
+import org.apache.kafka.common.ConsumerGroupState
 import org.apache.kafka.common.KafkaFuture
 import org.apache.kafka.common.Node
 import org.apache.kafka.common.TopicPartition
+import org.apache.kafka.common.errors.TopicExistsException
 import ru.inforion.lab403.common.extensions.*
 import ru.inforion.lab403.common.logging.logger
 import java.io.Closeable
+import java.util.concurrent.ExecutionException
 
 
 class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Closeable {
@@ -32,18 +35,18 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
 
     fun listTopics(): Set<String> = client.listTopics().names().getOrThrow(timeout)
 
-    fun deleteTopics(topics: Collection<String>) { client.deleteTopics(topics).all().getOrThrow() }
+    fun deleteTopics(topics: Collection<String>) = client.deleteTopics(topics).getOrThrow(timeout)
 
-    fun createTopics(topics: Collection<NewTopic>) { client.createTopics(topics).all().getOrThrow(timeout) }
+    fun createTopics(topics: Collection<NewTopic>) = client.createTopics(topics).getOrThrow(timeout)
 
-    fun describeTopics(topics: Collection<String>) = client.describeTopics(topics).all().getOrThrow(timeout).values
+    fun describeTopics(topics: Collection<String>): Collection<TopicDescription> = client.describeTopics(topics).getOrThrow(timeout).values
 
-    fun describeGroups(groups: Collection<String>): MutableMap<String, KafkaFuture<ConsumerGroupDescription>> =
+    fun describeGroups(groups: Collection<String>): Map<String, KafkaFuture<ConsumerGroupDescription>> =
         client.describeConsumerGroups(groups).describedGroups()
 
     fun listOffsets(offsets: Collection<TopicPartition>, offsetSpec: OffsetSpec): Map<TopicPartition, Long> {
         val parameters = offsets.associateWith { offsetSpec }
-        val result = client.listOffsets(parameters).all().getOrThrow(timeout)
+        val result = client.listOffsets(parameters).getOrThrow(timeout)
         return result.associate { it.key to it.value.offset() }
     }
 
@@ -77,27 +80,47 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         }
     }
 
-    private fun createAndConfigureTopic(topic: String, config: Map<String, String>?, partitions: Int, replicationFactor: Short = 1) {
-        val newTopic = config
-            .ifItNotNull { NewTopic(topic, partitions, replicationFactor).configs(it) }
-            .either { NewTopic(topic, partitions, replicationFactor) }
-        createTopics(setOf(newTopic))
+    private fun createAndConfigureTopic(
+        topic: String,
+        config: Map<String, String> = emptyMap(),
+        partitions: Int,
+        replicationFactor: Short = 1,
+        retries: Int = 10,
+        delay: Long = 100  // ms
+    ) {
+        val newTopic = NewTopic(topic, partitions, replicationFactor).configs(config)
+
+        // kafka returns from get() method of deleteTopics() but
+        // when try to createTopics() it fails with TopicExistsException exception
+        repeat(retries) {
+            try {
+                createTopics(setOf(newTopic))
+                return
+            } catch (error: ExecutionException) {
+                if (error.cause !is TopicExistsException) throw error
+                Thread.sleep(delay)
+            }
+        }
+
+        error("Can't create topic '$topic' within $retries retries because topic already exists")
     }
 
     fun resetOffsets(group: String, topic: String, config: Map<String, String>, partitions: Int, replicationFactor: Short = 1) {
         deleteTopics(setOf(topic))
         createAndConfigureTopic(topic, config, partitions, replicationFactor)
 
-        describeGroups(setOf(group)).map { (group, groupDesc) ->
-            when (val state = groupDesc.get().state().toString()) {
-                in "Empty", "Dead" -> {
-                    val partitionsToReset = describeTopics(setOf(topic)).flatMap { it.toTopicPartitions() }
-                    val preparedOffsets = prepareOffsetsToReset(partitionsToReset, OffsetSpec.earliest())
-                    client.alterConsumerGroupOffsets(group, preparedOffsets)
-                }
+        describeGroups(setOf(group)).map { (group, desc) ->
+            val state = desc.getOrThrow(timeout).state()
 
-                else -> throw IllegalStateException("Assignments can only be reset if the group '$group' is inactive, but the current state is $state")
+            require(state == ConsumerGroupState.EMPTY || state == ConsumerGroupState.DEAD) {
+                "Assignments can only be reset if the group '$group' is inactive, but the current state is $state"
             }
+
+            val partitionsToReset = describeTopics(setOf(topic)).flatMap { it.toTopicPartitions() }
+            val preparedOffsets = prepareOffsetsToReset(partitionsToReset, OffsetSpec.earliest())
+            client.alterConsumerGroupOffsets(group, preparedOffsets)
+        }.forEach {
+            it.getOrThrow(timeout)
         }
     }
 

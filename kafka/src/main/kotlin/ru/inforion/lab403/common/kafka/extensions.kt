@@ -2,7 +2,7 @@
 
 package ru.inforion.lab403.common.kafka
 
-import org.apache.kafka.clients.admin.TopicDescription
+import org.apache.kafka.clients.admin.*
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -16,9 +16,14 @@ import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
 import org.joda.time.DateTime
+import ru.inforion.lab403.common.concurrent.events.SimpleEvent
+import ru.inforion.lab403.common.concurrent.events.StatefulEvent
+import ru.inforion.lab403.common.extensions.cast
 import java.time.Duration
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 inline val <K, V> ConsumerRecord<K, V>.value: V get() = value()
 
@@ -81,3 +86,13 @@ inline fun <T> KafkaFuture<T>.getOrThrow(millis: Long = -1): T =
 
 inline fun <T> KafkaFuture<T>.getOrNull(millis: Long = -1): T? =
     runCatching { getOrThrow(millis) }.getOrNull()
+
+inline fun DeleteTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
+
+inline fun CreateTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
+
+inline fun DescribeTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
+
+inline fun ListOffsetsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
+
+inline fun AlterConsumerGroupOffsetsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
