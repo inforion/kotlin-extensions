@@ -5,6 +5,7 @@ package ru.inforion.lab403.common.spark
 import org.apache.spark.TaskContext
 import org.apache.spark.api.java.JavaRDD
 import org.apache.spark.api.java.JavaRDDLike
+import org.apache.spark.streaming.kafka010.HasOffsetRanges
 import ru.inforion.lab403.common.concurrent.launch
 import ru.inforion.lab403.common.extensions.INT_MAX
 import java.util.concurrent.LinkedBlockingQueue
@@ -77,3 +78,5 @@ inline fun <T> JavaRDD<T>.random(fraction: Double) = sample(false, fraction, Sys
 // somehow get session from rdd and get executors count
 inline fun <T, S> JavaRDD<T>.sort(ascending: Boolean = false, partitions: Int = 1, noinline selector: (T) -> S): JavaRDD<T> =
     sortBy(selector, ascending, partitions)
+
+inline fun <T> JavaRDD<T>.offsets() = (rdd() as HasOffsetRanges).offsetRanges()
