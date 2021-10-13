@@ -2,11 +2,14 @@
 
 package ru.inforion.lab403.common.extensions
 
+import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+
+inline fun File.toZipFile() = ZipFile(this)
 
 inline fun ZipOutputStream.writeEntry(name: String, action: ZipOutputStream.() -> Unit) {
     val entry = ZipEntry(name)
@@ -16,10 +19,14 @@ inline fun ZipOutputStream.writeEntry(name: String, action: ZipOutputStream.() -
     closeEntry()
 }
 
+inline fun ZipOutputStream.writeEntry(name: String, bytes: ByteArray) = writeEntry(name) { write(bytes) }
+
 inline fun <T> ZipFile.readEntry(name: String, action: InputStream.() -> T): T {
     val entry = requireNotNull(getEntry(name)) { "Entry '$name' not found in ZIP" }
     return getInputStream(entry).use(action)
 }
+
+inline fun ZipFile.readEntry(name: String): ByteArray = readEntry(name) { readAllBytes() }
 
 inline fun ZipFile.isFileExists(filename: String) = getEntry(filename) != null
 
