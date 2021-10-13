@@ -105,16 +105,31 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         error("Can't create topic '$topic' within $retries retries because topic already exists")
     }
 
-    fun resetOffsets(group: String, topic: String, config: Map<String, String>, partitions: Int, replicationFactor: Short = 1) {
-        deleteTopics(setOf(topic))
-        createAndConfigureTopic(topic, config, partitions, replicationFactor)
-
+    fun resetOffsets(
+        group: String,
+        topic: String,
+        config: Map<String, String>,
+        partitions: Int,
+        replicationFactor: Short = 1,
+        retries: Int = 10
+    ) {
         describeGroups(setOf(group)).map { (group, desc) ->
+            var counter = retries
+
+            while (counter > 0) {
+                val state = desc.getOrThrow(timeout).state()
+                if (state == ConsumerGroupState.DEAD || state == ConsumerGroupState.EMPTY) break
+                else counter -= 1
+            }
+
             val state = desc.getOrThrow(timeout).state()
 
             require(state == ConsumerGroupState.EMPTY || state == ConsumerGroupState.DEAD) {
                 "Assignments can only be reset if the group '$group' is inactive, but the current state is $state"
             }
+
+            deleteTopics(setOf(topic))
+            createAndConfigureTopic(topic, config, partitions, replicationFactor, retries)
 
             val partitionsToReset = describeTopics(setOf(topic)).flatMap { it.toTopicPartitions() }
             val preparedOffsets = prepareOffsetsToReset(partitionsToReset, OffsetSpec.earliest())

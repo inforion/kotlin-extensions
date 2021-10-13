@@ -16,14 +16,9 @@ import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
 import org.joda.time.DateTime
-import ru.inforion.lab403.common.concurrent.events.SimpleEvent
-import ru.inforion.lab403.common.concurrent.events.StatefulEvent
-import ru.inforion.lab403.common.extensions.cast
 import java.time.Duration
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 inline val <K, V> ConsumerRecord<K, V>.value: V get() = value()
 
