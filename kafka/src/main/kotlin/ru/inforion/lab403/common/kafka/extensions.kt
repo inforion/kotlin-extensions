@@ -12,6 +12,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.KafkaFuture
 import org.apache.kafka.common.TopicPartition
+import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
@@ -75,6 +76,13 @@ inline fun <K, V> KafkaProducer<K, V>.send(topic: String, key: K, value: V): Fut
     send(ProducerRecord(topic, key, value))
 
 inline fun TopicDescription.toTopicPartitions() = partitions().map { TopicPartition(name(), it.partition()) }
+
+@OptIn(ExperimentalStdlibApi::class)
+inline fun Topic.config() = buildMap<String, String> {
+    if (retention != null) put(TopicConfig.RETENTION_BYTES_CONFIG, retention.toString())
+    if (segment != null) put(TopicConfig.SEGMENT_BYTES_CONFIG, segment.toString())
+    if (policy != null) put(TopicConfig.CLEANUP_POLICY_CONFIG, policy)
+}
 
 inline fun <T> KafkaFuture<T>.getOrThrow(millis: Long = -1): T =
     if (millis < 0) get() else get(millis, TimeUnit.MILLISECONDS)

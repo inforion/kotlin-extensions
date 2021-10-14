@@ -80,15 +80,8 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         }
     }
 
-    private fun createAndConfigureTopic(
-        topic: String,
-        config: Map<String, String> = emptyMap(),
-        partitions: Int,
-        replicationFactor: Short = 1,
-        retries: Int = 10,
-        delay: Long = 100  // ms
-    ) {
-        val newTopic = NewTopic(topic, partitions, replicationFactor).configs(config)
+    fun createAndConfigureTopic(topic: Topic, retries: Int = 10, delay: Long = 100) {
+        val newTopic = NewTopic(topic.name, topic.partitions, topic.replication).configs(topic.config())
 
         // kafka returns from get() method of deleteTopics() but
         // when try to createTopics() it fails with TopicExistsException exception
@@ -105,14 +98,7 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
         error("Can't create topic '$topic' within $retries retries because topic already exists")
     }
 
-    fun resetOffsets(
-        group: String,
-        topic: String,
-        config: Map<String, String>,
-        partitions: Int,
-        replicationFactor: Short = 1,
-        retries: Int = 10
-    ) {
+    fun resetOffsets(group: String, topic: Topic, retries: Int = 10) {
         describeGroups(setOf(group)).map { (group, desc) ->
             var counter = retries
 
@@ -128,10 +114,10 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
                 "Assignments can only be reset if the group '$group' is inactive, but the current state is $state"
             }
 
-            deleteTopics(setOf(topic))
-            createAndConfigureTopic(topic, config, partitions, replicationFactor, retries)
+            deleteTopics(setOf(topic.name))
+            createAndConfigureTopic(topic, retries)
 
-            val partitionsToReset = describeTopics(setOf(topic)).flatMap { it.toTopicPartitions() }
+            val partitionsToReset = describeTopics(setOf(topic.name)).flatMap { it.toTopicPartitions() }
             val preparedOffsets = prepareOffsetsToReset(partitionsToReset, OffsetSpec.earliest())
             client.alterConsumerGroupOffsets(group, preparedOffsets)
         }.forEach {
