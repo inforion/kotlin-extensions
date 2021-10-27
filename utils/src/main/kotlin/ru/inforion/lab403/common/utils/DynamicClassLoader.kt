@@ -6,7 +6,7 @@ import java.io.File
 import java.net.URLClassLoader
 
 
-object DynamicClassLoader : URLClassLoader(arrayOf(), ClassLoader.getSystemClassLoader()) {
+object DynamicClassLoader : URLClassLoader(arrayOf(), DynamicClassLoader::class.java.classLoader) {
 
     private const val libraryPathKey = "java.library.path"
 
