@@ -1,5 +1,6 @@
 package ru.inforion.lab403.common.utils
 
+import ru.inforion.lab403.common.extensions.cast
 import java.io.Serializable
 import kotlin.reflect.KProperty
 
@@ -13,6 +14,6 @@ class LazyTransient<R, T>(private val initializer: () -> T): Serializable {
             initialized = true
             value = initializer()
         }
-        return value!!
+        return value.cast()
     }
 }
