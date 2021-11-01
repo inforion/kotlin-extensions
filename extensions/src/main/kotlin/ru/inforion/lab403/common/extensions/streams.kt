@@ -14,6 +14,40 @@ import java.util.zip.ZipOutputStream
 
 val emptyInputStream = ByteArray(0).inputStream()
 
+
+inline fun InputStream.readWhile(
+    leftover: Boolean = true,
+    capacity: Int = 32,
+    predicate: (Int) -> Boolean
+): ByteArray {
+    val result = ByteArrayOutputStream(capacity)
+    while (true) {
+        val value = read()
+
+        if (value == -1)
+            throw EOFException()
+
+        if (!predicate(value)) {
+            if (leftover) result.write(value)
+            return result.toByteArray()
+        }
+
+        result.write(value)
+    }
+}
+
+
+inline fun InputStream.readWhileOrNull(
+    leftover: Boolean = true,
+    capacity: Int = 32,
+    predicate: (Int) -> Boolean
+) = try {
+    readWhile(leftover, capacity, predicate)
+} catch (error: EOFException) {
+    null
+}
+
+
 const val DEFAULT_BYTE_BUFFER_CHUNK = 0x80_0000
 const val DEFAULT_BYTE_BUFFER_MARKER = 0x6EADBEEF
 
