@@ -55,6 +55,28 @@ inline val <T> List<T>.end get() = last()
 
 inline val <T> List<T>.endOrNull get() = lastOrNull()
 
+inline fun <reified T> List<T>.split(count: Int): List<List<T>> {
+    require(size > 0) { "List is empty" }
+    require(count > 0) { "Amount of partitions must be positive" }
+
+    if (size == 1)
+        return listOf(this)
+
+    val result = mutableListOf<List<T>>()
+
+    var index = 0
+    var timer = size % count
+    var step = size / count + if (timer > 0) 1 else 0
+    repeat (if (count > size) size else count) {
+        result.add(subList(index, index + step).toList())
+        index += step
+        timer -= 1
+        if (timer == 0) step -= 1
+    }
+
+    return result.toList()
+}
+
 inline fun <R> List<*>.findInstance(klass: Class<R>): R? {
     for (element in this) if (klass.isInstance(element)) return element.cast()
     return null

@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":kafka"))
     implementation(project(":concurrent"))
 
+    testImplementation(project(":kryo"))
+
     api("org.jetbrains.kotlinx.spark:core-3.0_$scalaVersion:$kotlinSparkVersion")
     api("org.jetbrains.kotlinx.spark:kotlin-spark-api-3.0:$kotlinSparkVersion")
     api("org.jetbrains.kotlinx.spark:kotlin-spark-api-common:$kotlinSparkVersion")
