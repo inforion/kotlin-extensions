@@ -190,11 +190,13 @@ inline val Char.truth get() = !untruth
  * ULong conversions
  */
 
+val LONG_MASK = (BigInteger.ONE shl 64) - BigInteger.ONE
+
 inline val ULong.long get() = toLong()
 inline val ULong.int get() = toInt()
 inline val ULong.short get() = toShort()
 inline val ULong.byte get() = toByte()
-inline val ULong.bigint get() = long.bigint
+inline val ULong.bigint get() = long.bigint and LONG_MASK
 
 @Deprecated("Conversion from ULong to ULong is useless", ReplaceWith("this"))
 inline val ULong.ulong get() = toULong()
@@ -220,7 +222,7 @@ inline val UInt.long_z get() = toLong()
 inline val UInt.int get() = toInt()
 inline val UInt.short get() = toShort()
 inline val UInt.byte get() = toByte()
-inline val UInt.bigint get() = int.bigint
+inline val UInt.bigint get() = int.bigint and LONG_MASK
 
 inline val UInt.ulong_z get() = toULong()
 @Deprecated("Conversion from UInt to UInt is useless", ReplaceWith("this"))
@@ -242,7 +244,7 @@ inline val UShort.long_z get() = toLong()
 inline val UShort.int_z get() = toInt()
 inline val UShort.short get() = toShort()
 inline val UShort.byte get() = toByte()
-inline val UShort.bigint get() = short.bigint
+inline val UShort.bigint get() = short.bigint and LONG_MASK
 
 inline val UShort.ulong_z get() = toULong()
 inline val UShort.uint_z get() = toUInt()
@@ -270,7 +272,7 @@ inline val UByte.long_z get() = toLong()
 inline val UByte.int_z get() = toInt()
 inline val UByte.short_z get() = toShort()
 inline val UByte.byte get() = toByte()
-inline val UByte.bigint get() = byte.bigint
+inline val UByte.bigint get() = byte.bigint and LONG_MASK
 
 inline val UByte.ulong_z get() = toULong()
 inline val UByte.uint_z get() = toUInt()
