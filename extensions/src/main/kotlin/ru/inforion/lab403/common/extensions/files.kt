@@ -6,6 +6,8 @@ import java.io.InputStream
 import java.net.URI
 import java.net.URL
 import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 
 
@@ -13,6 +15,12 @@ fun createTimeFile(prefix: String? = null, suffix: String? = null, directory: Fi
     val realPrefix = prefix ?: System.currentTimeMillis().toString()
     return File.createTempFile(realPrefix, suffix, directory).also { it.deleteOnExit() }
 }
+
+fun ByteArray.toTemporaryFile(
+    prefix: String? = null,
+    suffix: String? = null,
+    directory: File? = null
+) = createTimeFile(prefix, suffix, directory).also { it.writeBytes(this) }
 
 @Deprecated("use operator div()")
 fun joinPaths(vararg paths: String): String {
