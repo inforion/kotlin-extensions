@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import ru.inforion.lab403.common.concurrent.locks.PhonyLock
 import ru.inforion.lab403.common.wsrpc.annotations.WebSocketRpcMethod
+import ru.inforion.lab403.common.wsrpc.endpoints.IteratorEndpoint.Companion.toIterableEndpoint
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import ru.inforion.lab403.common.wsrpc.interfaces.WebSocketRpcEndpoint
 import java.util.concurrent.locks.Lock
@@ -90,12 +91,6 @@ class SequenceEndpoint<T> constructor(
     }
 
     @WebSocketRpcMethod
-    fun iter(): Any? {
-        val iter = requireNotNull(iter) { "Before iterating through sequence call scroll method." }
-        return lock.withLock { if (iter.hasNext()) iter.next() else null }
-    }
-
-    @WebSocketRpcMethod
     fun <R> flatMap(transform: Callable<Iterable<R>>) {
         state = state.flatMap { transform.call(it) }
     }
@@ -111,9 +106,7 @@ class SequenceEndpoint<T> constructor(
     }
 
     @WebSocketRpcMethod
-    fun scroll(size: Int) {
-        iter = state.windowed(size, size, partialWindows = true).iterator()
-    }
+    fun scroll(size: Int) = state.toIterableEndpoint(size = size)
 
     @WebSocketRpcMethod(close = true)
     fun first() = lock.withLock { state.first() }
