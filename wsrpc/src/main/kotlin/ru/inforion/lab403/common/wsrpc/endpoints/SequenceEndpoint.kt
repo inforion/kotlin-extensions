@@ -22,6 +22,7 @@ class SequenceEndpoint<T> constructor(
     }
 
     private var state: Sequence<*> = sequence
+    private var iter: Iterator<*>? = null
 
     @WebSocketRpcMethod
     fun find(predicate: Callable<Boolean>) {
@@ -89,6 +90,12 @@ class SequenceEndpoint<T> constructor(
     }
 
     @WebSocketRpcMethod
+    fun iter(): Any? {
+        requireNotNull(iter) { "Before iterating through sequence call scroll method." }
+        return lock.withLock { runBlocking { if (iter!!.hasNext()) iter!!.next() else null } }
+    }
+
+    @WebSocketRpcMethod
     fun <R> flatMap(transform: Callable<Iterable<R>>) {
         state = state.flatMap { transform.call(it) }
     }
@@ -101,6 +108,11 @@ class SequenceEndpoint<T> constructor(
     @WebSocketRpcMethod
     fun distinct() {
         state = state.distinct()
+    }
+
+    @WebSocketRpcMethod
+    fun scroll(size: Int) {
+        iter = state.windowed(size, size, partialWindows = true).iterator()
     }
 
     @WebSocketRpcMethod(close = true)
