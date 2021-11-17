@@ -91,8 +91,8 @@ class SequenceEndpoint<T> constructor(
 
     @WebSocketRpcMethod
     fun iter(): Any? {
-        requireNotNull(iter) { "Before iterating through sequence call scroll method." }
-        return lock.withLock { runBlocking { if (iter!!.hasNext()) iter!!.next() else null } }
+        val iter = requireNotNull(iter) { "Before iterating through sequence call scroll method." }
+        return lock.withLock { if (iter.hasNext()) iter.next() else null }
     }
 
     @WebSocketRpcMethod
