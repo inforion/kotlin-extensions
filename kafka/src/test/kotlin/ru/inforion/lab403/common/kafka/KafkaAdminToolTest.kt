@@ -6,6 +6,6 @@ class KafkaAdminToolTest {
     @Test
     internal fun resetOffset() {
         val admin = KafkaAdminTool("localhost:9092", 10000)
-        admin.resetOffsets("traces-consumer-group", "Traces", emptyMap(), 8)
+        admin.resetOffsets("traces-consumer-group", Topic("Traces", 7))
     }
 }

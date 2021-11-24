@@ -23,7 +23,6 @@ class SequenceEndpoint<T> constructor(
     }
 
     private var state: Sequence<*> = sequence
-    private var iter: Iterator<*>? = null
 
     @WebSocketRpcMethod
     fun find(predicate: Callable<Boolean>) {

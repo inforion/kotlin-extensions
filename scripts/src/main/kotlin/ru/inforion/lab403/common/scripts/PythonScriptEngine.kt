@@ -2,14 +2,8 @@ package ru.inforion.lab403.common.scripts
 
 import org.python.core.*
 import org.python.jsr223.PyScriptEngine
-import org.python.jsr223.PyScriptEngineScope
 import org.python.modules.cPickle
-import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.primaryConstructor
 
 class PythonScriptEngine(engine: PyScriptEngine) : AbstractScriptEngine<PyScriptEngine>(engine) {
     companion object {

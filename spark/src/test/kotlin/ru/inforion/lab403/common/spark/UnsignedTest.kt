@@ -8,6 +8,7 @@ import org.apache.spark.serializer.KryoRegistrator
 import org.apache.spark.serializer.KryoSerializer
 import org.junit.Test
 import ru.inforion.lab403.common.extensions.int
+import ru.inforion.lab403.common.extensions.split
 import ru.inforion.lab403.common.extensions.uint
 
 internal class UnsignedTest {
@@ -45,7 +46,7 @@ internal class UnsignedTest {
         val testik = Testik(100u)
 
         val partitions = list
-            .partition(sc.defaultParallelism())
+            .split(sc.defaultParallelism())
             .map { it to testik }
 
         val result = partitions

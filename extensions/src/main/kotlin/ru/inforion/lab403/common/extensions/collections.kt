@@ -74,7 +74,7 @@ inline fun <reified T> List<T>.split(count: Int): List<List<T>> {
         if (timer == 0) step -= 1
     }
 
-    return result.toList()
+    return result
 }
 
 inline fun <R> List<*>.findInstance(klass: Class<R>): R? {
