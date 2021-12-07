@@ -15,6 +15,12 @@ import java.util.zip.ZipOutputStream
 val emptyInputStream = ByteArray(0).inputStream()
 
 
+inline fun InputStream.readAvailableBytes(count: Int = -1): ByteArray {
+    val toRead = if (count > 0) minOf(available(), count) else available()
+    return readNBytes(toRead)
+}
+
+
 inline fun InputStream.readWhile(
     leftover: Boolean = true,
     capacity: Int = 32,

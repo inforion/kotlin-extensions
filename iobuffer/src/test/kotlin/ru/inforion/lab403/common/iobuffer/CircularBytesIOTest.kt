@@ -5,6 +5,7 @@ import ru.inforion.lab403.common.extensions.byte
 import ru.inforion.lab403.common.extensions.int_z
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 
 internal class CircularBytesIOTest {
@@ -130,5 +131,58 @@ internal class CircularBytesIOTest {
 
         assertEquals(0, io.readAvailable)
         assertEquals(16, io.writeAvailable)
+    }
+
+    @Test
+    fun clearCircularBufferTest() {
+        val chunk = ByteArray(20) { it.byte }
+
+        val io = CircularBytesIO(20)
+        io.write(chunk, 0, 10)
+        io.write(chunk, 0, 10)
+
+        assertEquals(20, io.readAvailable)
+        assertEquals(0, io.writeAvailable)
+
+        io.clear()
+
+        assertEquals(0, io.readAvailable)
+        assertEquals(20, io.writeAvailable)
+    }
+
+    @Test
+    fun iterateCircularBufferTest() {
+        val chunk = ByteArray(20) { it.byte }
+
+        val io = CircularBytesIO(20)
+        io.write(chunk, 0, 10)
+        io.read(8)
+        io.write(chunk, 0, 10)
+
+        val index = io.indexOf(5)
+
+        assertEquals(7, index)
+        assertEquals(4, io.readAvailable)
+
+        val actual = io.map { it * it }
+        val expected = listOf(36, 49, 64, 81)
+
+        assertEquals(expected, actual)
+
+        assertEquals(0, io.readAvailable)
+        assertEquals(20, io.writeAvailable)
+    }
+
+    @Test
+    fun isEmptyCircularBufferTest() {
+        val chunk = ByteArray(20) { it.byte }
+
+        val io = CircularBytesIO(20)
+        io.write(chunk, 0, 10)
+        io.write(chunk, 0, 10)
+
+        io.clear()
+
+        assertTrue { io.isEmpty() }
     }
 }

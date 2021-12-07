@@ -89,4 +89,14 @@ class BlockingCircularBytesIO(val capacity: Int) : BlockingBytesIO {
     override fun write(bytes: ByteArray, offset: Int, count: Int) = locked { signalWrite(bytes, offset, count) }
 
     override fun read(count: Int) = locked { signalRead(count) }
+
+    /**
+     * Returns asynchronous iterator for the buffer
+     */
+    override fun iterator() = io.iterator()
+
+    /**
+     * Asynchronous clear the buffer so no others thread should wait read or write to it
+     */
+    override fun clear() = io.clear()
 }

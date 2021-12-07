@@ -5,7 +5,7 @@ package ru.inforion.lab403.common.iobuffer
  *
  * @since 0.3.4
  */
-interface BytesIO {
+interface BytesIO : Iterable<Byte> {
     /**
      * Available number of bytes that can be written to buffer before overflow
      */
@@ -19,14 +19,22 @@ interface BytesIO {
     /**
      * Writes [count] specified [bytes] from [offset] into buffer
      *
-     * @throws IllegalArgumentException if overflow will occurred
+     * @throws IllegalArgumentException if overflow will occur
      */
     fun write(bytes: ByteArray, offset: Int = 0, count: Int = bytes.size)
 
     /**
      * Read [count] bytes from buffer
      *
-     * @throws IllegalArgumentException if underflow will occurred
+     * @throws IllegalArgumentException if underflow will occur
      */
     fun read(count: Int): ByteArray
+
+
+    /**
+     * Clear data in buffer and reset positions
+     *
+     * @since 0.4.0
+     */
+    fun clear()
 }

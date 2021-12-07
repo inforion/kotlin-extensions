@@ -107,4 +107,19 @@ class CircularBytesIO(val capacity: Int) : BytesIO {
             check(readAvailable >= 0) { "Internal read operations failed -> readAvailable=$readAvailable" }
         }
     }
+
+    /**
+     * @since 0.4.0
+     */
+    override fun iterator() = object : Iterator<Byte> {
+        override fun hasNext() = readAvailable != 0
+        override fun next() = read(1).first()
+    }
+
+    override fun clear() {
+        data.fill(0)
+        writePos = 0
+        readPos = 0
+        writeOverflow = false
+    }
 }

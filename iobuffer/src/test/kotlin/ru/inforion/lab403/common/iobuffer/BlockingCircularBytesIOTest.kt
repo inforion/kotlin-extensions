@@ -8,6 +8,7 @@ import ru.inforion.lab403.common.extensions.int_s
 import ru.inforion.lab403.common.extensions.int_z
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 import kotlin.test.expect
 
 
@@ -93,5 +94,18 @@ internal class BlockingCircularBytesIOTest {
     fun readFailTest() {
         val io = BlockingCircularBytesIO(16)
         assertFails { io.read(10) }
+    }
+
+    @Test
+    fun isEmptyCircularBufferTest() {
+        val chunk = ByteArray(20) { it.byte }
+
+        val io = BlockingCircularBytesIO(20)
+        io.write(chunk, 0, 10)
+        io.write(chunk, 0, 10)
+
+        io.clear()
+
+        assertTrue { io.isEmpty() }
     }
 }
