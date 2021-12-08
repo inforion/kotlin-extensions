@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.intervalmap
 
 import ru.inforion.lab403.common.extensions.hex
+import ru.inforion.lab403.common.extensions.str
 import ru.inforion.lab403.common.logging.logger
 import java.util.*
 
@@ -19,7 +20,9 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
 
     private var baseOrNull: Interval? = null
 
-    private val base get() = requireNotNull(baseOrNull) { "Map was not initialized" }
+    val isInitialized get() = baseOrNull != null
+
+    val base get() = requireNotNull(baseOrNull) { "Map was not initialized" }
 
     constructor(id: ID, first: Mark, last: Mark) : this() {
         init(id, first, last)
@@ -29,7 +32,7 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
         init(id.id, first, last)
     }
 
-    fun init(id: ID, first: Mark, last: Mark) = apply {
+    fun init(id: ID, first: Mark, last: Mark): Interval {
         check(intervals.isEmpty()) { "$name: can't init already initialized Map" }
 
         baseOrNull = Interval(id, first, last)
@@ -42,6 +45,8 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
         }
 
         log.fine { "$name: initialized with $base" }
+
+        return base
     }
 
     fun clear() {
@@ -157,6 +162,6 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
         .iterator()
 
     override fun toString() = joinToString("\n") {
-        "${it.key}=[${it.value.joinToString("") { i -> i.id.toString() }}]"
+        "${it.key}=[${it.value.joinToString("") { i -> i.id.str }}]"
     }
 }

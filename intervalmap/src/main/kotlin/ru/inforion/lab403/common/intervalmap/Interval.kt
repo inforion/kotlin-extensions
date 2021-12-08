@@ -1,11 +1,11 @@
 package ru.inforion.lab403.common.intervalmap
 
-import ru.inforion.lab403.common.extensions.char
 import ru.inforion.lab403.common.extensions.hex
+import ru.inforion.lab403.common.extensions.str
 
 data class Interval(val id: ID, val first: Mark, val last: Mark) {
     companion object {
-        var idFormatter = { id: ID -> id.char }
+        var idFormatter = { id: ID -> id.str }
         var valueFormatter = { mark: Mark -> "0x${mark.hex}" }
     }
 
