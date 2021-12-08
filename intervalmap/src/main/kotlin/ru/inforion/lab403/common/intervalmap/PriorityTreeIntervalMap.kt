@@ -3,7 +3,6 @@
 package ru.inforion.lab403.common.intervalmap
 
 import ru.inforion.lab403.common.extensions.hex
-import ru.inforion.lab403.common.extensions.str
 import ru.inforion.lab403.common.logging.logger
 import java.util.*
 
@@ -57,7 +56,7 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
 
     fun add(id: ID, first: Mark, last: Mark): Interval {
         require(id != base.id) {
-            "Can't map region with init region id = $base"
+            "Can't map interval with init interval id = $base"
         }
 
         val interval = intervals[id]
@@ -74,13 +73,13 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
 
     fun remove(id: ID): Interval? {
         require(id != base.id) {
-            "Can't unmap region with init region id = $base, clear all map for it"
+            "Can't unmap interval with init interval id = $base, clear all map for it"
         }
 
         val interval = intervals[id]
 
         if (interval == null) {
-            log.warning { "$name: can't unmap region with id=$id because not mapped" }
+            log.warning { "$name: can't unmap interval with id=$id because not mapped" }
             return null
         }
 
@@ -130,7 +129,7 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
             marks.mapIfRequired(interval)
         }
 
-        log.fine { "$name: add mapping $interval" }
+        log.fine { "$name: add interval $interval" }
     }
 
     private fun doUnmap(interval: Interval) {
@@ -153,7 +152,7 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
             mark != end && intervals.isEmpty()
         }
 
-        log.fine { "$name: remove mapping $interval" }
+        log.fine { "$name: rem interval $interval" }
     }
 
     override fun iterator() = map
@@ -162,6 +161,6 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
         .iterator()
 
     override fun toString() = joinToString("\n") {
-        "${it.key}=[${it.value.joinToString("") { i -> i.id.str }}]"
+        "${Interval.markFormatter(it.key)}=[${it.value.joinToString(" ") { i -> Interval.idFormatter(i.id) }}]"
     }
 }

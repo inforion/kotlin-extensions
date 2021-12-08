@@ -92,12 +92,12 @@ inline fun Long.bitrev64() = ulong.bitrev64().long
 // =====================================================================================================================
 
 inline fun ubitMask32(size: Int): UInt {
-    require(size > 0 && size <= UINT_BITS)
+    require(size > 0 && size <= UINT_BITS) { "Can't create ubitMask32 with size=$size" }
     return UINT_MAX ushr (UINT_BITS - size)
 }
 
 inline fun ubitMask64(size: Int): ULong {
-    require(size > 0 && size <= ULONG_BITS)
+    require(size > 0 && size <= ULONG_BITS) { "Can't create ubitMask64 with size=$size" }
     return ULONG_MAX ushr (ULONG_BITS - size)
 }
 
@@ -471,9 +471,44 @@ inline fun cmpl2(bits: Int) = 1 cmpl2 bits
 // log2/pow2 operations
 // =====================================================================================================================
 
-inline fun log2(n: Int): Int {
-    if (n <= 0) throw IllegalArgumentException()
-    return INT_BITS - Integer.numberOfLeadingZeros(n) - 1
+inline fun UByte.log2(): Int {
+    require(this > 0u) { "Required positive value for log2() but got $this" }
+    return UBYTE_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun UShort.log2(): Int {
+    require(this > 0u) { "Required positive value for log2() but got $this" }
+    return USHORT_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun UInt.log2(): Int {
+    require(this > 0u) { "Required positive value for log2() but got $this" }
+    return UINT_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun ULong.log2(): Int {
+    require(this > 0u) { "Required positive value for log2() but got $this" }
+    return ULONG_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun Byte.log2(): Int {
+    require(this > 0) { "Required positive value for log2() but got $this" }
+    return BYTE_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun Short.log2(): Int {
+    require(this > 0) { "Required positive value for log2() but got $this" }
+    return SHORT_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun Int.log2(): Int {
+    require(this > 0) { "Required positive value for log2() but got $this" }
+    return INT_BITS - countLeadingZeroBits() - 1
+}
+
+inline fun Long.log2(): Int {
+    require(this > 0) { "Required positive value for log2() but got $this" }
+    return LONG_BITS - countLeadingZeroBits() - 1
 }
 
 inline fun pow2(n: Int) = 1uL shl n

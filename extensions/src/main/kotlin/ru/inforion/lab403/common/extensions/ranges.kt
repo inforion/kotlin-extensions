@@ -6,10 +6,10 @@ import java.io.Serializable
 import kotlin.math.max
 import kotlin.math.min
 
-inline val ULongRange.length get() = last - first + 1u
-inline val UIntRange.length get() = last - first + 1u
-inline val LongRange.length get() = last - first + 1
-inline val IntRange.length get() = last - first + 1
+inline val ULongRange.length get() = maxOf(last, first) - minOf(last, first) + 1u
+inline val UIntRange.length get() = maxOf(last, first) - minOf(last, first) + 1u
+inline val LongRange.length get() = maxOf(last, first) - minOf(last, first) + 1
+inline val IntRange.length get() = maxOf(last, first) - minOf(last, first) + 1
 
 inline infix fun Long.between(range: LongRange) = this > range.first && this < range.last
 inline infix fun Int.between(range: IntRange) = this > range.first && this < range.last
