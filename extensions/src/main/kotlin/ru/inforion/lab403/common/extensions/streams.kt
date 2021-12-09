@@ -261,7 +261,7 @@ inline fun <T> DataOutputStream.writeList(value: List<T>, write: DataOutputStrea
 inline fun <T> DataInputStream.readList(read: DataInputStream.() -> T): List<T> {
     val size = readInt()
     val result = ArrayList<T>(size)
-    repeat(size) { result[it] = read(this) }
+    repeat(size) { result.add(read(this)) }
     return result
 }
 
