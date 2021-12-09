@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.collections.ArrayList
 
 val emptyInputStream = ByteArray(0).inputStream()
 
@@ -249,6 +250,18 @@ inline fun <K, V> DataInputStream.readDictionary(
     val size = readInt()
     val result = dictionary<K, V>(capacity(size))
     repeat(size) { result[key()] = value() }
+    return result
+}
+
+inline fun <T> DataOutputStream.writeList(value: List<T>, write: DataOutputStream.(T) -> Unit) {
+    writeInt(value.size)
+    value.forEach { write(it) }
+}
+
+inline fun <T> DataInputStream.readList(read: DataInputStream.() -> T): List<T> {
+    val size = readInt()
+    val result = ArrayList<T>(size)
+    repeat(size) { result[it] = read(this) }
     return result
 }
 
