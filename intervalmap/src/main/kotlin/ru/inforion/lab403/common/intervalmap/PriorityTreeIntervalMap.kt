@@ -152,6 +152,15 @@ class PriorityTreeIntervalMap(val name: String = "Map-${idGenerator++}") : Itera
             mark != end && intervals.isEmpty()
         }
 
+        val toMerge = map.entries
+            .sortedBy { it.key }
+            .zipWithNext()
+            .filter { it.first.value == it.second.value && it.second.key != end}
+
+        toMerge.forEach {
+            map.remove(it.second.key)
+        }
+
         log.fine { "$name: rem interval $interval" }
     }
 
