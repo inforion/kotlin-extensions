@@ -90,6 +90,16 @@ class SequenceEndpoint<T> constructor(
     }
 
     @WebSocketRpcMethod
+    fun drop(n: Int) {
+        state = state.drop(n)
+    }
+
+    @WebSocketRpcMethod
+    fun dropWhile(predicate: Callable<Boolean>) {
+        state = state.dropWhile { predicate.call(it) }
+    }
+
+    @WebSocketRpcMethod
     fun <R> flatMap(transform: Callable<Iterable<R>>) {
         state = state.flatMap { transform.call(it) }
     }
