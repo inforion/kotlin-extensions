@@ -23,6 +23,7 @@ internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
         val engine: String,
         val code: String,
         val type: FunctionType,
+        val name: String?,
         val closure: Map<String, ByteArray>
     )
 
@@ -49,7 +50,7 @@ internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
         val desc = json.deserialize<FunctionDescription>(context)
 
         val index = lambdaIndex++
-        val name = "anonymous$index"
+        val name = desc.name ?: "anonymous$index"
 
         engines.forEach { engine ->
             when (desc.type) {
