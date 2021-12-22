@@ -41,8 +41,6 @@ fun gzipInputStreamIfPossible(path: String): InputStream {
     return result
 }
 
-fun <T : Any> T.getJarDirectory(): String = File(this::class.java.protectionDomain.codeSource.location.toURI().path).path
-
 fun walkTo(result: MutableCollection<File>, folder: File, depth: Int): MutableCollection<File> {
     if (!folder.isDirectory)
         return result
@@ -97,12 +95,33 @@ operator fun File.div(child: File): File = this / child.path
 
 /**
  * {EN}
- * Property function to simplify get of the location associated with this CodeSource for class
+ * Property function get the location associated with this CodeSource for class
  *
- * @return the location or raise NPE
+ * NOTE: This function may not work on various JVM
+ *
+ * @return the class location
  * {EN}
  */
-val <T>Class<T>.location get() = protectionDomain.codeSource.location.toURI().path
+val <T>Class<T>.location0 get(): String  {
+    val domain = protectionDomain.sure { "Can't get protectionDomain for $this with JVM: $javaHome" }
+    val codeSource = domain.codeSource.sure { "Can't get codeSource for $this with JVM: $javaHome" }
+    val location = codeSource.location.sure { "Class location $this not specified during construction" }
+    return location.toString()
+}
+
+
+/**
+ * {EN}
+ * Property function get the location of [this] class
+ *
+ * @return the class location
+ * {EN}
+ */
+val <T>Class<T>.location2 get(): String {
+    val path = "${name.replace('.', '/')}.class"
+    val url = classLoader.getResource(path)
+    return url.sure { "Can't get class location for $this" }.toString()
+}
 
 /**
  * {EN}

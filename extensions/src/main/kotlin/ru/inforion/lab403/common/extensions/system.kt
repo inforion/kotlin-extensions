@@ -35,6 +35,8 @@ inline val userHomeDir: String get() = System.getProperty("user.home")
 
 inline val javaWorkingDirectory: String get() = System.getProperty("user.dir")
 
+inline val javaHome: String get() = System.getProperty("java.home")
+
 inline val environment: Map<String, String> get() = System.getenv()
 
 inline val properties: Properties get() = System.getProperties()
