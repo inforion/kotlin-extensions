@@ -32,7 +32,8 @@ class WebSocketRpcServer constructor(
     val host: String = "localhost",
     val port: Int,
 
-    registry: WebSocketTypesRegistry = WebSocketTypesRegistry {  },
+    types: WebSocketTypesRegistry = WebSocketTypesRegistry {  },
+    packages: WebSocketPackageRegistry = WebSocketPackageRegistry {  },
 
     val pingTimeout: Int = 10, // in seconds
     val isReuseAddress: Boolean = true,
@@ -148,7 +149,7 @@ class WebSocketRpcServer constructor(
         threads.close()
     }
 
-    internal val resources = ResourceManager(this, registry)
+    internal val resources = ResourceManager(this, types, packages)
 
     init {
         register(ServiceEndpoint(this), SERVICE_ENDPOINT_UUID)

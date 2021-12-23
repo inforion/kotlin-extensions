@@ -7,12 +7,13 @@ import ru.inforion.lab403.common.extensions.availableProcessors
 import ru.inforion.lab403.common.json.deserialize
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.scripts.ScriptingManager
+import ru.inforion.lab403.common.wsrpc.WebSocketPackageRegistry
 import ru.inforion.lab403.common.wsrpc.interfaces.Callable
 import java.lang.reflect.Type
 import java.util.concurrent.LinkedBlockingQueue
 
 
-internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
+internal class FunctionDeserializer(val registry: WebSocketPackageRegistry) : JsonDeserializer<Callable<*>> {
     companion object {
         val log = logger()
     }
@@ -42,7 +43,7 @@ internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
 
     private val engines by lazy {
         List(availableProcessors) {
-            ScriptingManager.engine("python")
+            ScriptingManager.engine("python").also { registry.applyPackages(it) }
         }.toLinkedBlockingQueue()
     }
 
