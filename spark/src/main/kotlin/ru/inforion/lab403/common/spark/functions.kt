@@ -95,4 +95,12 @@ fun sparkContext(
         .apply { setLogLevel(logLevel) }
 }
 
+inline fun JavaSparkContext.waitForParallelism(coresCount: Int, additionalAction: (Int) -> Unit) {
+    do {
+        Thread.sleep(250)
+        val level = defaultParallelism()
+        additionalAction(level)
+    } while ( level < coresCount)
+}
+
 fun <T> shield(value: T) = value
