@@ -69,29 +69,30 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
         return true
     }
 
-    override fun contains(element: E) = data.contains(element)
+    override fun contains(element: E) = subList(0, size).contains(element)
 
-    override fun containsAll(elements: Collection<E>) = elements.all { data.contains(it) }
+    override fun containsAll(elements: Collection<E>) = toSubList().containsAll(elements)
 
-    override fun get(index: Int) = data[index]
+    override fun get(index: Int) = if (index < size) data[index] else throw IndexOutOfBoundsException()
 
-    override fun indexOf(element: E) = data.indexOf(element)
+    override fun indexOf(element: E) = toSubList().indexOf(element)
 
     override fun isEmpty() = size == 0
 
-    override fun iterator() = subList(0, size).iterator()
+    override fun iterator() = listIterator()
 
-    override fun lastIndexOf(element: E) = data.lastIndexOf(element)
+    override fun lastIndexOf(element: E) = toSubList().lastIndexOf(element)
 
-    override fun listIterator() = TODO()
+    override fun listIterator() = toSubList().listIterator()
 
-    override fun listIterator(index: Int) = TODO()
+    override fun listIterator(index: Int) = toSubList().listIterator(index)
 
     override fun subList(fromIndex: Int, toIndex: Int) = SubList(data, fromIndex, toIndex)
 
+    fun toSubList(start: Int = 0) = subList(start, size)
+
     class SubList<E>(internal val data: Array<E>, internal val start: Int, internal val end: Int): List<E> {
-        override val size: Int
-            get() = end - start
+        override val size = end - start
 
         override fun contains(element: E) = (start until end).any { data[it] == element }
 
@@ -99,36 +100,41 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
             TODO("Not yet implemented")
         }
 
-        override fun get(index: Int) = data[start + index]
+        override fun get(index: Int) = if (index < size) data[index] else throw IndexOutOfBoundsException()
 
         override fun indexOf(element: E) = (start until end).first { data[it] == element }
 
         override fun isEmpty() = start == end
 
-        override fun iterator() = SubListIterator(this)
+        override fun iterator() = listIterator()
 
-        override fun lastIndexOf(element: E): Int {
-            TODO("Not yet implemented")
-        }
+        override fun lastIndexOf(element: E) = ((end-1)..start).first { data[it] == element }
 
-        override fun listIterator(): ListIterator<E> {
-            TODO("Not yet implemented")
-        }
+        override fun listIterator() = SubListIterator(this)
 
-        override fun listIterator(index: Int): ListIterator<E> {
-            TODO("Not yet implemented")
-        }
+        override fun listIterator(index: Int) = SubListIterator(this, index)
 
         override fun subList(fromIndex: Int, toIndex: Int) = SubList(data, fromIndex + start, toIndex + start)
     }
-    class SubListIterator<E>(private val list: SubList<E>): Iterator<E> {
-        private var id = list.start
+    class SubListIterator<E>(private val list: SubList<E>, start: Int = 0): ListIterator<E> {
+        private var id = list.start + start
         override fun hasNext() = id < list.end
 
         override fun next(): E {
             if (id >= list.end) throw NoSuchElementException()
             return list.data[id++]
         }
+
+        override fun hasPrevious() = id > list.start
+
+        override fun nextIndex() = list.start - id
+
+        override fun previous(): E {
+            if (id <= list.start) throw NoSuchElementException()
+            return list.data[--id]
+        }
+
+        override fun previousIndex() = list.start - id - 1
     }
 }
 
