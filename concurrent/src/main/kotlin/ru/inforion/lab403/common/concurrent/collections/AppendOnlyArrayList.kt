@@ -1,5 +1,6 @@
 package ru.inforion.lab403.common.concurrent.collections
 
+import ru.inforion.lab403.common.extensions.cast
 import java.io.Serializable
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -22,7 +23,7 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
 
     private val futureSize = AtomicInteger(0)
     private val currentSize = AtomicInteger(0)
-    private var data = EMPTY_ELEMENTDATA as Array<E>
+    private var data: Array<E> = EMPTY_ELEMENTDATA.cast()
 
     private val growLock = ReentrantLock()
 
@@ -31,7 +32,7 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
 
     init {
         if (capacity > 0) {
-            data = arrayOfNulls<Any?>(capacity) as Array<E>
+            data = arrayOfNulls<Any?>(capacity).cast()
         }
     }
 
@@ -58,10 +59,10 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
         updateSize(index + 1)
     }
 
-    internal fun unsafeAddAll(elements: Collection<E?>): Boolean { //isn't concurrent
-        if (elements.isEmpty()) { return false}
-        val toAdd = (elements as Collection<Any?>).toTypedArray() as Array<E?> //WTF Kotlin?
-        val startIndex = futureSize.getAndAdd(toAdd.size)
+    internal fun unsafeAddAll(elements: Collection<E>): Boolean { //isn't concurrent
+        if (elements.isEmpty()) return false
+        val toAdd = elements.cast<Collection<Any?>>().toTypedArray()
+        val startIndex = futureSize.getAndAdd(elements.size)
         if (startIndex > data.size) { grow(size) }
         System.arraycopy(toAdd, 0, data, startIndex, toAdd.size)
         updateSize(startIndex + toAdd.size)
