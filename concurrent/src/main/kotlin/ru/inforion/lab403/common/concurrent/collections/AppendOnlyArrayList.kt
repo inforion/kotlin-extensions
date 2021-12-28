@@ -16,9 +16,9 @@ import kotlin.math.max
 
 class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneable, Serializable {
     companion object {
-        private val DEFAULT_CAPACITY = 10
+        private const val DEFAULT_CAPACITY = 10
         private val EMPTY_ELEMENTDATA = arrayOf<Any>()
-        private val GROW_FACTOR = 1.7
+        private const val GROW_FACTOR = 2
     }
 
     private val futureSize = AtomicInteger(0)
@@ -40,13 +40,13 @@ class AppendOnlyArrayList<E>(capacity: Int = 0): List<E>, RandomAccess, Cloneabl
         currentSize.getAndAccumulate(size, Math::max)// need for synchronize array size, MB to slow
     }
 
-    @Synchronized private fun grow(minCapacity: Int) = growLock.withLock {
+    private fun grow(minCapacity: Int) = growLock.withLock {
         if (minCapacity > data.size) { //very important check
             data = Arrays.copyOf(data, newCapacity(minCapacity))
         }
     }
 
-    @Synchronized private fun grow() = grow(data.size + 1)
+    private fun grow() = grow(data.size + 1)
 
     private fun newCapacity(minCapacity: Int) =
         if (data.isEmpty()) { max(DEFAULT_CAPACITY, minCapacity) }
