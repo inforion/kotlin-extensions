@@ -23,11 +23,11 @@ internal class Bench {
             executor.awaitTermination(20, TimeUnit.SECONDS)
         }
     }
-    
+
     @Test fun benchAdd() {
         val str = "SomeString"
         bench {
-            val array = arrayListOf<String>()
+            val array = appendOnlyArrayListOf<String>()
             repeat(1000000) { array.add(str) }
         }
     }
