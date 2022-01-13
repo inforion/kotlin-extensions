@@ -114,8 +114,12 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
                 "Assignments can only be reset if the group '$group' is inactive, but the current state is $state"
             }
 
-            deleteTopics(setOf(topic.name))
-            createAndConfigureTopic(topic, retries)
+            if (topic.name !in listTopics()) {
+                createAndConfigureTopic(topic, retries)
+            } else {
+                deleteTopics(setOf(topic.name))
+                createAndConfigureTopic(topic, retries)
+            }
 
             val partitionsToReset = describeTopics(setOf(topic.name)).flatMap { it.toTopicPartitions() }
             val preparedOffsets = prepareOffsetsToReset(partitionsToReset, OffsetSpec.earliest())
