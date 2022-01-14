@@ -15,12 +15,16 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
 
-internal class ResourceManager(private val server: WebSocketRpcServer, private val registry: WebSocketTypesRegistry) {
+internal class ResourceManager(
+    private val server: WebSocketRpcServer,
+    private val types: WebSocketTypesRegistry,
+    private val packages: WebSocketPackageRegistry
+) {
     private val mappers = LinkedBlockingQueue<Json>()
 
     fun checkoutJsonMapper(): Json = mappers.poll() ?: defaultJsonBuilder()
-        .registerTypeAdapter(Callable::class, FunctionDeserializer())
-        .apply { registry.setupJsonBuilder(this, server) }
+        .registerTypeAdapter(Callable::class, FunctionDeserializer(packages))
+        .apply { types.setupJsonBuilder(this, server) }
         .create()
 
     fun checkinJsonMapper(mapper: Json) = mappers.offer(mapper)
@@ -28,7 +32,8 @@ internal class ResourceManager(private val server: WebSocketRpcServer, private v
     internal data class Method<R>(
         val function: KFunction<R>,
         val parameters: List<KParameter>,
-        val close: Boolean)
+        val close: Boolean
+    )
 
     private val methods = dictionaryOf<KClass<*>, Map<String, Method<*>>>()
 
