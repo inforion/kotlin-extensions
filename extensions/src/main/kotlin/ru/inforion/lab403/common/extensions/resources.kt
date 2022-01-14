@@ -31,6 +31,10 @@ inline fun <reified T: Any>getResourceUrlOf(obj: T, resource: String): URL =
 
 inline fun <reified T: Any> T.getResourceUrl(resource: String): URL = getResourceUrlOf(this, resource)
 
+inline fun <reified T: Any> getResourceTextOf(obj: T, resource: String) = getResourceUrlOf(obj, resource).readText()
+
+inline fun <reified T: Any> T.getResourceText(resource: String) = getResourceUrl(resource).readText()
+
 private fun getClassLoader() = Thread.currentThread().contextClassLoader
 
 fun <R: Any> getResourceOfRoot(resource: String, getter: (ClassLoader) -> R?): R {
