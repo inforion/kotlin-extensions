@@ -60,7 +60,7 @@ internal class FunctionDeserializer : JsonDeserializer<Callable<*>> {
                 }
                 FunctionType.FUNCTION -> {
                     log.severe { "Function closure variables currently not implemented!" }
-                    engine.evalGetNames(desc.code).first()
+                    engine.evalGetNames(desc.code)
                 }
             }
         }
