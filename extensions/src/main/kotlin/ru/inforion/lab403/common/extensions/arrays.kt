@@ -502,3 +502,11 @@ inline fun UInt.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN) = ulong_z.pack
 
 inline fun ULong.pack(size: Int, order: ByteOrder = LITTLE_ENDIAN): ByteArray =
     ByteArray(size).also { it.putUInt(0, this, size, order) }
+
+inline fun<T> Array<T>.reassign(ctor: (T) -> T) = forEachIndexed { index: Int, value: T ->
+    this[index] = ctor(value)
+}
+
+inline fun<T> Array<T>.reassignIndexed(ctor: (Int, T) -> T) = forEachIndexed { index: Int, value: T ->
+    this[index] = ctor(index, value)
+}
