@@ -92,6 +92,8 @@ inline fun <T> KafkaFuture<T>.getOrNull(millis: Long = -1): T? =
 
 inline fun DeleteTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
 
+inline fun DeleteConsumerGroupsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
+
 inline fun CreateTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)
 
 inline fun DescribeTopicsResult.getOrThrow(millis: Long = -1) = all().getOrThrow(millis)

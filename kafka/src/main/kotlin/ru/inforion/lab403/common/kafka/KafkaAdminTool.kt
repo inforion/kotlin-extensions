@@ -37,6 +37,8 @@ class KafkaAdminTool constructor(val brokers: String, val timeout: Long) : Close
 
     fun deleteTopics(topics: Collection<String>) = client.deleteTopics(topics).getOrThrow(timeout)
 
+    fun deleteConsumerGroups(groups: Collection<String>) = client.deleteConsumerGroups(groups).getOrThrow(timeout)
+
     fun createTopics(topics: Collection<NewTopic>) = client.createTopics(topics).getOrThrow(timeout)
 
     fun describeTopics(topics: Collection<String>): Collection<TopicDescription> = client.describeTopics(topics).getOrThrow(timeout).values
