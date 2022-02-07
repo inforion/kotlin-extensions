@@ -53,19 +53,18 @@ internal class FunctionDeserializer(val registry: WebSocketPackageRegistry) : Js
         val index = lambdaIndex++
         val name = desc.name ?: "anonymous$index"
 
-        engines.forEach { engine ->
+        engines.acquire {
             when (desc.type) {
                 FunctionType.LAMBDA -> {
-                    desc.closure.forEach { (name, data) -> engine.deserializeAndSet(name, data) }
-                    engine.evalAndSet(name, desc.code)
+                    desc.closure.forEach { (name, data) -> deserializeAndSet(name, data) }
+                    evalAndSet(name, desc.code)
                 }
                 FunctionType.FUNCTION -> {
                     log.severe { "Function closure variables currently not implemented!" }
-                    engine.evalGetNames(desc.code)
+                    evalGetNames(desc.code)
                 }
             }
+            return Callable<Any> { invocable.invokeFunction(name, *it) }
         }
-
-        return Callable<Any> { engines.acquire { invocable.invokeFunction(name, *it) } }
     }
 }
