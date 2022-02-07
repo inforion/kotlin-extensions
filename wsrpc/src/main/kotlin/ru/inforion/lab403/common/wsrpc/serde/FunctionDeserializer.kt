@@ -53,7 +53,7 @@ internal class FunctionDeserializer(val registry: WebSocketPackageRegistry) : Js
         val index = lambdaIndex++
         val name = desc.name ?: "anonymous$index"
 
-        engines.acquire {
+        return engines.acquire {
             when (desc.type) {
                 FunctionType.LAMBDA -> {
                     desc.closure.forEach { (name, data) -> deserializeAndSet(name, data) }
@@ -64,7 +64,7 @@ internal class FunctionDeserializer(val registry: WebSocketPackageRegistry) : Js
                     evalGetNames(desc.code)
                 }
             }
-            return Callable<Any> { invocable.invokeFunction(name, *it) }
+            Callable<Any> { invocable.invokeFunction(name, *it) }
         }
     }
 }
