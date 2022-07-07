@@ -127,6 +127,9 @@ class SequenceEndpoint<T> constructor(
     fun count() = lock.withLock { state.count() }
 
     @WebSocketRpcMethod(close = true)
+    fun<R> fold(operation: Callable<R>, acc: R) = lock.withLock { state.fold (acc) { acc, i -> operation.call(acc, i) } }
+
+    @WebSocketRpcMethod(close = true)
     fun collect() = lock.withLock {
         runBlocking { state.asFlow().toList() }
     }
