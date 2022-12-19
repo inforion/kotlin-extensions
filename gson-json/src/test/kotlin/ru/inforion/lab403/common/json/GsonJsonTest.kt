@@ -216,4 +216,11 @@ internal class GsonJsonTest {
 
         assertEquals(expectedHamster, actualHamster)
     }
-}
+
+    @Test
+    fun serializeULong() {
+        val gson = defaultJsonBuilder().create()
+        val expected = "18446744071564953877"
+        val actual = gson.toJson(18446744071564953877uL)
+        assertEquals(expected, actual)
+    }
