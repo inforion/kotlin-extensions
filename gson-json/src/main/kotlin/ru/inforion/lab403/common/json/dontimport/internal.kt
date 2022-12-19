@@ -44,7 +44,7 @@ internal inline infix fun <T> Type?.orIfAnyOrNull(value: Class<out T>) =
 internal inline fun JsonPrimitive.parse(): Any = when {
     isBoolean -> asBoolean
     isNumber -> with(asString) {
-        toIntOrNull() ?: toLongOrNull() ?: toFloatOrNull() ?: toDoubleOrNull()
+        toIntOrNull() ?: toLongOrNull() ?: toULongOrNull() ?: toFloatOrNull() ?: toDoubleOrNull()
         ?: error("Can't deserialize json primitive as number: $this")
     }
     isString -> asString

@@ -224,3 +224,17 @@ internal class GsonJsonTest {
         val actual = gson.toJson(18446744071564953877uL)
         assertEquals(expected, actual)
     }
+
+    @Test
+    @Test
+    fun deserializeULongList() {
+        val json = """
+           [
+                18446744071564953877
+           ]
+        """
+        val expected: List<ULong> = listOf(18446744071564953877uL)
+        val actual = json.fromJson<List<ULong>>(defaultJsonBuilder().create())
+        assertEquals(expected, actual)
+    }
+}
