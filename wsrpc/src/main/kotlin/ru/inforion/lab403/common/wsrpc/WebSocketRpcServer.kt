@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.wsrpc
 
 import org.java_websocket.WebSocket
+import org.java_websocket.exceptions.InvalidDataException
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ClientHandshake
@@ -35,9 +36,9 @@ class WebSocketRpcServer constructor(
     types: WebSocketTypesRegistry = WebSocketTypesRegistry {  },
     packages: WebSocketPackageRegistry = WebSocketPackageRegistry {  },
 
-    val pingTimeout: Int = 10, // in seconds
+    val pingTimeout: Int = 100, // in seconds
     val isReuseAddress: Boolean = true,
-    val isTcpNoDelayActive: Boolean = false,
+    val isTcpNoDelayActive: Boolean = true,
 ) : Iterable<EndpointHolder>, Closeable {
     companion object {
         const val SERVICE_ENDPOINT_NAME = "Service"
@@ -85,6 +86,7 @@ class WebSocketRpcServer constructor(
         override fun onClose(conn: WebSocket?, code: Int, reason: String, remote: Boolean) {
             log.config { "Client[port=${conn?.remoteSocketAddress?.port}] closed connection code=$code reason='$reason' remote=$remote" }
         }
+
 
         override fun onMessage(conn: WebSocket, message: String) {
             launch(threads) {
