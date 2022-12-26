@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 val jvmTestsOptions: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.5.21"
+    id("org.jetbrains.kotlin.jvm") version "1.7.21"
     id("org.jetbrains.dokka") version "1.4.0"
     id("signing")
     id("maven")
@@ -14,8 +14,6 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
-    maven { url = uri("https://jitpack.io") }
 }
 
 val isPublishMavenCentral = project.hasProperty("signing.gnupg.keyName")
@@ -33,12 +31,10 @@ subprojects
             repositories {
                 mavenLocal()
                 mavenCentral()
-                jcenter()
-                maven { url = uri("https://jitpack.io") }
             }
 
             group = "com.github.inforion.common"
-            version = "0.4.0"
+            version = "0.4.1"
         }
 
         it.afterEvaluate {
@@ -132,17 +128,19 @@ subprojects
                                 developer {
                                     name.set("Alexei Gladkikh")
                                     email.set("gladkikhalexei@gmail.com")
-                                    organization.set("INFORION, LLC")
+                                }
+
+                                developer {
+                                    name.set("Vladimir Trishin")
+                                    email.set("v.trishin@inforion.ru")
                                 }
 
                                 developer {
                                     name.set("Artur Kemurdzhian")
-                                    organization.set("INFORION, LLC")
                                 }
 
                                 developer {
                                     name.set("Artem Simankov")
-                                    organization.set("INFORION, LLC")
                                 }
 
                                 developer {

@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.21"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.21"
 }
 
 val jodaTimeVersion: String by project
