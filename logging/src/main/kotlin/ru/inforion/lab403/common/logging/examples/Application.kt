@@ -19,7 +19,8 @@ object Application {
             }
         }
 
-        Logger.forEach { it.addPublisher(publisher) }.onCreate { it.addPublisher(publisher) }
+        Logger.removeDefaultPublisher()
+        Logger.addPublisher(publisher)
 
         log.severe { "This is severe message" }
         log.warning { "This is warning message" }

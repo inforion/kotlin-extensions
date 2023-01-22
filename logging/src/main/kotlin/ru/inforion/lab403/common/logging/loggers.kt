@@ -24,7 +24,7 @@ internal fun <T: Any> logger(
     forClass: Class<T>,
     level: LogLevel,
     flush: Boolean,
-    vararg publishers: AbstractPublisher = arrayOf(Logger.defaultPublisher)
+    vararg publishers: AbstractPublisher = arrayOf()
 ): Logger {
     val klass = unwrapCompanionClass(forClass)
     return Logger.create(klass, level, flush, *publishers)
@@ -41,7 +41,7 @@ internal fun <T: Any> logger(
 fun <T: Any> T.logger(
     level: LogLevel = FINE,
     flush: Boolean = true,
-    vararg publishers: AbstractPublisher = arrayOf(Logger.defaultPublisher)
+    vararg publishers: AbstractPublisher = arrayOf()
 ) = logger(javaClass, level, flush, *publishers)
 
 /**
