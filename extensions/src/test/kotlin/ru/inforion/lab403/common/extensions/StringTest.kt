@@ -15,6 +15,11 @@ internal class StringTest {
     @Test fun hexlifyTest() = assertEquals(string, bytes.hexlify())
     @Test fun hexlifySeparatorTest() = assertEquals(spacedString, bytes.hexlify(separator = ' '))
 
+    @Test fun unhexlifyEmptyStringTest() = assertEquals(listOf(), "".unhexlify().toList())
+    @Test fun hexlifyEmptyByteArrayTest() = assertEquals(byteArrayOf().hexlify(), "")
+    @Test fun unhexlifyEmptyStringSpaceSeparatorTest() = assertEquals(listOf(), "".unhexlify().toList())
+    @Test fun hexlifyEmptyByteArraySpaceSeparatorTest() = assertEquals(byteArrayOf().hexlify(separator = ' '), "")
+
     @Test fun byte_hex2() = assertEquals("7F", 0x7F.hex2)
 
     @Test fun short_hex2() = assertEquals("7FFF", 0x7FFF.hex2)
