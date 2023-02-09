@@ -20,6 +20,18 @@ class Logger private constructor(
         private val runtime = Runtime.getRuntime()
 
         /**
+         * Default publisher for loggers
+         *
+         * @since 0.2.4
+         */
+        val defaultPublisher: AbstractPublisher = BeautyPublisher.stdout()
+
+        /**
+         * Handlers for all loggers
+         */
+        private val sharedHandlers = hashSetOf(defaultPublisher)
+
+        /**
          * Shutdown hook to flush all loggers when program exit
          */
         private val shutdownHook = thread(false) { flush() }.also { runtime.addShutdownHook(it) }
@@ -86,29 +98,27 @@ class Logger private constructor(
             create(klass.simpleName, level, flush, *publishers)
 
         /**
-         * Add new publisher to all loggers
+         * Add new publisher to the shared handlers
          *
          * @param publisher publisher to add
          *
          * @since 0.2.0
          */
-        fun addPublisher(publisher: AbstractPublisher) = loggers.values.forEach { it.addPublisher(publisher) }
+        fun addPublisher(publisher: AbstractPublisher) = sharedHandlers.add(publisher)
 
         /**
-         * Remove publisher from all loggers
+         * Remove the publisher from the shared handlers
          *
          * @param publisher publisher to remove
          *
          * @since 0.2.0
          */
-        fun removePublisher(publisher: AbstractPublisher) = loggers.values.forEach { it.removePublisher(publisher) }
+        fun removePublisher(publisher: AbstractPublisher) = sharedHandlers.remove(publisher)
 
         /**
-         * Default publisher for loggers
          *
-         * @since 0.2.4
          */
-        var defaultPublisher: AbstractPublisher = BeautyPublisher.stdout()
+        fun removeDefaultPublisher() = sharedHandlers.remove(defaultPublisher)
 
         /**
          * Flush all publishers of all loggers
@@ -118,7 +128,19 @@ class Logger private constructor(
         fun flush() = loggers.values.forEach { it.flush() }
     }
 
-    private val handlers = publishers.toMutableSet()
+    /**
+     * Own handlers for each logger
+     */
+    private val ownHandlers = publishers.toMutableSet()
+
+    /**
+     * Union sequence of own and shared handlers
+     */
+    private val allHandlersSeq
+        get() = sequence {
+            sharedHandlers.forEach { yield(it) }
+            ownHandlers.forEach { yield(it) }
+        }
 
     override fun toString() = name
 
@@ -129,7 +151,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    fun addPublisher(publisher: AbstractPublisher) = handlers.add(publisher)
+    fun addPublisher(publisher: AbstractPublisher) = ownHandlers.add(publisher)
 
     /**
      * Remove publisher to logger
@@ -138,21 +160,21 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    fun removePublisher(publisher: AbstractPublisher) = handlers.remove(publisher)
+    fun removePublisher(publisher: AbstractPublisher) = ownHandlers.remove(publisher)
 
     /**
      * Flush all publishers of logger
      *
      * @since 0.2.0
      */
-    fun flush() = handlers.forEach { it.flush() }
+    fun flush() = allHandlersSeq.forEach { it.flush() }
 
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
         val timestamp = System.currentTimeMillis()
         val caller = Thread.currentThread().stackTrace[STACK_TRACE_CALLER_INDEX]
         val record = Record(this, level, timestamp, caller)
-        handlers.forEach {
+        allHandlersSeq.forEach {
             it.publish(message, record)
             if (flush || flushOnPublish) it.flush()
         }
