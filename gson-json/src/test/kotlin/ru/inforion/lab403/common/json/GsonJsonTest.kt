@@ -5,6 +5,8 @@ import org.junit.Test
 import ru.inforion.lab403.common.json.sysinfo.FullSystemInfo
 import java.lang.reflect.Type
 import java.util.*
+import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 import kotlin.test.assertEquals
 
 internal class GsonJsonTest {
@@ -234,6 +236,15 @@ internal class GsonJsonTest {
         """
         val expected: List<ULong> = listOf(18446744071564953877uL)
         val actual = json.fromJson<List<ULong>>(defaultJsonBuilder().create())
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun ktypeSerialize() {
+        val gson = defaultJsonBuilder().create()
+        val t: KType = Int::class.createType()
+        val expected = "\"Int\""
+        val actual = t.toJson(gson)
         assertEquals(expected, actual)
     }
 }
