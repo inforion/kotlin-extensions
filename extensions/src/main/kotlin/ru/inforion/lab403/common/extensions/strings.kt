@@ -228,6 +228,7 @@ fun String.toFile(child: String): File {
     // If parent is blank then absolute path will be created
     // "".toFile("temp") -> /temp
     if (isBlank()) return File(child)
+    if (child.isAbsolute()) return File(child)
     return File(this, child)
 }
 
@@ -329,7 +330,7 @@ fun String.addExtension(extension: String): String = if (!endsWith(extension)) t
  * @return joined paths
  * {EN}
  */
-operator fun String.div(child: String): String = toFile(child).path
+operator fun String.div(child: String): String = toFile(child).invariantSeparatorsPath
 
 /**
  * {EN}

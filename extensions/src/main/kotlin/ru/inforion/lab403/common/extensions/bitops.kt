@@ -4,6 +4,7 @@ package ru.inforion.lab403.common.extensions
 
 import java.math.BigInteger
 import kotlin.experimental.inv
+import kotlin.math.min
 
 // =====================================================================================================================
 // Shift operations
@@ -165,11 +166,21 @@ inline fun Number.bext(n: Int): ULong {
 // =====================================================================================================================
 // Bit extract operations
 //
-// Note: results commonly are Int or UInt for more convinient operations after bit extraction
+// Note: results commonly are Int or UInt for more convenient operations after bit extraction
 // =====================================================================================================================
 
-inline fun ULong.xbits(high: Int, low: Int) = (this ushr low) and ((1uL shl (high - low + 1)) - 1u)
-inline fun UInt.xbits(high: Int, low: Int) = (this ushr low) and ((1u shl (high - low + 1)) - 1u)
+/**
+ * Before we did this: `(this ushr low) and ((1uL shl (high - low)) - 1u)`
+ * Overflow was possible, so now algorithm is simple: shift left and then right
+ */
+inline fun ULong.xbits(high: Int, low: Int): ULong =
+    if (low >= 63) 0uL
+    else (this shl (63 - min(63, high))) ushr (low + (63 - min(63, high)))
+
+inline fun UInt.xbits(high: Int, low: Int): UInt =
+    if (low >= 31) 0u
+    else (this shl (31 - min(31, high))) ushr (low + (31 - min(31, high)))
+
 inline fun UShort.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
 inline fun UByte.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
 

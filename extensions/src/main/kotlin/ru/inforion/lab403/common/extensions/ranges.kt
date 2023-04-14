@@ -11,6 +11,11 @@ inline val UIntRange.length get() = maxOf(last, first) - minOf(last, first) + 1u
 inline val LongRange.length get() = maxOf(last, first) - minOf(last, first) + 1
 inline val IntRange.length get() = maxOf(last, first) - minOf(last, first) + 1
 
+inline val ULongRange.lengthExclusively get() = maxOf(last, first) - minOf(last, first)
+inline val UIntRange.lengthExclusively get() = maxOf(last, first) - minOf(last, first)
+inline val LongRange.lengthExclusively get() = maxOf(last, first) - minOf(last, first)
+inline val IntRange.lengthExclusively get() = maxOf(last, first) - minOf(last, first)
+
 inline infix fun Long.between(range: LongRange) = this > range.first && this < range.last
 inline infix fun Int.between(range: IntRange) = this > range.first && this < range.last
 inline infix fun Short.between(range: IntRange) = this > range.first && this < range.last
@@ -57,7 +62,7 @@ inline val IntRange.hex8 get() = "${first.hex8}..${last.hex8}"
 inline val IntRange.hex4 get() = "${first.hex4}..${last.hex4}"
 inline val IntRange.hex2 get() = "${first.hex2}..${last.hex2}"
 
-data class Range<T: Number>(val first: T, val last: T): Serializable
+data class Range<T : Number>(val first: T, val last: T) : Serializable
 
 // TODO: uncomment when JB makes ULong and UInt numbers
 //inline fun ULongRange.toSerializable() = Range(first, last)
