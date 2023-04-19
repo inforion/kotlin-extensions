@@ -31,7 +31,7 @@ fun ByteArray.hexlify(upperCase: Boolean = true, separator: Char? = null): Strin
     val result = if (upperCase) String(hexChars).uppercase() else String(hexChars)
     if (separator != null) {
         val builder = StringBuilder()
-        builder.append(result[0..2])
+        if (result.isNotEmpty()) builder.append(result[0..2])
         for (i in 2 until result.length step 2) {
             builder.append(separator)
             builder.append(result[i..i + 2])
