@@ -93,9 +93,19 @@ subprojects
                             password = project.properties["mavenPassword"] as String?
                         }
 
-                        val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                        val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                        url = if (subprojectVersion.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+                        val internalReleasesRepoUrl = (project.properties["mavenInternalRepositoryUrl"] as String?)
+                            ?.let { url -> uri(url) }
+                        val internalSnapshotsRepoUrl = (project.properties["mavenInternalSnapshotsUrl"] as String?)
+                            ?.let { url -> uri(url) }
+
+                        val defaultReleasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                        val defaultSnapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+
+                        url = if (subprojectVersion.endsWith("SNAPSHOT")) {
+                            internalSnapshotsRepoUrl ?: defaultSnapshotsRepoUrl
+                        } else {
+                            internalReleasesRepoUrl ?: defaultReleasesRepoUrl
+                        }
                     }
                 }
 
