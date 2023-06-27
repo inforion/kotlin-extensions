@@ -5,6 +5,7 @@ import org.junit.Before
 import org.junit.Test
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
+import kotlin.system.measureTimeMillis
 
 internal class ArraysTest {
     data class TestClass(val int: Int, val long: Long, val string: String)
@@ -190,5 +191,47 @@ internal class ArraysTest {
                 TestClass(5, 5, "5")
         ).sumOf { it.long * 2 }
         assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
+    }
+
+    @Test fun justPerformanceLittle() {
+        val times = 6
+        val iterations = 100000
+
+        val results = mutableListOf<Long>()
+        repeat (times) {
+            measureTimeMillis {
+                repeat(iterations) {
+                    array.putInt(2, 0x00112233_44556677L, 8, LITTLE_ENDIAN)
+                    array.putInt(6, 0x00112233, 4, LITTLE_ENDIAN)
+                    array.putInt(8, 0x11EEFF, 3, LITTLE_ENDIAN)
+                }
+            }.also {
+                results.add(it)
+            }
+        }
+
+        println("result: $results")
+        println("mean: ${results.average()}")
+    }
+
+    @Test fun justPerformanceBig() {
+        val times = 6
+        val iterations = 100000
+
+        val results = mutableListOf<Long>()
+        repeat (times) {
+            measureTimeMillis {
+                repeat(iterations) {
+                    array.putInt(2, 0x00112233_44556677L, 8, BIG_ENDIAN)
+                    array.putInt(6, 0x00112233, 4, BIG_ENDIAN)
+                    array.putInt(8, 0x11EEFF, 3, BIG_ENDIAN)
+                }
+            }.also {
+                results.add(it)
+            }
+        }
+
+        println("result: $results")
+        println("mean: ${results.average()}")
     }
 }
