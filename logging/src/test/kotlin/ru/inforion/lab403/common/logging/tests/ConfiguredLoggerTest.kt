@@ -66,5 +66,7 @@ internal class ConfiguredLoggerTest {
         log.finest { "Print the six finest message" }
         log.debug { "Print the 7 debug message" }
         log.trace { "Print the 8 trace message" }
+
+        // TODO: mock writer
     }
 }
