@@ -8,14 +8,17 @@ class Slf4jLoggerImpl(private val loggerName:String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of Kopycat logger {EN}
      */
-    private val kcLogger = Logger.create(loggerName, LogLevel.MIN_VALUE, false)
+    private val kcLogger = Logger.create(loggerName, LogLevel.MIN_VALUE, false).also {
+        it.useSharedHandlers = false
+        it.useSLF4JHandlers = true
+    }
 
     /**
      * Replace curly braces in [format] with [args].
      *
      * Example: formatString("{} equals {}", a, b) -> "a equals b"
      */
-    fun formatString(format: String?, vararg args: Any?): String? {
+    private fun formatString(format: String?, vararg args: Any?): String? {
         if (format == null || args.any { it == null })
             return null
         var modifiedString = format!!

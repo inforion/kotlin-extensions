@@ -32,6 +32,11 @@ class Logger private constructor(
         private val sharedHandlers = hashSetOf(defaultPublisher)
 
         /**
+         * Handlers for all SLF4J provider loggers
+         */
+        private val sharedSLF4JHandlers = hashSetOf(defaultPublisher)
+
+        /**
          * Shutdown hook to flush all loggers when program exit
          */
         private val shutdownHook = thread(false) { flush() }.also { runtime.addShutdownHook(it) }
@@ -62,7 +67,7 @@ class Logger private constructor(
         private val callbacks = mutableListOf<LoggerActionCallback>()
 
         /**
-         * Create new logger by name with specified publishers or get it (logger) if it already exist for the class
+         * Create new logger by name with specified publishers or get it (logger) if it already exists for the class
          *
          * NOTE: this function is more likely internal API, please use functions from 'loggers.kt'
          *
@@ -115,6 +120,25 @@ class Logger private constructor(
          */
         fun removePublisher(publisher: AbstractPublisher) = sharedHandlers.remove(publisher)
 
+
+        /**
+         * Add new publisher to SLF4J logger provider
+         *
+         * @param publisher publisher to add
+         *
+         * @since 0.4.4
+         */
+        fun addSLF4JPublisher(publisher: AbstractPublisher) = sharedSLF4JHandlers.add(publisher)
+
+        /**
+         * Remove publisher to SLF4J logger provider
+         *
+         * @param publisher publisher to remove
+         *
+         * @since 0.4.4
+         */
+        fun removeSLF4JPublisher(publisher: AbstractPublisher) = sharedSLF4JHandlers.remove(publisher)
+
         /**
          *
          */
@@ -128,6 +152,9 @@ class Logger private constructor(
         fun flush() = loggers.values.forEach { it.flush() }
     }
 
+    var useSharedHandlers = true
+    var useSLF4JHandlers = false
+
     /**
      * Own handlers for each logger
      */
@@ -138,7 +165,13 @@ class Logger private constructor(
      */
     private val allHandlersSeq
         get() = sequence {
-            sharedHandlers.forEach { yield(it) }
+            if (useSharedHandlers) {
+                sharedHandlers.forEach { yield(it) }
+            }
+            if (useSLF4JHandlers) {
+                sharedSLF4JHandlers.forEach { yield(it) }
+            }
+
             ownHandlers.forEach { yield(it) }
         }
 
