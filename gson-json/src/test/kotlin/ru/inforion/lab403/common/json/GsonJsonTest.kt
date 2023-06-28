@@ -27,6 +27,15 @@ internal class GsonJsonTest {
     }
 
     @Test
+    fun unsignedKTypeTest() {
+        val gson = defaultJsonBuilder().create()
+        val expected = 100uL
+        val jsonElement = JsonPrimitive(100)
+        val actual = jsonElement.fromJson<Any>(ULong::class.createType(), gson)
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun unsignedOverflowTest() {
 //        val actual = """{"data":${UInt.MAX_VALUE}}""".fromJson<Testik>()
 //        assertEquals(Testik(UInt.MAX_VALUE), actual)
