@@ -3,6 +3,7 @@ package ru.inforion.lab403.common.extensions
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import ru.inforion.lab403.common.utils.Benchmark
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
 import kotlin.system.measureTimeMillis
@@ -194,44 +195,22 @@ internal class ArraysTest {
     }
 
     @Test fun justPerformanceLittle() {
-        val times = 6
-        val iterations = 100000
-
-        val results = mutableListOf<Long>()
-        repeat (times) {
-            measureTimeMillis {
-                repeat(iterations) {
-                    array.putInt(2, 0x00112233_44556677L, 8, LITTLE_ENDIAN)
-                    array.putInt(6, 0x00112233, 4, LITTLE_ENDIAN)
-                    array.putInt(8, 0x11EEFF, 3, LITTLE_ENDIAN)
-                }
-            }.also {
-                results.add(it)
-            }
+        Benchmark().bench {
+            array.putInt(2, 0x00112233_44556677L, 8, LITTLE_ENDIAN)
+            array.putInt(6, 0x00112233, 4, LITTLE_ENDIAN)
+            array.putInt(8, 0x11EEFF, 3, LITTLE_ENDIAN)
+        }.also {
+            println("mean: ${it.inWholeMilliseconds}")
         }
-
-        println("result: $results")
-        println("mean: ${results.average()}")
     }
 
     @Test fun justPerformanceBig() {
-        val times = 6
-        val iterations = 100000
-
-        val results = mutableListOf<Long>()
-        repeat (times) {
-            measureTimeMillis {
-                repeat(iterations) {
-                    array.putInt(2, 0x00112233_44556677L, 8, BIG_ENDIAN)
-                    array.putInt(6, 0x00112233, 4, BIG_ENDIAN)
-                    array.putInt(8, 0x11EEFF, 3, BIG_ENDIAN)
-                }
-            }.also {
-                results.add(it)
-            }
+        Benchmark().bench {
+            array.putInt(2, 0x00112233_44556677L, 8, BIG_ENDIAN)
+            array.putInt(6, 0x00112233, 4, BIG_ENDIAN)
+            array.putInt(8, 0x11EEFF, 3, BIG_ENDIAN)
+        }.also {
+            println("mean: ${it.inWholeMilliseconds}")
         }
-
-        println("result: $results")
-        println("mean: ${results.average()}")
     }
 }

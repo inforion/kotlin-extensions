@@ -7,6 +7,8 @@ plugins {
 dependencies {
     jmh("org.openjdk.jmh:jmh-core:$jmhCoreVersion")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:$jmhCoreVersion")
+
+    testApi(project(":utils"))
 }
 
 tasks {
