@@ -12,7 +12,7 @@ const val DEFAULT_CAPACITY = 16
  * [com.google.common.collect.Maps.capacity](https://github.com/google/guava/blob/v28.2/guava/src/com/google/common/collect/Maps.java#L325)
  * approach.
  */
-inline fun capacity(expectedSize: Int): Int = when {
+fun capacity(expectedSize: Int): Int = when {
     // We are not coercing the value to a valid one and not throwing an exception. It is up to the caller to
     // properly handle negative values.
     expectedSize < 0 -> expectedSize
@@ -32,24 +32,24 @@ inline fun <K, V> dictionaryOf(vararg pairs: Pair<K, V>) =
 
 inline fun <K, V> Dictionary<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean) = filterTo(dictionary(), predicate)
 
-inline fun <V> List<V>.toDictionaryByIndex() = dictionaryOf<Int, V>().also {
+fun <V> List<V>.toDictionaryByIndex() = dictionaryOf<Int, V>().also {
     forEachIndexed { index, item -> it[index] = item }
 }
 
-inline fun <K, V> Iterable<K>.toDictionaryWith(valueSelector: (K) -> V) = associateWithTo(dictionary(), valueSelector)
+fun <K, V> Iterable<K>.toDictionaryWith(valueSelector: (K) -> V) = associateWithTo(dictionary(), valueSelector)
 
 inline fun <K, V> Map<K, V>.toDictionary() = dictionary<K, V>().also { it.putAll(this) }
 
-inline fun <IK, IV, OK, OV> Map<IK, IV>.toDictionary(transform: (Map.Entry<IK, IV>) -> Pair<OK, OV>) =
+fun <IK, IV, OK, OV> Map<IK, IV>.toDictionary(transform: (Map.Entry<IK, IV>) -> Pair<OK, OV>) =
     entries.associateTo(dictionary(), transform)
 
-inline fun <K, V> Dictionary<K, V>.addAll(other: Dictionary<K, V>): Boolean {
+fun <K, V> Dictionary<K, V>.addAll(other: Dictionary<K, V>): Boolean {
     val total = keys.size
     putAll(other)
     return keys.size > total
 }
 
-inline fun <K, V> Dictionary<K, V>.removeIf(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
+fun <K, V> Dictionary<K, V>.removeIf(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     var removed = false
     val each  = entries.iterator()
     while (each.hasNext()) {

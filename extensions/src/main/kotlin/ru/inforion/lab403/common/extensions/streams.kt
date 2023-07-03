@@ -16,13 +16,13 @@ import kotlin.collections.ArrayList
 val emptyInputStream = ByteArray(0).inputStream()
 
 
-inline fun InputStream.readAvailableBytes(count: Int = -1): ByteArray {
+fun InputStream.readAvailableBytes(count: Int = -1): ByteArray {
     val toRead = if (count > 0) minOf(available(), count) else available()
     return readNBytes(toRead)
 }
 
 
-inline fun InputStream.readWhile(
+fun InputStream.readWhile(
     leftover: Boolean = true,
     capacity: Int = 32,
     predicate: (Int) -> Boolean
@@ -44,7 +44,7 @@ inline fun InputStream.readWhile(
 }
 
 
-inline fun InputStream.readWhileOrNull(
+fun InputStream.readWhileOrNull(
     leftover: Boolean = true,
     capacity: Int = 32,
     predicate: (Int) -> Boolean
@@ -58,7 +58,7 @@ inline fun InputStream.readWhileOrNull(
 const val DEFAULT_BYTE_BUFFER_CHUNK = 0x80_0000
 const val DEFAULT_BYTE_BUFFER_MARKER = 0x6EADBEEF
 
-inline fun InputStream.readBufferData(
+fun InputStream.readBufferData(
     dst: ByteBuffer,
     offset: Int = 0,
     chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK
@@ -76,7 +76,7 @@ inline fun InputStream.readBufferData(
     return total
 }
 
-inline fun OutputStream.writeBufferData(
+fun OutputStream.writeBufferData(
     src: ByteBuffer,
     offset: Int = 0,
     chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK
@@ -90,7 +90,7 @@ inline fun OutputStream.writeBufferData(
     } while (src.remaining() != 0)
 }
 
-inline fun DataInputStream.readByteBuffer(
+fun DataInputStream.readByteBuffer(
     chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK,
     marker: Int = DEFAULT_BYTE_BUFFER_MARKER
 ): ByteBuffer {
@@ -114,7 +114,7 @@ inline fun DataInputStream.readByteBuffer(
     return obj.position(position)
 }
 
-inline fun DataOutputStream.writeByteBuffer(
+fun DataOutputStream.writeByteBuffer(
     obj: ByteBuffer,
     chunk: Int = DEFAULT_BYTE_BUFFER_CHUNK,
     marker: Int = DEFAULT_BYTE_BUFFER_MARKER
@@ -136,29 +136,29 @@ inline fun DataOutputStream.writeByteBuffer(
 }
 
 
-inline fun DataOutputStream.writeLongRange(range: LongRange) {
+fun DataOutputStream.writeLongRange(range: LongRange) {
     writeLong(range.first)
     writeLong(range.last)
 }
 
-inline fun DataInputStream.readLongRange() = LongRange(readLong(), readLong())
+fun DataInputStream.readLongRange() = LongRange(readLong(), readLong())
 
 
-inline fun DataOutputStream.writeIntRange(range: IntRange) {
+fun DataOutputStream.writeIntRange(range: IntRange) {
     writeInt(range.first)
     writeInt(range.last)
 }
 
-inline fun DataInputStream.readIntRange() = IntRange(readInt(), readInt())
+fun DataInputStream.readIntRange() = IntRange(readInt(), readInt())
 
 
-inline fun DataOutputStream.writeTribyte(v: Int) {
+fun DataOutputStream.writeTribyte(v: Int) {
     write(v ushr 16 and 0xFF)
     write(v ushr 8 and 0xFF)
     write(v ushr 0 and 0xFF)
 }
 
-inline fun DataInputStream.readTribyte(): Int {
+fun DataInputStream.readTribyte(): Int {
     val ch1 = read()
     val ch2 = read()
     val ch3 = read()
@@ -174,56 +174,56 @@ inline fun DataInputStream.readDate(): Date = Date(readLong())
 
 inline fun DataInputStream.readULong() = readLong().ulong
 
-inline fun DataOutputStream.writeLongOptional(value: Long?) {
+fun DataOutputStream.writeLongOptional(value: Long?) {
     writeBoolean(value != null)
     if (value != null) writeLong(value)
 }
 
-inline fun DataOutputStream.writeULongOptional(value: ULong?) {
+fun DataOutputStream.writeULongOptional(value: ULong?) {
     writeBoolean(value != null)
     if (value != null) writeLong(value.long)
 }
 
-inline fun DataInputStream.readLongOrNull() = if (readBoolean()) readULong() else null
+fun DataInputStream.readLongOrNull() = if (readBoolean()) readULong() else null
 
-inline fun DataInputStream.readULongOrNull() = if (readBoolean()) readULong() else null
+fun DataInputStream.readULongOrNull() = if (readBoolean()) readULong() else null
 
-inline fun DataOutputStream.writeIntOptional(value: Int?) {
+fun DataOutputStream.writeIntOptional(value: Int?) {
     writeBoolean(value != null)
     if (value != null) writeInt(value)
 }
 
-inline fun DataInputStream.readIntOrNull() = if (readBoolean()) readInt() else null
+fun DataInputStream.readIntOrNull() = if (readBoolean()) readInt() else null
 
-inline fun DataOutputStream.writeStringIso(value: String) {
+fun DataOutputStream.writeStringIso(value: String) {
     writeInt(value.length)
     write(value.bytes)
 }
 
-inline fun DataInputStream.readStringIso() = readNBytes(readInt()).string
+fun DataInputStream.readStringIso() = readNBytes(readInt()).string
 
-inline fun DataOutputStream.writeStringIsoOptional(value: String?) {
+fun DataOutputStream.writeStringIsoOptional(value: String?) {
     writeBoolean(value != null)
     if (value != null) writeStringIso(value)
 }
 
-inline fun DataInputStream.readStringIsoOrNull() = if (readBoolean()) readStringIso() else null
+fun DataInputStream.readStringIsoOrNull() = if (readBoolean()) readStringIso() else null
 
-inline fun DataOutputStream.writeByteArray(value: ByteArray) {
+fun DataOutputStream.writeByteArray(value: ByteArray) {
     writeInt(value.size)
     write(value)
 }
 
-inline fun DataInputStream.readByteArray(): ByteArray = readNBytes(readInt())
+fun DataInputStream.readByteArray(): ByteArray = readNBytes(readInt())
 
-inline fun DataOutputStream.writeByteArrayOptional(value: ByteArray?) {
+fun DataOutputStream.writeByteArrayOptional(value: ByteArray?) {
     writeBoolean(value != null)
     if (value != null) writeByteArray(value)
 }
 
-inline fun DataInputStream.readByteArrayOrNull(): ByteArray? = if (readBoolean()) readByteArray() else null
+fun DataInputStream.readByteArrayOrNull(): ByteArray? = if (readBoolean()) readByteArray() else null
 
-inline fun <K, V> DataOutputStream.writeDictionary(
+fun <K, V> DataOutputStream.writeDictionary(
     value: Dictionary<K, V>,
     write: DataOutputStream.(Map.Entry<K, V>) -> Unit
 ) {
@@ -231,7 +231,7 @@ inline fun <K, V> DataOutputStream.writeDictionary(
     value.forEach { write(it) }
 }
 
-inline fun <K, V> DataInputStream.readDictionary(
+fun <K, V> DataInputStream.readDictionary(
     read: DataInputStream.() -> Pair<K, V>
 ): Dictionary<K, V> {
     val size = readInt()
@@ -243,7 +243,7 @@ inline fun <K, V> DataInputStream.readDictionary(
     return result
 }
 
-inline fun <K, V> DataInputStream.readDictionary(
+fun <K, V> DataInputStream.readDictionary(
     key: DataInputStream.() -> K,
     value: DataInputStream.() -> V,
 ): Dictionary<K, V> {
@@ -253,12 +253,12 @@ inline fun <K, V> DataInputStream.readDictionary(
     return result
 }
 
-inline fun <T> DataOutputStream.writeList(value: List<T>, write: DataOutputStream.(T) -> Unit) {
+fun <T> DataOutputStream.writeList(value: List<T>, write: DataOutputStream.(T) -> Unit) {
     writeInt(value.size)
     value.forEach { write(it) }
 }
 
-inline fun <T> DataInputStream.readList(read: DataInputStream.() -> T): List<T> {
+fun <T> DataInputStream.readList(read: DataInputStream.() -> T): List<T> {
     val size = readInt()
     val result = ArrayList<T>(size)
     repeat(size) { result.add(read(this)) }

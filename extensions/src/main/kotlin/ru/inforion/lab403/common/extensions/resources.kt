@@ -6,7 +6,7 @@ import java.net.URL
 import java.util.*
 import java.util.zip.GZIPInputStream
 
-inline fun <reified T: Any, R: Any> getResourceOf(obj: T, resource: String, getter: (Class<T>) -> R?): R {
+fun <T: Any, R: Any> getResourceOf(obj: T, resource: String, getter: (Class<T>) -> R?): R {
     val cls: Class<T> = obj.javaClass
     val result = getter(cls)
     if (result == null) {
@@ -16,24 +16,24 @@ inline fun <reified T: Any, R: Any> getResourceOf(obj: T, resource: String, gett
     return result
 }
 
-inline fun <reified T: Any> getResourceAsStreamOf(obj: T, resource: String): InputStream =
+fun <T: Any> getResourceAsStreamOf(obj: T, resource: String): InputStream =
     getResourceOf(obj, resource) { it.getResourceAsStream(resource) }
 
-inline fun <reified T: Any>getGZIPResourceAsStreamOf(obj: T, resource: String) =
+fun <T: Any>getGZIPResourceAsStreamOf(obj: T, resource: String) =
         GZIPInputStream(getResourceAsStreamOf(obj, resource))
 
-inline fun <reified T: Any> T.getResourceAsStream(resource: String) = getResourceAsStreamOf(this, resource)
+fun <T: Any> T.getResourceAsStream(resource: String) = getResourceAsStreamOf(this, resource)
 
-inline fun <reified T: Any> T.getGZIPResourceAsStream(resource: String) = getGZIPResourceAsStreamOf(this, resource)
+fun <T: Any> T.getGZIPResourceAsStream(resource: String) = getGZIPResourceAsStreamOf(this, resource)
 
-inline fun <reified T: Any>getResourceUrlOf(obj: T, resource: String): URL =
+fun <T: Any>getResourceUrlOf(obj: T, resource: String): URL =
     getResourceOf(obj, resource) { it.getResource(resource) }
 
-inline fun <reified T: Any> T.getResourceUrl(resource: String): URL = getResourceUrlOf(this, resource)
+fun <T: Any> T.getResourceUrl(resource: String): URL = getResourceUrlOf(this, resource)
 
-inline fun <reified T: Any> getResourceTextOf(obj: T, resource: String) = getResourceUrlOf(obj, resource).readText()
+fun <T: Any> getResourceTextOf(obj: T, resource: String) = getResourceUrlOf(obj, resource).readText()
 
-inline fun <reified T: Any> T.getResourceText(resource: String) = getResourceUrl(resource).readText()
+fun <T: Any> T.getResourceText(resource: String) = getResourceUrl(resource).readText()
 
 private fun getClassLoader() = Thread.currentThread().contextClassLoader
 
@@ -51,7 +51,7 @@ fun getResourceAsStreamOfRoot(resource: String): InputStream = getResourceOfRoot
 
 fun getResourceUrlOfRoot(resource: String): URL = getResourceOfRoot(resource) { it.getResource(resource) }
 
-inline fun <reified T: Any> T.buildInformationString(versionProperties: String = "version.properties"): String {
+fun <T: Any> T.buildInformationString(versionProperties: String = "version.properties"): String {
     val result: String
     val prop = Properties()
     val stream = getResourceAsStream(versionProperties)

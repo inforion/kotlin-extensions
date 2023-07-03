@@ -488,10 +488,10 @@ inline fun ByteArray.getArray(index: Int, size: Int): ByteArray = copyOfRange(in
 
 inline fun ByteArray.putArray(index: Int, data: ByteArray) = System.arraycopy(data, 0, this, index, data.size)
 
-inline fun ByteArray.getString(index: Int, size: Int, charset: Charset = Charsets.US_ASCII): String =
+fun ByteArray.getString(index: Int, size: Int, charset: Charset = Charsets.US_ASCII): String =
     getArray(index, size).toString(charset)
 
-inline fun ByteArray.putString(index: Int, string: String, charset: Charset = Charsets.US_ASCII) =
+fun ByteArray.putString(index: Int, string: String, charset: Charset = Charsets.US_ASCII) =
     putArray(index, string.toByteArray(charset))
 
 inline fun Byte.pack(size: Int) = ulong_z.pack(size)

@@ -54,8 +54,8 @@ fun String.unhexlify(): ByteArray {
     return data
 }
 
-inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
-inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
 inline fun UShort.binary(n: Int): String = uint_z.binary(n)
 inline fun UByte.binary(n: Int): String = uint_z.binary(n)
 
@@ -165,20 +165,20 @@ inline val Int.str get() = toString()
 inline val Short.str get() = toString()
 inline val Byte.str get() = toString()
 
-inline val ULong.hex get() = when {
+val ULong.hex get() = when {
     this > 0xFFFF_FFFFu -> hex16
     this > 0xFFFFu -> hex8
     this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val UInt.hex get() = when {
+val UInt.hex get() = when {
     this > 0xFFFFu -> hex8
     this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val UShort.hex get() = when {
+val UShort.hex get() = when {
     this > 0xFFu -> hex4
     else -> hex2
 }
@@ -190,16 +190,16 @@ inline val Int.hex get() = uint.hex
 inline val Short.hex get() = ushort.hex
 inline val Byte.hex get() = ubyte.hex
 
-inline fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
+fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
 
-inline fun String.alignRight(maxlen: Int = length) = "%-${maxlen}s".format(this)
+fun String.alignRight(maxlen: Int = length) = "%-${maxlen}s".format(this)
 
 /**
  * Slice input string from 0 to maxlen.
  * If maxlen > string.length then remain string.length (no exception thrown)
  */
-inline fun String.stretch(maxlen: Int, alignRight: Boolean = true) = when {
-    length == 0 -> alignLeft(maxlen)
+fun String.stretch(maxlen: Int, alignRight: Boolean = true) = when {
+    isEmpty() -> alignLeft(maxlen)
     alignRight -> slice(0 until length.coerceAtMost(maxlen)).alignRight(maxlen)
     else -> slice((length - maxlen).coerceAtLeast(0) until length).alignLeft(maxlen)
 }
@@ -493,15 +493,15 @@ inline fun String.className() = substringAfterLast(".")
 
 inline fun String.packageName() = substringBeforeLast(".")
 
-inline fun String.splitPackageClass() = Pair(packageName(), className())
+fun String.splitPackageClass() = Pair(packageName(), className())
 
-inline fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${take(maxlen)}..."
+fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${take(maxlen)}..."
 
 inline fun String.toFileOutputStream() = toFile().outputStream()
 
 inline fun String.toFileInputStream() = toFile().inputStream()
 
-inline fun String.toInetSocketAddress(): InetSocketAddress {
+fun String.toInetSocketAddress(): InetSocketAddress {
     val host = substringBefore(":")
     val port = substringAfter(":").int()
     return InetSocketAddress(host, port)
