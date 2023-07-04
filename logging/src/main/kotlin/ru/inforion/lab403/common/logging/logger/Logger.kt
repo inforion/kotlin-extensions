@@ -206,9 +206,13 @@ class Logger private constructor(
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
         val timestamp = System.currentTimeMillis()
-        val caller = Thread.currentThread().stackTrace[
-                if (isTopLevelLogger) STACK_TRACE_CALLER_INDEX else STACK_TRACE_CALLER_INDEX + 1]
-        val record = Record(this, level, timestamp, caller)
+        val thread = Thread.currentThread()
+        val trace = thread.stackTrace
+        val caller = trace[
+                if (isTopLevelLogger) STACK_TRACE_CALLER_INDEX else
+                    if (trace.size > STACK_TRACE_CALLER_INDEX + 2) STACK_TRACE_CALLER_INDEX + 2 else STACK_TRACE_CALLER_INDEX + 1
+        ]
+        val record = Record(this, level, timestamp, caller, thread)
         allHandlersSeq.forEach {
             it.publish(message, record)
             if (flush || flushOnPublish) it.flush()

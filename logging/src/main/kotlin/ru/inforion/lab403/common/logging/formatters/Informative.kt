@@ -9,13 +9,19 @@ import ru.inforion.lab403.common.logging.logger.Record
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Informative(val painter: Formatter = ColorMultiline):
+class Informative(
+    val painter: Formatter = ColorMultiline,
+    val messageFormat: String = defaultMessageFormat
+) :
     Formatter {
 
     companion object {
         var locationLength = 50
         var dateFormat = "HH:mm:ss"
-        var messageFormat = "%(time) %(level) %(location): %(message)\n"
+        var defaultMessageFormat = "%(time) %(level) %(location): %(message)\n"
+
+        var extremelyInformativeMessageFormat = "%(time) %(level) [%(name)][%(thread)] %(location): %(message)\n"
+        var newInformativeMessageFormat = "%(time) %(level) [%(name)] [%(thread)]: %(message)\n"
     }
 
     private inline fun stretch(string: String, maxlen: Int) = if (string.length <= maxlen)
@@ -38,10 +44,15 @@ class Informative(val painter: Formatter = ColorMultiline):
         val location = formatLocation(record.caller)
         val level = record.level.abbreviation
         val time = formatDate(record.millis)
+        val name = stretch(record.logger.name, locationLength)
+        val thread = record.thread.name
+
         // TODO: Make more efficient way
         val formatted = messageFormat
             .replace("%(time)", time)
             .replace("%(level)", level)
+            .replace("%(name)", name)
+            .replace("%(thread)", thread)
             .replace("%(location)", location)
             .replace("%(message)", message)
         return painter.format(formatted, record)

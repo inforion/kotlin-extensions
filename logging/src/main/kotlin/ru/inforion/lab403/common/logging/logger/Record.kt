@@ -7,7 +7,8 @@ class Record constructor(
     val logger: Logger,
     val level: LogLevel,
     val millis: Long,
-    val caller: Caller
+    val caller: Caller,
+    val thread: Thread,
 ) {
     val sourceMethodName: String get() = caller.methodName
     val sourceClassName: String get() = caller.className
