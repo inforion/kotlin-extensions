@@ -152,6 +152,7 @@ class Logger private constructor(
         fun flush() = loggers.values.forEach { it.flush() }
     }
 
+    var isTopLevelLogger = true
     var useSharedHandlers = true
     var useSLF4JHandlers = false
 
@@ -205,7 +206,8 @@ class Logger private constructor(
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
         val timestamp = System.currentTimeMillis()
-        val caller = Thread.currentThread().stackTrace[STACK_TRACE_CALLER_INDEX]
+        val caller = Thread.currentThread().stackTrace[
+                if (isTopLevelLogger) STACK_TRACE_CALLER_INDEX else STACK_TRACE_CALLER_INDEX + 1]
         val record = Record(this, level, timestamp, caller)
         allHandlersSeq.forEach {
             it.publish(message, record)

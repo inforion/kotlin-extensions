@@ -11,6 +11,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     private val logger = Logger.create(loggerName, LogLevel.MIN_VALUE, false).also {
         it.useSharedHandlers = false
         it.useSLF4JHandlers = true
+        it.isTopLevelLogger = false
     }
 
     /**
