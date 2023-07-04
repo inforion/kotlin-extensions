@@ -6,9 +6,9 @@ import ru.inforion.lab403.common.logging.LogLevel
 
 class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
-     * {EN} All methods point to corresponding methods of Kopycat logger {EN}
+     * {EN} All methods point to corresponding methods of the logger {EN}
      */
-    private val kcLogger = Logger.create(loggerName, LogLevel.MIN_VALUE, false).also {
+    private val logger = Logger.create(loggerName, LogLevel.MIN_VALUE, false).also {
         it.useSharedHandlers = false
         it.useSLF4JHandlers = true
     }
@@ -44,7 +44,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun trace(msg: String?) {
         if (msg != null)
-            kcLogger.trace { msg }
+            logger.trace { msg }
     }
 
     override fun trace(format: String?, arg: Any?) {
@@ -93,11 +93,10 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun debug(msg: String?) {
         if (msg != null)
-            kcLogger.debug { msg }
+            logger.debug { msg }
     }
 
     override fun debug(format: String?, arg: Any?) {
-        println("ABCDFV: $format $arg")
         debug(formatString(format, arg))
     }
 
@@ -106,7 +105,6 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun debug(format: String?, vararg arguments: Any?) {
-        println("ABCDFV: $format ${arguments.toList()}")
         debug(formatString(format, *arguments))
     }
 
@@ -144,7 +142,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun info(msg: String?) {
         if (msg != null)
-            kcLogger.info { msg }
+            logger.info { msg }
     }
 
     override fun info(format: String?, arg: Any?) {
@@ -193,7 +191,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun warn(msg: String?) {
         if (msg != null)
-            kcLogger.warning { msg }
+            logger.warning { msg }
     }
 
     override fun warn(format: String?, arg: Any?) {
@@ -242,7 +240,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun error(msg: String?) {
         if (msg != null)
-            kcLogger.severe { msg }
+            logger.severe { msg }
     }
 
     override fun error(format: String?, arg: Any?) {
