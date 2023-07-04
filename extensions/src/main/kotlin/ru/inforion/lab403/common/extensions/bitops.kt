@@ -61,6 +61,8 @@ inline fun inv(data: UInt) = data.inv()
 inline fun inv(data: UShort) = data.inv()
 inline fun inv(data: UByte) = data.inv()
 
+inline fun inv(data: BigInteger) = data.inv()
+
 // =====================================================================================================================
 // Bit reverse operations
 // =====================================================================================================================
@@ -114,6 +116,14 @@ inline fun bitMask64(size: Int) = ubitMask64(size).long
 inline fun bitMask32(range: IntRange) = ubitMask32(range).int
 inline fun bitMask64(range: IntRange) = ubitMask64(range).long
 
+fun ubitMaskBigint(size: Int): BigInteger = (BigInteger.ONE shl size) - BigInteger.ONE
+fun ubitMaskBigint(range: IntRange) =
+    if (range.last == 0)
+        ubitMaskBigint(range.first + 1)
+    else
+        ubitMaskBigint(range.first + 1) and inv(ubitMaskBigint(range.last))
+
+
 // =====================================================================================================================
 // Fill with zeros bit outside the specified range for long values
 // =====================================================================================================================
@@ -138,6 +148,9 @@ inline infix fun Int.mask(range: IntRange) = (uint mask range).int
 inline infix fun Short.mask(range: IntRange) = (ushort mask range).short
 inline infix fun Byte.mask(range: IntRange) = (ubyte mask range).byte
 
+inline infix fun BigInteger.mask(size: Int) = this and ubitMaskBigint(size)
+inline infix fun BigInteger.mask(range: IntRange) = this and ubitMaskBigint(range)
+
 // =====================================================================================================================
 // Fill with zero specified bit range (from msb to lsb)
 // =====================================================================================================================
@@ -151,6 +164,8 @@ inline infix fun Long.bzero(range: IntRange) = (ulong bzero range).long
 inline infix fun Int.bzero(range: IntRange) = (uint bzero range).int
 inline infix fun Short.bzero(range: IntRange) = (ushort bzero range).short
 inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
+
+inline infix fun BigInteger.bzero(range: IntRange) = this and inv(ubitMaskBigint(range))
 
 /**
  * Make bit extension by the lowest bit of the id.
@@ -199,6 +214,13 @@ inline infix fun Int.xbit(index: Int) = (uint xbit index).int
 inline infix fun Short.xbit(index: Int) = (ushort xbit index).int
 inline infix fun Byte.xbit(index: Int) = (ubyte xbit index).int
 
+
+inline fun BigInteger.xbits(high: Int, low: Int) =
+    (this ushr low) and ((BigInteger.ONE shl (high - low + 1)) - BigInteger.ONE)
+inline infix fun BigInteger.xbit(index: Int) =
+    (this ushr index) and BigInteger.ONE
+
+
 inline operator fun ULong.get(range: IntRange) = xbits(range.first, range.last)
 inline operator fun UInt.get(range: IntRange) = xbits(range.first, range.last)
 inline operator fun UShort.get(range: IntRange) = xbits(range.first, range.last)
@@ -219,6 +241,9 @@ inline operator fun Int.get(index: Int) = xbit(index)
 inline operator fun Short.get(index: Int) = xbit(index)
 inline operator fun Byte.get(index: Int) = xbit(index)
 
+inline operator fun BigInteger.get(range: IntRange) = xbits(range.first, range.last)
+inline operator fun BigInteger.get(index: Int) = xbit(index)
+
 // =====================================================================================================================
 // Bit insert operations
 // =====================================================================================================================
@@ -238,12 +263,20 @@ fun insertBit(dst: UInt, value: UInt, index: Int): UInt {
 inline fun insertBit(dst: Long, value: Long, index: Int): Long = insertBit(dst.ulong, value.ulong, index).long
 inline fun insertBit(dst: Int, value: Int, index: Int): Int = insertBit(dst.uint, value.uint, index).int
 
+inline fun insertBit(dst: BigInteger, value: BigInteger, index: Int): BigInteger {
+    val ins = value shl index
+    val mask = inv(BigInteger.ONE shl index)
+    return dst and mask or ins
+}
+
 fun insertField(dst: ULong, src: ULong, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
 fun insertField(dst: UInt, src: UInt, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
 
 inline fun insertField(dst: Long, src: Long, range: IntRange) = insertField(dst.ulong, src.ulong, range).long
 inline fun insertField(dst: Int, src: Int, range: IntRange) = insertField(dst.uint, src.uint, range).int
 
+inline fun insertField(dst: BigInteger, src: BigInteger, range: IntRange) =
+    (dst bzero range) or ((src shl range.last) mask range)
 
 inline fun ULong.insert(value: ULong, index: Int): ULong = insertBit(this, value, index)
 inline fun ULong.insert(value: UInt, index: Int): ULong = insert(value.ulong_z, index)
@@ -263,7 +296,6 @@ inline fun Int.insert(value: Int, index: Int): Int = insertBit(uint, value.uint,
 inline fun Long.insert(data: Long, range: IntRange): Long = insertField(ulong, data.ulong, range).long
 inline fun Int.insert(data: Int, range: IntRange): Int = insertField(uint, data.uint, range).int
 
-
 inline fun insert(value: ULong, index: Int): ULong = 0uL.insert(value, index)
 inline fun insert(value: UInt, index: Int): UInt = 0u.insert(value, index)
 
@@ -276,6 +308,16 @@ inline fun insert(value: Boolean, index: Int): Int = insert(value.uint, index).i
 
 inline fun insert(data: Long, range: IntRange): Long = insert(data.ulong, range).long
 inline fun insert(data: Int, range: IntRange): Int = insert(data.uint, range).int
+
+
+inline fun BigInteger.insert(value: BigInteger, index: Int): BigInteger = insertBit(this, value, index)
+inline fun BigInteger.insert(value: ULong, index: Int): BigInteger = insertBit(this, value.bigint, index)
+inline fun BigInteger.insert(value: UInt, index: Int): BigInteger = insert(value.bigint, index)
+inline fun BigInteger.insert(value: Int, index: Int): BigInteger = insert(value.bigint, index)
+inline fun BigInteger.insert(value: Boolean, index: Int): BigInteger = insert(value.int.bigint, index)
+
+inline fun BigInteger.insert(data: BigInteger, range: IntRange): BigInteger = insertField(this, data, range)
+inline fun BigInteger.insert(data: ULong, range: IntRange): BigInteger = insertField(this, data.bigint, range)
 
 // =====================================================================================================================
 // Bit set/clr/toggle operations
@@ -302,6 +344,9 @@ inline infix fun Short.clr(index: Int) = (int_s clr index).short
 inline infix fun Byte.clr(index: Int) = (int_s clr index).byte
 
 
+inline infix fun BigInteger.clr(range: IntRange) = this bzero range
+inline infix fun BigInteger.clr(index: Int) = this and inv(BigInteger.ONE shl index)
+
 inline infix fun ULong.set(index: Int) = this or (1uL shl index)
 inline infix fun UInt.set(index: Int) = this or (1u shl index)
 inline infix fun UShort.set(index: Int) = (uint_z set index).ushort
@@ -312,6 +357,9 @@ inline infix fun Int.set(index: Int) = (uint set index).int
 inline infix fun Short.set(index: Int) = (int_s set index).short
 inline infix fun Byte.set(index: Int) = (int_s set index).byte
 
+inline infix fun BigInteger.set(range: IntRange) = this or ubitMaskBigint(range)
+inline infix fun BigInteger.set(index: Int) = this or (BigInteger.ONE shl index)
+inline infix fun BigInteger.and(other: ULong) = this and other.bigint
 
 inline infix fun ULong.toggle(index: Int) = this xor (1uL shl index)
 inline infix fun UInt.toggle(index: Int) = this xor (1u shl index)
@@ -392,6 +440,29 @@ inline fun Int.swap32() = uint.swap32().int
 inline fun Int.swap16() = uint.swap16().int
 
 inline fun Short.swap16() = ushort.swap16().short
+
+
+fun BigInteger.swap64() = (this and 0x00000000_000000FFuL shl  56) or
+        (this and 0x00000000_0000FF00uL shl  40) or
+        (this and 0x00000000_00FF0000uL shl  24) or
+        (this and 0x00000000_FF000000uL shl   8) or
+        (this and 0x000000FF_00000000uL ushr  8) or
+        (this and 0x0000FF00_00000000uL ushr 24) or
+        (this and 0x00FF0000_00000000uL ushr 40) or
+        (this and 0xFF000000_00000000uL ushr 56)
+
+fun BigInteger.swap32() = (this and 0x0000_00FFuL shl  24) or
+        (this and 0x0000_FF00uL shl   8) or
+        (this and 0x00FF_0000uL ushr  8) or
+        (this and 0xFF00_0000uL ushr 24)
+
+fun BigInteger.swap128() = (this[63..0].ulong.swap64().bigint shl 64) or
+        (this[127..64].ulong.swap64().bigint)
+
+fun BigInteger.swap80(): BigInteger = (0 until 10).fold(BigInteger.ZERO) { acc, i ->
+    acc or (this[(i + 1) * 8 - 1..i * 8] shl (80 - (i + 1) * 8))
+}
+
 
 // =====================================================================================================================
 // Bit rotate operations

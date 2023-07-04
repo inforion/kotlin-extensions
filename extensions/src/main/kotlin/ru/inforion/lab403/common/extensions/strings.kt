@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.extensions
 
 import java.io.File
+import java.math.BigInteger
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -99,6 +100,7 @@ inline val String.shortByHex get() = short(16)
 inline val String.byteByHex get() = byte(16)
 inline val String.ulongByHex get() = ulong(16)
 inline val String.uintByHex get() = uint(16)
+inline val String.bigintByHex get() = BigInteger(this, 16)
 
 inline val String.long: Long get() = removePrefixOrNull("0x")?.longByHex ?: longByDec
 inline val String.int: Int get() = removePrefixOrNull("0x")?.intByHex ?: intByDec
@@ -160,6 +162,15 @@ inline val UShort.hex4 get() = "%04X".format(short)
 
 inline val UByte.hex2 get() = "%02X".format(byte)
 
+inline val BigInteger.lhex20 get() = "%020x".format(this)
+inline val BigInteger.lhex32 get() = "%032x".format(this)
+
+inline val BigInteger.hex2 get() = "%02X".format(this)
+inline val BigInteger.hex4 get() = "%04X".format(this)
+inline val BigInteger.hex8 get() = "%08X".format(this)
+inline val BigInteger.hex16 get() = "%016X".format(this)
+inline val BigInteger.hex32 get() = "%032X".format(this)
+
 inline val Long.str get() = toString()
 inline val Int.str get() = toString()
 inline val Short.str get() = toString()
@@ -189,6 +200,14 @@ inline val Long.hex get() = ulong.hex
 inline val Int.hex get() = uint.hex
 inline val Short.hex get() = ushort.hex
 inline val Byte.hex get() = ubyte.hex
+
+val BigInteger.hex get() = when {
+    this > 0xFFFF_FFFF_FFFF_FFFFu.bigint -> hex32
+    this > 0xFFFF_FFFFu.bigint -> hex16
+    this > 0xFFFFu.bigint -> hex8
+    this > 0xFFu.bigint -> hex4
+    else -> hex2
+}
 
 fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
 

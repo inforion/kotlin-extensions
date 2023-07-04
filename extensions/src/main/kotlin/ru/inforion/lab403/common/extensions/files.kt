@@ -5,7 +5,13 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.net.URI
 import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.AclFileAttributeView
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.DosFileAttributes
+import java.nio.file.attribute.PosixFileAttributes
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
@@ -162,3 +168,16 @@ fun String.isTraverseDirectory(base: String) = !isNotTraverseDirectory(base)
  * {EN}
  */
 fun String.isValidPath() = runCatching { Paths.get(this) }.isSuccess
+
+
+inline fun <reified T: BasicFileAttributes> File.readAttribute(): T = Files.readAttributes(toPath(), T::class.java)
+
+inline fun <reified T: BasicFileAttributes> Path.readAttribute(): T = Files.readAttributes(this, T::class.java)
+
+fun Path.getAclFileAttributeView(): AclFileAttributeView =
+    Files.getFileAttributeView(this, AclFileAttributeView::class.java)
+
+fun Path.readDosAttribute() = readAttribute<DosFileAttributes>()
+
+fun Path.readPosixAttribute() = readAttribute<PosixFileAttributes>()
+
