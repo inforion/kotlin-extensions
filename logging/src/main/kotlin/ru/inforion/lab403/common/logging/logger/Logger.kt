@@ -77,12 +77,12 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun create(name: String, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher) = loggers.getOrPut(name) {
+        fun create(name: String, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = true) = loggers.getOrPut(name) {
             Logger(
                 name,
-                level = Config.level(name) { level },
+                level = if (noConfig) level else Config.level(name) { level },
                 flushOnPublish = flush,
-                publishers = Config.publishers(name) { publishers }
+                publishers = if (noConfig) publishers else Config.publishers(name) { publishers },
             ).apply {
                 callbacks.forEach { it.invoke(this) }
             }
@@ -99,8 +99,8 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun <T> create(klass: Class<T>, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher) =
-            create(klass.simpleName, level, flush, *publishers)
+        fun <T> create(klass: Class<T>, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = true) =
+            create(klass.simpleName, level, flush, *publishers, noConfig = noConfig)
 
         /**
          * Add new publisher to the shared handlers
