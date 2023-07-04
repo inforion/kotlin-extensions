@@ -152,7 +152,7 @@ class Logger private constructor(
         fun flush() = loggers.values.forEach { it.flush() }
     }
 
-    var isTopLevelLogger = true
+    var stackFrameOffset = 0
     var useSharedHandlers = true
     var useSLF4JHandlers = false
 
@@ -208,10 +208,10 @@ class Logger private constructor(
         val timestamp = System.currentTimeMillis()
         val thread = Thread.currentThread()
         val trace = thread.stackTrace
-        val caller = trace[
-                if (isTopLevelLogger) STACK_TRACE_CALLER_INDEX else
-                    if (trace.size > STACK_TRACE_CALLER_INDEX + 2) STACK_TRACE_CALLER_INDEX + 2 else STACK_TRACE_CALLER_INDEX + 1
-        ]
+        val caller = (STACK_TRACE_CALLER_INDEX + stackFrameOffset).let {
+            val index = if (it in trace.indices) it else minOf(STACK_TRACE_CALLER_INDEX, trace.size)
+            trace[index]
+        }
         val record = Record(this, level, timestamp, caller, thread)
         allHandlersSeq.forEach {
             it.publish(message, record)
