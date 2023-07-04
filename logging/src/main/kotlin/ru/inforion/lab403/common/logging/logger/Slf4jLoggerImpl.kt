@@ -1,10 +1,10 @@
 package ru.inforion.lab403.common.logging.logger
 
 import org.slf4j.Marker
+import org.slf4j.helpers.MessageFormatter
 import ru.inforion.lab403.common.logging.LogLevel
-import java.text.MessageFormat
 
-class Slf4jLoggerImpl(private val loggerName:String) : org.slf4j.Logger {
+class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of Kopycat logger {EN}
      */
@@ -21,13 +21,7 @@ class Slf4jLoggerImpl(private val loggerName:String) : org.slf4j.Logger {
     private fun formatString(format: String?, vararg args: Any?): String? {
         if (format == null || args.any { it == null })
             return null
-        var modifiedString = format!!
-        var i = 0
-
-        while (modifiedString.contains("{}"))
-            modifiedString = modifiedString.replaceFirst("{}", "{" + i++ + "}")
-
-        return MessageFormat.format(modifiedString, *args.map { it.toString() }.toTypedArray())
+        return MessageFormatter.arrayFormat(format, args).message
     }
 
     private fun logExceptionWithMessage(msg: String?, t: Throwable?): String? {
@@ -103,6 +97,7 @@ class Slf4jLoggerImpl(private val loggerName:String) : org.slf4j.Logger {
     }
 
     override fun debug(format: String?, arg: Any?) {
+        println("ABCDFV: $format $arg")
         debug(formatString(format, arg))
     }
 
@@ -111,6 +106,7 @@ class Slf4jLoggerImpl(private val loggerName:String) : org.slf4j.Logger {
     }
 
     override fun debug(format: String?, vararg arguments: Any?) {
+        println("ABCDFV: $format ${arguments.toList()}")
         debug(formatString(format, *arguments))
     }
 
