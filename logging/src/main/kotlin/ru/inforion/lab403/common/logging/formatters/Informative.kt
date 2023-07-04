@@ -41,7 +41,6 @@ class Informative(
     private inline fun formatDate(millis: Long) = SimpleDateFormat(dateFormat).format(Date(millis))
 
     override fun format(message: String, record: Record): String {
-        val location = formatLocation(record.caller)
         val level = record.level.abbreviation
         val time = formatDate(record.millis)
         val name = stretch(record.logger.name, locationLength)
@@ -53,8 +52,18 @@ class Informative(
             .replace("%(level)", level)
             .replace("%(name)", name)
             .replace("%(thread)", thread)
-            .replace("%(location)", location)
             .replace("%(message)", message)
+            .let {
+                if (it.contains("%(location)")) {
+                    val trace = record.thread.stackTrace
+                    it.replace(
+                        "%(location)", formatLocation(
+                            record.thread.stackTrace[if (record.stackFrameIndex in trace.indices) record.stackFrameIndex
+                            else trace.lastIndex]
+                        )
+                    )
+                } else it
+            }
         return painter.format(formatted, record)
     }
 }

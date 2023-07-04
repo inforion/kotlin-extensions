@@ -1,6 +1,7 @@
 package ru.inforion.lab403.common.logging.logger
 
 import org.slf4j.Marker
+import org.slf4j.event.Level
 import org.slf4j.helpers.MessageFormatter
 import ru.inforion.lab403.common.logging.LogLevel
 
@@ -31,16 +32,22 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
         return "$msg: $t"
     }
 
+    private fun markerString(msg: String?):String? {
+        if(msg == null)
+            return null
+        return "[M] $msg"
+    }
+
     override fun getName(): String {
         return loggerName
     }
 
     override fun isTraceEnabled(): Boolean {
-        return true
+        return logger.level >= Level.TRACE.toInt()
     }
 
     override fun isTraceEnabled(marker: Marker?): Boolean {
-        return true
+        return logger.level >= Level.TRACE.toInt()
     }
 
     override fun trace(msg: String?) {
@@ -64,31 +71,31 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun trace(marker: Marker?, msg: String?) {
-        throw NotImplementedError("Marker logging not implemented")
+        traceInternal(markerString(msg))
     }
 
     override fun trace(marker: Marker?, format: String?, arg: Any?) {
-        trace(marker, formatString(format, arg))
+        traceInternal(markerString(formatString(format, arg)))
     }
 
     override fun trace(marker: Marker?, format: String?, arg1: Any?, arg2: Any?) {
-        trace(marker, formatString(format, arg1, arg2))
+        traceInternal(markerString(formatString(format, arg1, arg2)))
     }
 
     override fun trace(marker: Marker?, format: String?, vararg argArray: Any?) {
-        trace(marker, formatString(format, *argArray))
+        traceInternal(markerString(formatString(format, *argArray)))
     }
 
     override fun trace(marker: Marker?, msg: String?, t: Throwable?) {
-        trace(marker, logExceptionWithMessage(msg, t))
+        traceInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
     override fun isDebugEnabled(): Boolean {
-        return true
+        return logger.level >= Level.DEBUG.toInt()
     }
 
     override fun isDebugEnabled(marker: Marker?): Boolean {
-        return true
+        return logger.level >= Level.DEBUG.toInt()
     }
 
     override fun debug(msg: String?) {
@@ -112,31 +119,31 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun debug(marker: Marker?, msg: String?) {
-        throw NotImplementedError("Marker logging not implemented")
+        debugInternal(markerString(msg))
     }
 
     override fun debug(marker: Marker?, format: String?, arg: Any?) {
-        debug(marker, formatString(format, arg))
+        debugInternal(markerString(formatString(format, arg)))
     }
 
     override fun debug(marker: Marker?, format: String?, arg1: Any?, arg2: Any?) {
-        debug(marker, formatString(format, arg1, arg2))
+        debugInternal(markerString(formatString(format, arg1, arg2)))
     }
 
     override fun debug(marker: Marker?, format: String?, vararg arguments: Any?) {
-        debug(marker, formatString(format, *arguments))
+        debugInternal(markerString(formatString(format, *arguments)))
     }
 
     override fun debug(marker: Marker?, msg: String?, t: Throwable?) {
-        debug(marker, logExceptionWithMessage(msg, t))
+        debugInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
     override fun isInfoEnabled(): Boolean {
-        return true
+        return logger.level >= Level.INFO.toInt()
     }
 
     override fun isInfoEnabled(marker: Marker?): Boolean {
-        return true
+        return logger.level >= Level.INFO.toInt()
     }
 
     override fun info(msg: String?) {
@@ -160,31 +167,31 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun info(marker: Marker?, msg: String?) {
-        throw NotImplementedError("Marker logging not implemented")
+        infoInternal(markerString(msg))
     }
 
     override fun info(marker: Marker?, format: String?, arg: Any?) {
-        info(marker, formatString(format, arg))
+        infoInternal(markerString(formatString(format, arg)))
     }
 
     override fun info(marker: Marker?, format: String?, arg1: Any?, arg2: Any?) {
-        info(marker, formatString(format, arg1, arg2))
+        infoInternal(markerString(formatString(format, arg1, arg2)))
     }
 
     override fun info(marker: Marker?, format: String?, vararg arguments: Any?) {
-        info(marker, formatString(format, *arguments))
+        infoInternal(markerString(formatString(format, *arguments)))
     }
 
     override fun info(marker: Marker?, msg: String?, t: Throwable?) {
-        info(marker, logExceptionWithMessage(msg, t))
+        infoInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
     override fun isWarnEnabled(): Boolean {
-        return true
+        return logger.level >= Level.WARN.toInt()
     }
 
     override fun isWarnEnabled(marker: Marker?): Boolean {
-        return true
+        return logger.level >= Level.WARN.toInt()
     }
 
     override fun warn(msg: String?) {
@@ -208,31 +215,31 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun warn(marker: Marker?, msg: String?) {
-        throw NotImplementedError("Marker logging not implemented")
+        warnInternal(markerString(msg))
     }
 
     override fun warn(marker: Marker?, format: String?, arg: Any?) {
-        warn(marker, formatString(format, arg))
+        warnInternal(markerString(formatString(format, arg)))
     }
 
     override fun warn(marker: Marker?, format: String?, arg1: Any?, arg2: Any?) {
-        warn(marker, formatString(format, arg1, arg2))
+        warnInternal(markerString(formatString(format, arg1, arg2)))
     }
 
     override fun warn(marker: Marker?, format: String?, vararg arguments: Any?) {
-        warn(marker, formatString(format, *arguments))
+        warnInternal(markerString(formatString(format, *arguments)))
     }
 
     override fun warn(marker: Marker?, msg: String?, t: Throwable?) {
-        warn(marker, logExceptionWithMessage(msg, t))
+        warnInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
     override fun isErrorEnabled(): Boolean {
-        return true
+        return logger.level >= Level.ERROR.toInt()
     }
 
     override fun isErrorEnabled(marker: Marker?): Boolean {
-        return true
+        return logger.level >= Level.ERROR.toInt()
     }
 
     override fun error(msg: String?) {
@@ -256,23 +263,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun error(marker: Marker?, msg: String?) {
-        throw NotImplementedError("Marker logging not implemented")
+        errorInternal(markerString(msg))
     }
 
     override fun error(marker: Marker?, format: String?, arg: Any?) {
-        error(marker, formatString(format, arg))
+        errorInternal(markerString(formatString(format, arg)))
     }
 
     override fun error(marker: Marker?, format: String?, arg1: Any?, arg2: Any?) {
-        error(marker, formatString(format, arg1, arg2))
+        errorInternal(markerString(formatString(format, arg1, arg2)))
     }
 
     override fun error(marker: Marker?, format: String?, vararg arguments: Any?) {
-        error(marker, formatString(format, *arguments))
+        errorInternal(markerString(formatString(format, *arguments)))
     }
 
     override fun error(marker: Marker?, msg: String?, t: Throwable?) {
-        error(marker, logExceptionWithMessage(msg, t))
+        errorInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
     /**
