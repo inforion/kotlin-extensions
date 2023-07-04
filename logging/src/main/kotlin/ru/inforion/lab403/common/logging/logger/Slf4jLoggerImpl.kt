@@ -42,13 +42,16 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
         return loggerName
     }
 
-    override fun isTraceEnabled(): Boolean {
-        return logger.level >= Level.TRACE.toInt()
-    }
-
-    override fun isTraceEnabled(marker: Marker?): Boolean {
-        return logger.level >= Level.TRACE.toInt()
-    }
+    override fun isTraceEnabled(): Boolean = logger.level >= Level.TRACE.toInt()
+    override fun isTraceEnabled(marker: Marker?): Boolean = logger.level >= Level.TRACE.toInt()
+    override fun isErrorEnabled(): Boolean = logger.level >= Level.ERROR.toInt()
+    override fun isErrorEnabled(marker: Marker?): Boolean = logger.level >= Level.ERROR.toInt()
+    override fun isWarnEnabled(): Boolean = logger.level >= Level.WARN.toInt()
+    override fun isWarnEnabled(marker: Marker?): Boolean = logger.level >= Level.WARN.toInt()
+    override fun isInfoEnabled(): Boolean = logger.level >= Level.INFO.toInt()
+    override fun isInfoEnabled(marker: Marker?): Boolean = logger.level >= Level.INFO.toInt()
+    override fun isDebugEnabled(): Boolean = logger.level >= Level.DEBUG.toInt()
+    override fun isDebugEnabled(marker: Marker?): Boolean = logger.level >= Level.DEBUG.toInt()
 
     override fun trace(msg: String?) {
         traceInternal(msg)
@@ -88,14 +91,6 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun trace(marker: Marker?, msg: String?, t: Throwable?) {
         traceInternal(markerString(logExceptionWithMessage(msg, t)))
-    }
-
-    override fun isDebugEnabled(): Boolean {
-        return logger.level >= Level.DEBUG.toInt()
-    }
-
-    override fun isDebugEnabled(marker: Marker?): Boolean {
-        return logger.level >= Level.DEBUG.toInt()
     }
 
     override fun debug(msg: String?) {
@@ -138,14 +133,6 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
         debugInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
-    override fun isInfoEnabled(): Boolean {
-        return logger.level >= Level.INFO.toInt()
-    }
-
-    override fun isInfoEnabled(marker: Marker?): Boolean {
-        return logger.level >= Level.INFO.toInt()
-    }
-
     override fun info(msg: String?) {
         infoInternal(msg)
     }
@@ -184,14 +171,6 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun info(marker: Marker?, msg: String?, t: Throwable?) {
         infoInternal(markerString(logExceptionWithMessage(msg, t)))
-    }
-
-    override fun isWarnEnabled(): Boolean {
-        return logger.level >= Level.WARN.toInt()
-    }
-
-    override fun isWarnEnabled(marker: Marker?): Boolean {
-        return logger.level >= Level.WARN.toInt()
     }
 
     override fun warn(msg: String?) {
@@ -234,13 +213,8 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
         warnInternal(markerString(logExceptionWithMessage(msg, t)))
     }
 
-    override fun isErrorEnabled(): Boolean {
-        return logger.level >= Level.ERROR.toInt()
-    }
 
-    override fun isErrorEnabled(marker: Marker?): Boolean {
-        return logger.level >= Level.ERROR.toInt()
-    }
+
 
     override fun error(msg: String?) {
         errorInternal(msg)

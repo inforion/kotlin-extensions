@@ -54,12 +54,14 @@ class Informative(
             .replace("%(thread)", thread)
             .replace("%(message)", message)
             .let {
-                if (it.contains("%(location)")) {
+                if ("%(location)" in it) {
                     val trace = record.thread.stackTrace
                     it.replace(
                         "%(location)", formatLocation(
-                            record.thread.stackTrace[if (record.stackFrameIndex in trace.indices) record.stackFrameIndex
-                            else trace.lastIndex]
+                            record.thread.stackTrace[
+                                    if (record.stackFrameIndex in trace.indices) record.stackFrameIndex
+                                    else trace.lastIndex
+                            ]
                         )
                     )
                 } else it
