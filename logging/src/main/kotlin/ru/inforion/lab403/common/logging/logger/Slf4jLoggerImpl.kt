@@ -44,24 +44,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun trace(msg: String?) {
-        if (msg != null)
-            logger.trace { msg }
+        traceInternal(msg)
     }
 
     override fun trace(format: String?, arg: Any?) {
-        trace(formatString(format, arg))
+        traceInternal(formatString(format, arg))
     }
 
     override fun trace(format: String?, arg1: Any?, arg2: Any?) {
-        trace(formatString(format, arg1, arg2))
+        traceInternal(formatString(format, arg1, arg2))
     }
 
     override fun trace(format: String?, vararg arguments: Any?) {
-        trace(formatString(format, *arguments))
+        traceInternal(formatString(format, *arguments))
     }
 
     override fun trace(msg: String?, t: Throwable?) {
-        trace(logExceptionWithMessage(msg, t))
+        traceInternal(logExceptionWithMessage(msg, t))
     }
 
     override fun trace(marker: Marker?, msg: String?) {
@@ -93,24 +92,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun debug(msg: String?) {
-        if (msg != null)
-            logger.debug { msg }
+        debugInternal(msg)
     }
 
     override fun debug(format: String?, arg: Any?) {
-        debug(formatString(format, arg))
+        debugInternal(formatString(format, arg))
     }
 
     override fun debug(format: String?, arg1: Any?, arg2: Any?) {
-        debug(formatString(format, arg1, arg2))
+        debugInternal(formatString(format, arg1, arg2))
     }
 
     override fun debug(format: String?, vararg arguments: Any?) {
-        debug(formatString(format, *arguments))
+        debugInternal(formatString(format, *arguments))
     }
 
     override fun debug(msg: String?, t: Throwable?) {
-        debug(logExceptionWithMessage(msg, t))
+        debugInternal(logExceptionWithMessage(msg, t))
     }
 
     override fun debug(marker: Marker?, msg: String?) {
@@ -142,24 +140,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun info(msg: String?) {
-        if (msg != null)
-            logger.info { msg }
+        infoInternal(msg)
     }
 
     override fun info(format: String?, arg: Any?) {
-        info(formatString(format, arg))
+        infoInternal(formatString(format, arg))
     }
 
     override fun info(format: String?, arg1: Any?, arg2: Any?) {
-        info(formatString(format, arg1, arg2))
+        infoInternal(formatString(format, arg1, arg2))
     }
 
     override fun info(format: String?, vararg arguments: Any?) {
-        info(formatString(format, *arguments))
+        infoInternal(formatString(format, *arguments))
     }
 
     override fun info(msg: String?, t: Throwable?) {
-        info(logExceptionWithMessage(msg, t))
+        infoInternal(logExceptionWithMessage(msg, t))
     }
 
     override fun info(marker: Marker?, msg: String?) {
@@ -191,24 +188,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun warn(msg: String?) {
-        if (msg != null)
-            logger.warning { msg }
+        warnInternal(msg)
     }
 
     override fun warn(format: String?, arg: Any?) {
-        warn(formatString(format, arg))
+        warnInternal(formatString(format, arg))
     }
 
     override fun warn(format: String?, vararg arguments: Any?) {
-        warn(formatString(format, *arguments))
+        warnInternal(formatString(format, *arguments))
     }
 
     override fun warn(format: String?, arg1: Any?, arg2: Any?) {
-        warn(formatString(format, arg1, arg2))
+        warnInternal(formatString(format, arg1, arg2))
     }
 
     override fun warn(msg: String?, t: Throwable?) {
-        warn(logExceptionWithMessage(msg, t))
+        warnInternal(logExceptionWithMessage(msg, t))
     }
 
     override fun warn(marker: Marker?, msg: String?) {
@@ -240,24 +236,23 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     }
 
     override fun error(msg: String?) {
-        if (msg != null)
-            logger.severe { msg }
+        errorInternal(msg)
     }
 
     override fun error(format: String?, arg: Any?) {
-        error(formatString(format, arg))
+        errorInternal(formatString(format, arg))
     }
 
     override fun error(format: String?, arg1: Any?, arg2: Any?) {
-        error(formatString(format, arg1, arg2))
+        errorInternal(formatString(format, arg1, arg2))
     }
 
     override fun error(format: String?, vararg arguments: Any?) {
-        error(formatString(format, *arguments))
+        errorInternal(formatString(format, *arguments))
     }
 
     override fun error(msg: String?, t: Throwable?) {
-        error(logExceptionWithMessage(msg, t))
+        errorInternal(logExceptionWithMessage(msg, t))
     }
 
     override fun error(marker: Marker?, msg: String?) {
@@ -278,5 +273,33 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
 
     override fun error(marker: Marker?, msg: String?, t: Throwable?) {
         error(marker, logExceptionWithMessage(msg, t))
+    }
+
+    /**
+     * {EN} These functions are needed to make stack size the same for each log function {EN}
+     */
+    private fun errorInternal(msg: String?) {
+        if (msg != null)
+            logger.severe { msg }
+    }
+
+    private fun infoInternal(msg: String?) {
+        if (msg != null)
+            logger.info { msg }
+    }
+
+    private fun traceInternal(msg: String?) {
+        if (msg != null)
+            logger.trace { msg }
+    }
+
+    private fun debugInternal(msg: String?) {
+        if (msg != null)
+            logger.debug { msg }
+    }
+
+    private fun warnInternal(msg: String?) {
+        if (msg != null)
+            logger.warning { msg }
     }
 }
