@@ -16,18 +16,18 @@ enum class Frequency(val multiplier: Long) {
 /**
  * Multipliers in readable form for different frequency dimensions
  */
-inline val Number.Hz get() = this.toLong()
-inline val Number.kHz get() = (toDouble() * Frequency.kHz.multiplier).toLong()
-inline val Number.MHz get() = (toDouble() * Frequency.MHz.multiplier).toLong()
-inline val Number.GHz get() = (toDouble() * Frequency.GHz.multiplier).toLong()
+val Number.Hz get() = this.toLong()
+val Number.kHz get() = (toDouble() * Frequency.kHz.multiplier).toLong()
+val Number.MHz get() = (toDouble() * Frequency.MHz.multiplier).toLong()
+val Number.GHz get() = (toDouble() * Frequency.GHz.multiplier).toLong()
 
 /**
  * Extension functions for conversion between frequencies dimensions
  */
-inline fun Number.to_Hz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.Hz.multiplier).toLong()
-inline fun Number.to_kHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.kHz.multiplier).toLong()
-inline fun Number.to_MHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.MHz.multiplier).toLong()
-inline fun Number.to_GHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.GHz.multiplier).toLong()
+fun Number.to_Hz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.Hz.multiplier).toLong()
+fun Number.to_kHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.kHz.multiplier).toLong()
+fun Number.to_MHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.MHz.multiplier).toLong()
+fun Number.to_GHz(from: Frequency = Frequency.Hz): Long = (toDouble() * from.multiplier / Frequency.GHz.multiplier).toLong()
 
 enum class Time(val divider: Long) {
     s(1),

@@ -3,8 +3,10 @@ package ru.inforion.lab403.common.extensions
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import ru.inforion.lab403.common.utils.Benchmark
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
+import kotlin.system.measureTimeMillis
 
 internal class ArraysTest {
     data class TestClass(val int: Int, val long: Long, val string: String)
@@ -190,5 +192,25 @@ internal class ArraysTest {
                 TestClass(5, 5, "5")
         ).sumOf { it.long * 2 }
         assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
+    }
+
+    @Test fun justPerformanceLittle() {
+        Benchmark().bench {
+            array.putInt(2, 0x00112233_44556677L, 8, LITTLE_ENDIAN)
+            array.putInt(6, 0x00112233, 4, LITTLE_ENDIAN)
+            array.putInt(8, 0x11EEFF, 3, LITTLE_ENDIAN)
+        }.also {
+            println("mean: ${it.inWholeMilliseconds}")
+        }
+    }
+
+    @Test fun justPerformanceBig() {
+        Benchmark().bench {
+            array.putInt(2, 0x00112233_44556677L, 8, BIG_ENDIAN)
+            array.putInt(6, 0x00112233, 4, BIG_ENDIAN)
+            array.putInt(8, 0x11EEFF, 3, BIG_ENDIAN)
+        }.also {
+            println("mean: ${it.inWholeMilliseconds}")
+        }
     }
 }

@@ -153,7 +153,7 @@ inline fun ThreadLocalRandom.success(rate: Double) = double < rate
  *
  * @param pdf probability density function
  */
-inline fun <E>Collection<E>.randomIndexed(pdf: (Int, E) -> Double): E {
+fun <E>Collection<E>.randomIndexed(pdf: (Int, E) -> Double): E {
     if (this.size == 1)
         return first()
     var cum = 0.0
@@ -175,7 +175,7 @@ inline fun <E>Collection<E>.randomIndexed(pdf: (Int, E) -> Double): E {
  *
  * @param pdf probability density function
  */
-inline fun <E>Collection<E>.random(pdf: (E) -> Double) = randomIndexed { _, e -> pdf(e) }
+fun <E>Collection<E>.random(pdf: (E) -> Double) = randomIndexed { _, e -> pdf(e) }
 
 /**
  * Get random element specified arguments
@@ -185,7 +185,7 @@ fun <T> random(vararg items: T) = items.random()
 // Random function deprecated
 
 @Deprecated("use will be renamed to randomIndexed() instead")
-inline fun <E>Collection<E>.choiceIndexed(block: (Int, E) -> Double) = randomIndexed(block)
+fun <E>Collection<E>.choiceIndexed(block: (Int, E) -> Double) = randomIndexed(block)
 
 @Deprecated("use will be renamed to random() instead")
 fun <E>Collection<E>.choice(block: (E) -> Double) = random(block)

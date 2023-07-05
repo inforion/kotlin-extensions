@@ -55,7 +55,7 @@ inline val <T> List<T>.end get() = last()
 
 inline val <T> List<T>.endOrNull get() = lastOrNull()
 
-inline fun <reified T> List<T>.split(count: Int): List<List<T>> {
+fun <T> List<T>.split(count: Int): List<List<T>> {
     require(size > 0) { "List is empty" }
     require(count > 0) { "Amount of partitions must be positive" }
 
@@ -77,29 +77,29 @@ inline fun <reified T> List<T>.split(count: Int): List<List<T>> {
     return result
 }
 
-inline fun <R> List<*>.findInstance(klass: Class<R>): R? {
+fun <R> List<*>.findInstance(klass: Class<R>): R? {
     for (element in this) if (klass.isInstance(element)) return element.cast()
     return null
 }
 
-inline fun <R> List<*>.firstInstance(klass: Class<R>): R {
+fun <R> List<*>.firstInstance(klass: Class<R>): R {
     for (element in this) if (klass.isInstance(element)) return element.cast()
     throw NoSuchElementException()
 }
 
 
-inline fun <R> List<*>.hasInstance(klass: Class<R>): Boolean {
+fun <R> List<*>.hasInstance(klass: Class<R>): Boolean {
     for (element in this) if (klass.isInstance(element)) return true
     return false
 }
 
-inline fun <T> Iterator<T>.toList(): List<T> {
+fun <T> Iterator<T>.toList(): List<T> {
     val result = mutableListOf<T>()
     while (hasNext()) result.add(next())
     return result
 }
 
-inline fun <T, C: Collection<T>> C.ifNotEmpty(action: (C) -> Unit) {
+fun <T, C: Collection<T>> C.ifNotEmpty(action: (C) -> Unit) {
     if (isNotEmpty()) action(this)
 }
 
@@ -107,10 +107,10 @@ inline fun <IK, IV, OK, OV> Map<IK, IV>.associate(transform: (Map.Entry<IK, IV>)
 
 inline fun <K, V> Map<K, V>.ifContains(key: K, action: (V) -> Unit) = get(key) ifNotNull action
 
-inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R) =
+fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R) =
     minByOrNull(selector) ?: error("Collection should not be empty")
 
-inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R) =
+fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R) =
     maxByOrNull(selector) ?: error("Collection should not be empty")
 
 inline val <A, B> Collection<Pair<A, B>>.firsts get() = map { it.first }

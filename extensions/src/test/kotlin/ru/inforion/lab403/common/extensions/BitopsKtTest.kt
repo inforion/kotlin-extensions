@@ -1,6 +1,7 @@
 package ru.inforion.lab403.common.extensions
 
 import org.junit.Test
+import ru.inforion.lab403.common.utils.Benchmark
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
@@ -756,9 +757,21 @@ internal class BitopsKtTest {
         assertEquals(0xFFFFFFFF_FFFFFuL, 0xFFFFFFFF_FFFFFFFFuL[69..12])
         assertEquals(0x12_34uL, 0xABCDEF12_34567890uL[39 .. 24])
 
-        // TODO: it fails
         assertEquals(0x0uL, 0xFFFFFFFF_FFFFFFFFuL[999..99])
 
         assertEquals(15, 15[31..0])
+    }
+    @Test
+    fun performanceXbits() {
+        Benchmark().bench {
+            123123123uL[63..0]
+            0xFFFFFFFF_FFFFFFFFuL[63..0]
+            0xFFFFFFFF_FFFFFFFFuL[69..12]
+            0xABCDEF12_34567890uL[39 .. 24]
+            0xFFFFFFFF_FFFFFFFFuL[999..99]
+            15[31..0]
+        }.also {
+            println("mean: ${it.inWholeMicroseconds}")
+        }
     }
 }

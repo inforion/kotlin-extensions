@@ -14,13 +14,13 @@ inline infix fun Long.ashr(n: Int) = this shr n
 
 inline infix fun Int.ashr(n: Int) = this shr n
 
-// shl should not be convert to byte because i.e. 0xFF shl 16 return 0 in this case
+// shl should not be converted to byte because i.e. 0xFF shl 16 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun Short.shl(n: Int) = int_z shl n
 inline infix fun Short.ashr(n: Int) = int_s ashr n
 inline infix fun Short.ushr(n: Int) = int_z shr n
 
-// shl should not be convert to byte because i.e. 0xFF shl 8 return 0 in this case
+// shl should not be converted to byte because i.e. 0xFF shl 8 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun Byte.shl(count: Int) = int_z shl count
 inline infix fun Byte.ashr(count: Int) = int_s ashr count
@@ -32,13 +32,13 @@ inline infix fun ULong.ushr(n: Int) = this shr n
 inline infix fun UInt.ashr(n: Int) = (int shr n).uint
 inline infix fun UInt.ushr(n: Int) = this shr n
 
-// shl should not be convert to byte because i.e. 0xFFu shl 16 return 0 in this case
+// shl should not be converted to byte because i.e. 0xFFu shl 16 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UShort.shl(n: Int) = uint_z shl n
 inline infix fun UShort.ashr(n: Int) = (int_s ashr n).uint
 inline infix fun UShort.ushr(n: Int) = uint_z shr n
 
-// shl should not be convert to byte because i.e. 0xFFu shl 8 return 0 in this case
+// shl should not be converted to byte because i.e. 0xFFu shl 8 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UByte.shl(n: Int) = uint_z shl n
 inline infix fun UByte.ashr(n: Int) = (int_s ashr n).uint
@@ -61,11 +61,13 @@ inline fun inv(data: UInt) = data.inv()
 inline fun inv(data: UShort) = data.inv()
 inline fun inv(data: UByte) = data.inv()
 
+inline fun inv(data: BigInteger) = data.inv()
+
 // =====================================================================================================================
 // Bit reverse operations
 // =====================================================================================================================
 
-inline fun UInt.bitrev32(): UInt {
+fun UInt.bitrev32(): UInt {
     var x = this
     x = (((x and 0xAAAAAAAAu) ushr 1) or ((x and 0x55555555u) shl 1))
     x = (((x and 0xCCCCCCCCu) ushr 2) or ((x and 0x33333333u) shl 2))
@@ -76,7 +78,7 @@ inline fun UInt.bitrev32(): UInt {
 
 inline fun ULong.bitrev32() = uint.bitrev32().ulong_z
 
-inline fun ULong.bitrev64(): ULong {
+fun ULong.bitrev64(): ULong {
     val hi = (this ushr 32).uint.bitrev32()
     val lo = uint.bitrev32()
     return lo.ulong_z shl 32 or hi.ulong_z
@@ -92,20 +94,20 @@ inline fun Long.bitrev64() = ulong.bitrev64().long
 // Create bit mask operations
 // =====================================================================================================================
 
-inline fun ubitMask32(size: Int): UInt {
+fun ubitMask32(size: Int): UInt {
     require(size > 0 && size <= UINT_BITS) { "Can't create ubitMask32 with size=$size" }
     return UINT_MAX ushr (UINT_BITS - size)
 }
 
-inline fun ubitMask64(size: Int): ULong {
+fun ubitMask64(size: Int): ULong {
     require(size > 0 && size <= ULONG_BITS) { "Can't create ubitMask64 with size=$size" }
     return ULONG_MAX ushr (ULONG_BITS - size)
 }
 
-inline fun ubitMask32(range: IntRange) = if (range.last == 0) ubitMask32(range.first + 1) else
+fun ubitMask32(range: IntRange) = if (range.last == 0) ubitMask32(range.first + 1) else
     ubitMask32(range.first + 1) and inv(ubitMask32(range.last))
 
-inline fun ubitMask64(range: IntRange) = if (range.last == 0) ubitMask64(range.first + 1) else
+fun ubitMask64(range: IntRange) = if (range.last == 0) ubitMask64(range.first + 1) else
     ubitMask64(range.first + 1) and inv(ubitMask64(range.last))
 
 inline fun bitMask32(size: Int) = ubitMask32(size).int
@@ -113,6 +115,14 @@ inline fun bitMask64(size: Int) = ubitMask64(size).long
 
 inline fun bitMask32(range: IntRange) = ubitMask32(range).int
 inline fun bitMask64(range: IntRange) = ubitMask64(range).long
+
+fun ubitMaskBigint(size: Int): BigInteger = (BigInteger.ONE shl size) - BigInteger.ONE
+fun ubitMaskBigint(range: IntRange) =
+    if (range.last == 0)
+        ubitMaskBigint(range.first + 1)
+    else
+        ubitMaskBigint(range.first + 1) and inv(ubitMaskBigint(range.last))
+
 
 // =====================================================================================================================
 // Fill with zeros bit outside the specified range for long values
@@ -138,6 +148,9 @@ inline infix fun Int.mask(range: IntRange) = (uint mask range).int
 inline infix fun Short.mask(range: IntRange) = (ushort mask range).short
 inline infix fun Byte.mask(range: IntRange) = (ubyte mask range).byte
 
+inline infix fun BigInteger.mask(size: Int) = this and ubitMaskBigint(size)
+inline infix fun BigInteger.mask(range: IntRange) = this and ubitMaskBigint(range)
+
 // =====================================================================================================================
 // Fill with zero specified bit range (from msb to lsb)
 // =====================================================================================================================
@@ -152,12 +165,14 @@ inline infix fun Int.bzero(range: IntRange) = (uint bzero range).int
 inline infix fun Short.bzero(range: IntRange) = (ushort bzero range).short
 inline infix fun Byte.bzero(range: IntRange) = (ubyte bzero range).byte
 
+inline infix fun BigInteger.bzero(range: IntRange) = this and inv(ubitMaskBigint(range))
+
 /**
  * Make bit extension by the lowest bit of the id.
  * for 0x034251.bext(3) return 0b111
  * for 0x031400.bext(10) return 0
  */
-inline fun Number.bext(n: Int): ULong {
+fun Number.bext(n: Int): ULong {
     // used in mips lwl, lwr, swl, swr
     val bit = toInt() and 1
     return if (bit == 1) ubitMask64(n) else 0u
@@ -173,11 +188,11 @@ inline fun Number.bext(n: Int): ULong {
  * Before we did this: `(this ushr low) and ((1uL shl (high - low)) - 1u)`
  * Overflow was possible, so now algorithm is simple: shift left and then right
  */
-inline fun ULong.xbits(high: Int, low: Int): ULong =
+fun ULong.xbits(high: Int, low: Int): ULong =
     if (low >= 63) 0uL
     else (this shl (63 - min(63, high))) ushr (low + (63 - min(63, high)))
 
-inline fun UInt.xbits(high: Int, low: Int): UInt =
+fun UInt.xbits(high: Int, low: Int): UInt =
     if (low >= 31) 0u
     else (this shl (31 - min(31, high))) ushr (low + (31 - min(31, high)))
 
@@ -199,6 +214,13 @@ inline infix fun Int.xbit(index: Int) = (uint xbit index).int
 inline infix fun Short.xbit(index: Int) = (ushort xbit index).int
 inline infix fun Byte.xbit(index: Int) = (ubyte xbit index).int
 
+
+inline fun BigInteger.xbits(high: Int, low: Int) =
+    (this ushr low) and ((BigInteger.ONE shl (high - low + 1)) - BigInteger.ONE)
+inline infix fun BigInteger.xbit(index: Int) =
+    (this ushr index) and BigInteger.ONE
+
+
 inline operator fun ULong.get(range: IntRange) = xbits(range.first, range.last)
 inline operator fun UInt.get(range: IntRange) = xbits(range.first, range.last)
 inline operator fun UShort.get(range: IntRange) = xbits(range.first, range.last)
@@ -219,17 +241,20 @@ inline operator fun Int.get(index: Int) = xbit(index)
 inline operator fun Short.get(index: Int) = xbit(index)
 inline operator fun Byte.get(index: Int) = xbit(index)
 
+inline operator fun BigInteger.get(range: IntRange) = xbits(range.first, range.last)
+inline operator fun BigInteger.get(index: Int) = xbit(index)
+
 // =====================================================================================================================
 // Bit insert operations
 // =====================================================================================================================
 
-inline fun insertBit(dst: ULong, value: ULong, index: Int): ULong {
+fun insertBit(dst: ULong, value: ULong, index: Int): ULong {
     val ins = value shl index
     val mask = inv(1uL shl index)
     return dst and mask or ins
 }
 
-inline fun insertBit(dst: UInt, value: UInt, index: Int): UInt {
+fun insertBit(dst: UInt, value: UInt, index: Int): UInt {
     val ins = value shl index
     val mask = inv(1u shl index)
     return dst and mask or ins
@@ -238,12 +263,20 @@ inline fun insertBit(dst: UInt, value: UInt, index: Int): UInt {
 inline fun insertBit(dst: Long, value: Long, index: Int): Long = insertBit(dst.ulong, value.ulong, index).long
 inline fun insertBit(dst: Int, value: Int, index: Int): Int = insertBit(dst.uint, value.uint, index).int
 
-inline fun insertField(dst: ULong, src: ULong, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
-inline fun insertField(dst: UInt, src: UInt, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
+inline fun insertBit(dst: BigInteger, value: BigInteger, index: Int): BigInteger {
+    val ins = value shl index
+    val mask = inv(BigInteger.ONE shl index)
+    return dst and mask or ins
+}
+
+fun insertField(dst: ULong, src: ULong, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
+fun insertField(dst: UInt, src: UInt, range: IntRange) = (dst bzero range) or ((src shl range.last) mask range)
 
 inline fun insertField(dst: Long, src: Long, range: IntRange) = insertField(dst.ulong, src.ulong, range).long
 inline fun insertField(dst: Int, src: Int, range: IntRange) = insertField(dst.uint, src.uint, range).int
 
+inline fun insertField(dst: BigInteger, src: BigInteger, range: IntRange) =
+    (dst bzero range) or ((src shl range.last) mask range)
 
 inline fun ULong.insert(value: ULong, index: Int): ULong = insertBit(this, value, index)
 inline fun ULong.insert(value: UInt, index: Int): ULong = insert(value.ulong_z, index)
@@ -263,7 +296,6 @@ inline fun Int.insert(value: Int, index: Int): Int = insertBit(uint, value.uint,
 inline fun Long.insert(data: Long, range: IntRange): Long = insertField(ulong, data.ulong, range).long
 inline fun Int.insert(data: Int, range: IntRange): Int = insertField(uint, data.uint, range).int
 
-
 inline fun insert(value: ULong, index: Int): ULong = 0uL.insert(value, index)
 inline fun insert(value: UInt, index: Int): UInt = 0u.insert(value, index)
 
@@ -276,6 +308,16 @@ inline fun insert(value: Boolean, index: Int): Int = insert(value.uint, index).i
 
 inline fun insert(data: Long, range: IntRange): Long = insert(data.ulong, range).long
 inline fun insert(data: Int, range: IntRange): Int = insert(data.uint, range).int
+
+
+inline fun BigInteger.insert(value: BigInteger, index: Int): BigInteger = insertBit(this, value, index)
+inline fun BigInteger.insert(value: ULong, index: Int): BigInteger = insertBit(this, value.bigint, index)
+inline fun BigInteger.insert(value: UInt, index: Int): BigInteger = insert(value.bigint, index)
+inline fun BigInteger.insert(value: Int, index: Int): BigInteger = insert(value.bigint, index)
+inline fun BigInteger.insert(value: Boolean, index: Int): BigInteger = insert(value.int.bigint, index)
+
+inline fun BigInteger.insert(data: BigInteger, range: IntRange): BigInteger = insertField(this, data, range)
+inline fun BigInteger.insert(data: ULong, range: IntRange): BigInteger = insertField(this, data.bigint, range)
 
 // =====================================================================================================================
 // Bit set/clr/toggle operations
@@ -302,6 +344,9 @@ inline infix fun Short.clr(index: Int) = (int_s clr index).short
 inline infix fun Byte.clr(index: Int) = (int_s clr index).byte
 
 
+inline infix fun BigInteger.clr(range: IntRange) = this bzero range
+inline infix fun BigInteger.clr(index: Int) = this and inv(BigInteger.ONE shl index)
+
 inline infix fun ULong.set(index: Int) = this or (1uL shl index)
 inline infix fun UInt.set(index: Int) = this or (1u shl index)
 inline infix fun UShort.set(index: Int) = (uint_z set index).ushort
@@ -312,6 +357,9 @@ inline infix fun Int.set(index: Int) = (uint set index).int
 inline infix fun Short.set(index: Int) = (int_s set index).short
 inline infix fun Byte.set(index: Int) = (int_s set index).byte
 
+inline infix fun BigInteger.set(range: IntRange) = this or ubitMaskBigint(range)
+inline infix fun BigInteger.set(index: Int) = this or (BigInteger.ONE shl index)
+inline infix fun BigInteger.and(other: ULong) = this and other.bigint
 
 inline infix fun ULong.toggle(index: Int) = this xor (1uL shl index)
 inline infix fun UInt.toggle(index: Int) = this xor (1u shl index)
@@ -328,12 +376,12 @@ inline infix fun Byte.toggle(index: Int) = (int_s toggle index).byte
  * Concatenate two long values 'left' and 'right' at border 'at'
  * i.e. cat(0xFL, 0xAL, 3) = 0xFAL
  */
-inline fun cat(left: Long, right: Long, at: Int): Long {
+fun cat(left: Long, right: Long, at: Int): Long {
     require(at >= 0)
     return (left shl at + 1).insert(right, at..0)
 }
 
-inline fun cat(left: ULong, right: ULong, at: Int): ULong {
+fun cat(left: ULong, right: ULong, at: Int): ULong {
     require(at >= 0)
     return (left shl at + 1).insert(right, at..0)
 }
@@ -342,7 +390,7 @@ inline fun cat(left: ULong, right: ULong, at: Int): ULong {
  * Concatenate two int values 'left' and 'right' at border 'at'
  * i.e. cat(0xF, 0xA, 3) = 0xFA
  */
-inline fun cat(left: Int, right: Int, at: Int): Int {
+fun cat(left: Int, right: Int, at: Int): Int {
     require(at >= 0)
     return (left shl at + 1).insert(right, at..0)
 }
@@ -351,7 +399,7 @@ inline fun cat(left: Int, right: Int, at: Int): Int {
 // Byte swap operations
 // =====================================================================================================================
 
-inline fun ULong.swap64() =
+fun ULong.swap64() =
     (this and 0x00000000_000000FFuL shl  56) or
     (this and 0x00000000_0000FF00uL shl  40) or
     (this and 0x00000000_00FF0000uL shl  24) or
@@ -361,13 +409,13 @@ inline fun ULong.swap64() =
     (this and 0x00FF0000_00000000uL ushr 40) or
     (this and 0xFF000000_00000000uL ushr 56)
 
-inline fun ULong.swap32() =
+fun ULong.swap32() =
     (this and 0x0000_00FFuL shl  24) or
     (this and 0x0000_FF00uL shl   8) or
     (this and 0x00FF_0000uL ushr  8) or
     (this and 0xFF00_0000uL ushr 24)
 
-inline fun ULong.swap16() =
+fun ULong.swap16() =
     (this and 0x00FFuL shl  8) or
     (this and 0xFF00uL ushr 8)
 
@@ -393,12 +441,35 @@ inline fun Int.swap16() = uint.swap16().int
 
 inline fun Short.swap16() = ushort.swap16().short
 
+
+fun BigInteger.swap64() = (this and 0x00000000_000000FFuL shl  56) or
+        (this and 0x00000000_0000FF00uL shl  40) or
+        (this and 0x00000000_00FF0000uL shl  24) or
+        (this and 0x00000000_FF000000uL shl   8) or
+        (this and 0x000000FF_00000000uL ushr  8) or
+        (this and 0x0000FF00_00000000uL ushr 24) or
+        (this and 0x00FF0000_00000000uL ushr 40) or
+        (this and 0xFF000000_00000000uL ushr 56)
+
+fun BigInteger.swap32() = (this and 0x0000_00FFuL shl  24) or
+        (this and 0x0000_FF00uL shl   8) or
+        (this and 0x00FF_0000uL ushr  8) or
+        (this and 0xFF00_0000uL ushr 24)
+
+fun BigInteger.swap128() = (this[63..0].ulong.swap64().bigint shl 64) or
+        (this[127..64].ulong.swap64().bigint)
+
+fun BigInteger.swap80(): BigInteger = (0 until 10).fold(BigInteger.ZERO) { acc, i ->
+    acc or (this[(i + 1) * 8 - 1..i * 8] shl (80 - (i + 1) * 8))
+}
+
+
 // =====================================================================================================================
 // Bit rotate operations
 // =====================================================================================================================
 
-inline fun ULong.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
-inline fun UInt.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
+fun ULong.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
+fun UInt.rotr(n: Int, size: Int) = (this ushr n) or (this shl (size - n)) mask size
 
 inline infix fun ULong.rotr64(n: Int) = rotr(n, 64)
 inline infix fun ULong.rotr32(n: Int) = rotr(n, 32)
@@ -482,42 +553,42 @@ inline fun cmpl2(bits: Int) = 1 cmpl2 bits
 // log2/pow2 operations
 // =====================================================================================================================
 
-inline fun UByte.log2(): Int {
+fun UByte.log2(): Int {
     require(this > 0u) { "Required positive value for log2() but got $this" }
     return UBYTE_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun UShort.log2(): Int {
+fun UShort.log2(): Int {
     require(this > 0u) { "Required positive value for log2() but got $this" }
     return USHORT_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun UInt.log2(): Int {
+fun UInt.log2(): Int {
     require(this > 0u) { "Required positive value for log2() but got $this" }
     return UINT_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun ULong.log2(): Int {
+fun ULong.log2(): Int {
     require(this > 0u) { "Required positive value for log2() but got $this" }
     return ULONG_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun Byte.log2(): Int {
+fun Byte.log2(): Int {
     require(this > 0) { "Required positive value for log2() but got $this" }
     return BYTE_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun Short.log2(): Int {
+fun Short.log2(): Int {
     require(this > 0) { "Required positive value for log2() but got $this" }
     return SHORT_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun Int.log2(): Int {
+fun Int.log2(): Int {
     require(this > 0) { "Required positive value for log2() but got $this" }
     return INT_BITS - countLeadingZeroBits() - 1
 }
 
-inline fun Long.log2(): Int {
+fun Long.log2(): Int {
     require(this > 0) { "Required positive value for log2() but got $this" }
     return LONG_BITS - countLeadingZeroBits() - 1
 }
@@ -528,33 +599,33 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-inline infix fun ULong.signextRenameMeAfter(n: Int) =
+infix fun ULong.signextRenameMeAfter(n: Int) =
     if ((this ushr n).int.truth) ULONG_MAX shl n or this else inv(ULONG_MAX shl n) and this // 64 - n?
 
-inline infix fun ULong.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun ULong.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
-inline fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
-inline fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
+fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
-inline infix fun UInt.signextRenameMeAfter(n: Int) =
+infix fun UInt.signextRenameMeAfter(n: Int) =
     if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
 
-inline infix fun UInt.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun UInt.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
-inline fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
-inline fun Int.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
+fun Int.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
 
 // =====================================================================================================================
 // Overflow check operation
 // =====================================================================================================================
 
-inline fun isIntegerOverflow(op1: Int, op2: Int, res: Int): Boolean =
+fun isIntegerOverflow(op1: Int, op2: Int, res: Int): Boolean =
     (op1 < 0 && op2 < 0 && res >= 0) || (op1 > 0 && op2 > 0 && res < 0)
 
 
-inline fun uint16(b: UByte, a: UByte) = (b shl 8) or (a shl 0)
-inline fun uint32(d: UByte, c: UByte, b: UByte, a: UByte) = (d shl 24) or (c shl 16) or (b shl 8) or (a shl 0)
-inline fun uint64(
+fun uint16(b: UByte, a: UByte) = (b shl 8) or (a shl 0)
+fun uint32(d: UByte, c: UByte, b: UByte, a: UByte) = (d shl 24) or (c shl 16) or (b shl 8) or (a shl 0)
+fun uint64(
     h: UByte, g: UByte, f: UByte, e: UByte,
     d: UByte, c: UByte, b: UByte, a: UByte
 ) = (h shl 56) or (g shl 48) or (f shl 40) or (e shl 32) or (d shl 24) or (c shl 16) or (b shl 8) or (a shl 0)

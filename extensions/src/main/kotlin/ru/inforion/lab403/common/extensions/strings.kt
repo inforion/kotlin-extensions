@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.extensions
 
 import java.io.File
+import java.math.BigInteger
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -54,8 +55,8 @@ fun String.unhexlify(): ByteArray {
     return data
 }
 
-inline fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
-inline fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+fun ULong.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
+fun UInt.binary(n: Int): String = buildString { (n - 1 downTo 0).forEach { append(this@binary[it]) } }
 inline fun UShort.binary(n: Int): String = uint_z.binary(n)
 inline fun UByte.binary(n: Int): String = uint_z.binary(n)
 
@@ -99,6 +100,7 @@ inline val String.shortByHex get() = short(16)
 inline val String.byteByHex get() = byte(16)
 inline val String.ulongByHex get() = ulong(16)
 inline val String.uintByHex get() = uint(16)
+inline val String.bigintByHex get() = BigInteger(this, 16)
 
 inline val String.long: Long get() = removePrefixOrNull("0x")?.longByHex ?: longByDec
 inline val String.int: Int get() = removePrefixOrNull("0x")?.intByHex ?: intByDec
@@ -160,25 +162,34 @@ inline val UShort.hex4 get() = "%04X".format(short)
 
 inline val UByte.hex2 get() = "%02X".format(byte)
 
+inline val BigInteger.lhex20 get() = "%020x".format(this)
+inline val BigInteger.lhex32 get() = "%032x".format(this)
+
+inline val BigInteger.hex2 get() = "%02X".format(this)
+inline val BigInteger.hex4 get() = "%04X".format(this)
+inline val BigInteger.hex8 get() = "%08X".format(this)
+inline val BigInteger.hex16 get() = "%016X".format(this)
+inline val BigInteger.hex32 get() = "%032X".format(this)
+
 inline val Long.str get() = toString()
 inline val Int.str get() = toString()
 inline val Short.str get() = toString()
 inline val Byte.str get() = toString()
 
-inline val ULong.hex get() = when {
+val ULong.hex get() = when {
     this > 0xFFFF_FFFFu -> hex16
     this > 0xFFFFu -> hex8
     this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val UInt.hex get() = when {
+val UInt.hex get() = when {
     this > 0xFFFFu -> hex8
     this > 0xFFu -> hex4
     else -> hex2
 }
 
-inline val UShort.hex get() = when {
+val UShort.hex get() = when {
     this > 0xFFu -> hex4
     else -> hex2
 }
@@ -190,16 +201,24 @@ inline val Int.hex get() = uint.hex
 inline val Short.hex get() = ushort.hex
 inline val Byte.hex get() = ubyte.hex
 
-inline fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
+val BigInteger.hex get() = when {
+    this > 0xFFFF_FFFF_FFFF_FFFFu.bigint -> hex32
+    this > 0xFFFF_FFFFu.bigint -> hex16
+    this > 0xFFFFu.bigint -> hex8
+    this > 0xFFu.bigint -> hex4
+    else -> hex2
+}
 
-inline fun String.alignRight(maxlen: Int = length) = "%-${maxlen}s".format(this)
+fun String.alignLeft(maxlen: Int = length) = "%${maxlen}s".format(this)
+
+fun String.alignRight(maxlen: Int = length) = "%-${maxlen}s".format(this)
 
 /**
  * Slice input string from 0 to maxlen.
  * If maxlen > string.length then remain string.length (no exception thrown)
  */
-inline fun String.stretch(maxlen: Int, alignRight: Boolean = true) = when {
-    length == 0 -> alignLeft(maxlen)
+fun String.stretch(maxlen: Int, alignRight: Boolean = true) = when {
+    isEmpty() -> alignLeft(maxlen)
     alignRight -> slice(0 until length.coerceAtMost(maxlen)).alignRight(maxlen)
     else -> slice((length - maxlen).coerceAtLeast(0) until length).alignLeft(maxlen)
 }
@@ -493,15 +512,15 @@ inline fun String.className() = substringAfterLast(".")
 
 inline fun String.packageName() = substringBeforeLast(".")
 
-inline fun String.splitPackageClass() = Pair(packageName(), className())
+fun String.splitPackageClass() = Pair(packageName(), className())
 
-inline fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${take(maxlen)}..."
+fun String.crop(maxlen: Int = 32) = if (length <= maxlen) this else "${take(maxlen)}..."
 
 inline fun String.toFileOutputStream() = toFile().outputStream()
 
 inline fun String.toFileInputStream() = toFile().inputStream()
 
-inline fun String.toInetSocketAddress(): InetSocketAddress {
+fun String.toInetSocketAddress(): InetSocketAddress {
     val host = substringBefore(":")
     val port = substringAfter(":").int()
     return InetSocketAddress(host, port)
