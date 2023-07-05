@@ -16,6 +16,7 @@ class Informative(
     Formatter {
 
     companion object {
+        private const val STACK_TRACE_CALLER_INDEX = 4
         var locationLength = 50
         var dateFormat = "HH:mm:ss"
         var defaultMessageFormat = "%(time) %(level) %(location): %(message)\n"
@@ -56,10 +57,11 @@ class Informative(
             .let {
                 if ("%(location)" in it) {
                     val trace = record.thread.stackTrace
+                    val index = STACK_TRACE_CALLER_INDEX + record.stackFrameIndex
                     it.replace(
                         "%(location)", formatLocation(
                             record.thread.stackTrace[
-                                    if (record.stackFrameIndex in trace.indices) record.stackFrameIndex
+                                    if (index in trace.indices) index
                                     else trace.lastIndex
                             ]
                         )

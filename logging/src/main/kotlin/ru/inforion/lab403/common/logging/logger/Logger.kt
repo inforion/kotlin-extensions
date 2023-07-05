@@ -15,8 +15,6 @@ class Logger private constructor(
     vararg publishers: AbstractPublisher
 ) {
     companion object {
-        private const val STACK_TRACE_CALLER_INDEX = 2
-
         private val runtime = Runtime.getRuntime()
 
         /**
@@ -207,7 +205,7 @@ class Logger private constructor(
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
         val timestamp = System.currentTimeMillis()
         val thread = Thread.currentThread()
-        val record = Record(this, level, timestamp, thread, STACK_TRACE_CALLER_INDEX + stackFrameOffset)
+        val record = Record(this, level, timestamp, thread, stackFrameOffset)
         allHandlersSeq.forEach {
             it.publish(message, record)
             if (flush || flushOnPublish) it.flush()
