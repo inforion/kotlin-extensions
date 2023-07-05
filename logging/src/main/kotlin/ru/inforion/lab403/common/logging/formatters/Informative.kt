@@ -18,6 +18,7 @@ class Informative(
     companion object {
         private const val STACK_TRACE_CALLER_INDEX = 4
         var locationLength = 50
+        var nameLength = 20
         var dateFormat = "HH:mm:ss"
         var defaultMessageFormat = "%(time) %(level) %(location): %(message)\n"
 
@@ -44,7 +45,7 @@ class Informative(
     override fun format(message: String, record: Record): String {
         val level = record.level.abbreviation
         val time = formatDate(record.millis)
-        val name = stretch(record.logger.name, locationLength)
+        val name = stretch(record.logger.name, nameLength)
         val thread = record.thread.name
 
         // TODO: Make more efficient way
