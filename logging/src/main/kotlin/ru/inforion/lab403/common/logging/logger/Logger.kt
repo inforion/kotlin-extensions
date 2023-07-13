@@ -75,7 +75,7 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun create(name: String, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = true) = loggers.getOrPut(name) {
+        fun create(name: String, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = false) = loggers.getOrPut(name) {
             Logger(
                 name,
                 level = if (noConfig) level else Config.level(name) { level },
@@ -97,7 +97,7 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun <T> create(klass: Class<T>, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = true) =
+        fun <T> create(klass: Class<T>, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = false) =
             create(klass.simpleName, level, flush, *publishers, noConfig = noConfig)
 
         /**
