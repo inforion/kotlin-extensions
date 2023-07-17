@@ -89,10 +89,20 @@ object Config {
             ?: default()
 
     /**
+     * @since 0.4.5
+     */
+    fun levelOrNull(name: String) = config[name]?.levelOrNull()
+
+    /**
      * @since 0.2.4
      */
     fun publishers(name: String, default: () -> Array<out AbstractPublisher>) =
         config[name]?.publishersOrNull()
             ?: config["all"]?.publishersOrNull()
             ?: default()
+
+    /**
+     * @since 0.4.5
+     */
+    fun publishersOrNull(name: String) = config[name]?.publishersOrNull()
 }

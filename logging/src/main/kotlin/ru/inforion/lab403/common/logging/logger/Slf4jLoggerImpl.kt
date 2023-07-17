@@ -9,7 +9,15 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of the logger {EN}
      */
-    private val logger = Logger.create(loggerName, Config.level("all") { INFO }, flush = false, noConfig = true).also {
+    private val level = Config.levelOrNull(loggerName)
+        ?: Config.level("all-slf4j") { INFO }
+
+    private val logger = Logger.create(
+        loggerName,
+        level,
+        flush = false,
+        noConfig = true
+    ).also {
         it.useSharedHandlers = false
         it.useSLF4JHandlers = true
         it.stackFrameOffset = 2
@@ -32,8 +40,8 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
         return "$msg: $t"
     }
 
-    private fun markerString(msg: String?):String? {
-        if(msg == null)
+    private fun markerString(msg: String?): String? {
+        if (msg == null)
             return null
         return "[M] $msg"
     }
@@ -212,9 +220,6 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     override fun warn(marker: Marker?, msg: String?, t: Throwable?) {
         warnInternal(markerString(logExceptionWithMessage(msg, t)))
     }
-
-
-
 
     override fun error(msg: String?) {
         errorInternal(msg)
