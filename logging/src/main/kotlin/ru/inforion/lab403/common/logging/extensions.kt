@@ -3,6 +3,7 @@
 package ru.inforion.lab403.common.logging
 
 import ru.inforion.lab403.common.extensions.emptyString
+import ru.inforion.lab403.common.logging.logger.Config
 import ru.inforion.lab403.common.logging.logger.Logger
 
 /**
@@ -17,7 +18,7 @@ import ru.inforion.lab403.common.logging.logger.Logger
 fun String.loggerConfigure() = when {
     "=" !in this -> {
         val value = Levels.valueOf(this)
-        Logger.onCreate { it.level = value.level }
+        Logger.onCreate { Config.changeLevel(value.level) }
     }
 
     else -> {
@@ -28,7 +29,7 @@ fun String.loggerConfigure() = when {
         }
 
         Logger.onCreate { logger ->
-            logger.level = map.getOrDefault(logger.name, logger.level)
+            Config.changeLevel(map.getOrDefault(logger.name, logger.level))
         }
     }
 }

@@ -6,7 +6,7 @@ import ru.inforion.lab403.common.logging.tests.SLF4JLoggerTest
 
 
 class TestPublisherWithSlf4J : AbstractPublisher("TestPublisherWithSlf4J") {
-    val log = LoggerFactory.getLogger(SLF4JLoggerTest::class.java);
+    val log = LoggerFactory.getLogger(SLF4JLoggerTest::class.java)
 
     override fun publish(message: String, record: Record) {
         log.info(message)

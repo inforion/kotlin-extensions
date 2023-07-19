@@ -1,51 +1,42 @@
 package ru.inforion.lab403.common.logging.logger
 
-import ru.inforion.lab403.common.extensions.either
-import ru.inforion.lab403.common.extensions.ifNotNull
-import ru.inforion.lab403.common.extensions.otherwise
-import ru.inforion.lab403.common.json.fromJson
+import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.LogLevel
-import ru.inforion.lab403.common.logging.Messenger
-import ru.inforion.lab403.common.logging.logLevel
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import java.io.File
-
 
 object Config {
-    const val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
-    const val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
+    data class PublisherInfo(val cls: String, val args: List<Any>)
 
-    private inline fun <T> info(message: Messenger<T>) = System.err.println(message().toString())
+    /**
+     * Used only in ConfigFileLoader, seems redundant
+     */
+    data class LoggerInfo(val level: String? = null, val publishers: MutableList<PublisherInfo>? = null)
 
-    private inline fun <T> debug(message: Messenger<T>) {
-        if (isDebugEnabled) info(message)
-    }
-
-    private fun env(name: String): String? = System.getenv(name).also {
-        if (it != null) info { "$name: $it" }
-    }
-
-    private val isDebugEnabled by lazy {
-        env(ENV_DEBUG_ENABLED) ifNotNull { toBoolean() } either { false }
-    }
-
-    private val configurations: File? by lazy {
-        val path = env(ENV_CONF_PATH)
-
-        if (path != null) {
-            File(path).takeIf { it.isFile } otherwise {
-                info { "Logging configuration file can't be loaded: $this" }
+    data class LoggerRuntimeInfo(
+        private var customLevel: LogLevel? = null,
+        var publishers: MutableList<AbstractPublisher>? = null
+    ) {
+        var level: LogLevel
+            get() = customLevel ?: level("all")
+            set(value) {
+                customLevel = value
             }
-        } else {
-            debug { "INFORION_LOGGING_CONF_PATH not specified" }; null
+
+        fun addPublisher(publisher: AbstractPublisher) {
+            if (publishers == null)
+                publishers = mutableListOf()
+            publishers!!.add(publisher)
+
+        }
+
+        fun removePublisher(publisher: AbstractPublisher) {
+            if (publishers != null)
+                publishers!!.remove(publisher)
+
         }
     }
 
-    data class PublisherInfo(val cls: String, val args: List<Any>)
-
-    data class LoggerInfo(val level: String? = null, val publishers: List<PublisherInfo>? = null)
-
-    private fun PublisherInfo.toPublisher(): AbstractPublisher {
+    fun PublisherInfo.toPublisher(): AbstractPublisher {
         val cls = Class.forName(cls)
         val args = args.toTypedArray()
         val types = args.map { arg ->
@@ -62,47 +53,109 @@ object Config {
         return constructor.newInstance(*args) as AbstractPublisher
     }
 
-    private val config by lazy {
-        configurations ifNotNull {
-            runCatching {
-                fromJson<Map<String, LoggerInfo>>()
-            }.onSuccess {
-                info { "Successfully loading logger configuration file '$this'" }
-            }.onFailure { error ->
-                info { "Can't parse logger configuration file '$this' due to $error" }
-            }.getOrNull()
-        } either {
-            emptyMap()
+    private val mapOfLoggerRuntimeInfo = initMapOfLoggers()
+
+    private fun initMapOfLoggers() = mutableMapOf(
+        "all" to LoggerRuntimeInfo(INFO, publishers = mutableListOf(Logger.defaultPublisher))
+    )
+
+    /**
+     * @since 0.2.4
+     */
+    fun level(name: String): LogLevel = mapOfLoggerRuntimeInfo[name]?.level ?: mapOfLoggerRuntimeInfo["all"]!!.level
+
+    /**
+     * @since 0.2.4
+     */
+    fun publishers(
+        mask: String?
+    ): List<AbstractPublisher> {
+        val suitableLoggers = getLoggerNamesByMask(mask)
+        if (suitableLoggers.isEmpty())
+            return mapOfLoggerRuntimeInfo["all"]!!.publishers!!
+        return suitableLoggers
+            .flatMap { mapOfLoggerRuntimeInfo[it]?.publishers ?: mapOfLoggerRuntimeInfo["all"]!!.publishers!! }
+            .toSet().toList()
+    }
+
+    /**
+     * Add new publisher to loggers
+     *
+     * @param publisher publisher to add
+     * @param mask mask of suitable loggers.
+     *
+     * @since 0.4.TODO
+     */
+    fun addPublisher(publisher: AbstractPublisher, mask: String? = null) {
+        changeLoggersByMask(mask) { loggerName ->
+            if (mapOfLoggerRuntimeInfo[loggerName] != null)
+                mapOfLoggerRuntimeInfo[loggerName]!!.addPublisher(publisher)
+            else mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(publishers = mutableListOf(publisher))
         }
     }
 
-    private fun LoggerInfo.levelOrNull() = level ifNotNull { logLevel() }
+    /**
+     * Remove publisher from loggers
+     *
+     * @param publisher publisher to remove
+     * @param mask mask of suitable loggers
+     *
+     * @since 0.4.TODO
+     */
+    fun removePublisher(publisher: AbstractPublisher, mask: String? = null) {
+        changeLoggersByMask(mask) { loggerName ->
+            if (mapOfLoggerRuntimeInfo[loggerName] != null)
+                mapOfLoggerRuntimeInfo[loggerName]!!.removePublisher(publisher)
+            else {
+                val runtimeInfo = LoggerRuntimeInfo(publishers = publishers("all").toMutableList())
+                runtimeInfo.removePublisher(publisher)
+                mapOfLoggerRuntimeInfo[loggerName] = runtimeInfo
 
-    private fun LoggerInfo.publishersOrNull() = publishers ifNotNull { map { it.toPublisher() }.toTypedArray() }
+            }
+        }
+    }
+
+    fun clearPublishers() {
+        mapOfLoggerRuntimeInfo.clear()
+        mapOfLoggerRuntimeInfo.putAll(initMapOfLoggers())
+    }
 
     /**
-     * @since 0.2.4
+     * Change log level of loggers
+     *
+     * @param level new log level
+     * @param mask mask of suitable loggers
+     *
+     * @since 0.4.TODO
      */
-    fun level(name: String, default: () -> LogLevel): LogLevel =
-        config[name]?.levelOrNull()
-            ?: config["all"]?.levelOrNull()
-            ?: default()
+    fun changeLevel(level: LogLevel, mask: String? = null) {
+        changeLoggersByMask(mask) { loggerName ->
+            if (mapOfLoggerRuntimeInfo[loggerName] != null)
+                mapOfLoggerRuntimeInfo[loggerName]!!.level = level
+            else {
+                mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(level)
+            }
+        }
+    }
 
     /**
-     * @since 0.4.5
+     * Expect mask as `*.package.*`, with at most 2 asterisks (at the start and at the end)
+     * `*` or null is for selecting every logger
      */
-    fun levelOrNull(name: String) = config[name]?.levelOrNull()
+    private inline fun changeLoggersByMask(
+        mask: String?,
+        changeFunction: (name: String) -> Unit
+    ) {
+        val suitableLoggers = getLoggerNamesByMask(mask)
+        for (name in suitableLoggers) {
+            changeFunction(name)
+        }
+    }
 
-    /**
-     * @since 0.2.4
-     */
-    fun publishers(name: String, default: () -> Array<out AbstractPublisher>) =
-        config[name]?.publishersOrNull()
-            ?: config["all"]?.publishersOrNull()
-            ?: default()
-
-    /**
-     * @since 0.4.5
-     */
-    fun publishersOrNull(name: String) = config[name]?.publishersOrNull()
+    private inline fun getLoggerNamesByMask(mask: String?): List<String> {
+        if (mask == null || mask == "*")
+            return listOf("all")
+        val modifiedMask = Regex(mask.replace(".", "\\.").replace("*", ".*"))
+        return Logger.loggers.map { it.key }.filter { it.matches(modifiedMask) }
+    }
 }

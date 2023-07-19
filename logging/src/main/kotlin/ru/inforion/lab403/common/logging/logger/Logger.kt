@@ -10,10 +10,20 @@ import kotlin.concurrent.thread
 
 class Logger private constructor(
     val name: String,
-    @JvmField var level: LogLevel,
-    var flushOnPublish: Boolean = true,
-    vararg publishers: AbstractPublisher
+    var flushOnPublish: Boolean = true
 ) {
+    init {
+        assert(
+            !name.contains(Regex("[\\[\\]{}()+*?^\$\\\\|]"))
+        ) { "Logger name shouldn't contain Regex special characters" }
+    }
+
+    var level: LogLevel
+        get() = Config.level(name)
+        set(value) {
+            Config.changeLevel(value, name)
+        }
+
     companion object {
         private val runtime = Runtime.getRuntime()
 
@@ -25,16 +35,6 @@ class Logger private constructor(
         val defaultPublisher: AbstractPublisher = BeautyPublisher.stdout()
 
         /**
-         * Handlers for all loggers
-         */
-        private val sharedHandlers = hashSetOf(defaultPublisher)
-
-        /**
-         * Handlers for all SLF4J provider loggers
-         */
-        private val sharedSLF4JHandlers = hashSetOf(defaultPublisher)
-
-        /**
          * Shutdown hook to flush all loggers when program exit
          */
         private val shutdownHook = thread(false) { flush() }.also { runtime.addShutdownHook(it) }
@@ -42,7 +42,7 @@ class Logger private constructor(
         /**
          * All already created loggers
          */
-        private val loggers = mutableMapOf<String, Logger>()
+        internal val loggers = mutableMapOf<String, Logger>()
 
         /**
          * Execute given [action] for each known logger
@@ -75,14 +75,23 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun create(name: String, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = false) = loggers.getOrPut(name) {
-            Logger(
-                name,
-                level = if (noConfig) level else Config.level(name) { level },
-                flushOnPublish = flush,
-                publishers = if (noConfig) publishers else Config.publishers(name) { publishers },
-            ).apply {
-                callbacks.forEach { it.invoke(this) }
+        fun create(
+            name: String,
+            flush: Boolean,
+            level: LogLevel? = null,
+            vararg publishers: AbstractPublisher
+        ): Logger {
+            return loggers[name] ?: run {
+                val newLogger = Logger(name, flushOnPublish = flush).apply {
+                    this@Companion.callbacks.forEach { it.invoke(this) }
+                }
+                loggers[name] = newLogger
+                if (level != null)
+                    Config.changeLevel(level, name)
+                for (publisher in publishers)
+                    Config.addPublisher(publisher, name)
+
+                newLogger
             }
         }
 
@@ -97,50 +106,13 @@ class Logger private constructor(
          *
          * @since 0.2.0
          */
-        fun <T> create(klass: Class<T>, level: LogLevel, flush: Boolean, vararg publishers: AbstractPublisher, noConfig: Boolean = false) =
-            create(klass.simpleName, level, flush, *publishers, noConfig = noConfig)
-
-        /**
-         * Add new publisher to the shared handlers
-         *
-         * @param publisher publisher to add
-         *
-         * @since 0.2.0
-         */
-        fun addPublisher(publisher: AbstractPublisher) = sharedHandlers.add(publisher)
-
-        /**
-         * Remove the publisher from the shared handlers
-         *
-         * @param publisher publisher to remove
-         *
-         * @since 0.2.0
-         */
-        fun removePublisher(publisher: AbstractPublisher) = sharedHandlers.remove(publisher)
-
-
-        /**
-         * Add new publisher to SLF4J logger provider
-         *
-         * @param publisher publisher to add
-         *
-         * @since 0.4.4
-         */
-        fun addSLF4JPublisher(publisher: AbstractPublisher) = sharedSLF4JHandlers.add(publisher)
-
-        /**
-         * Remove publisher to SLF4J logger provider
-         *
-         * @param publisher publisher to remove
-         *
-         * @since 0.4.4
-         */
-        fun removeSLF4JPublisher(publisher: AbstractPublisher) = sharedSLF4JHandlers.remove(publisher)
-
-        /**
-         *
-         */
-        fun removeDefaultPublisher() = sharedHandlers.remove(defaultPublisher)
+        fun <T> create(
+            klass: Class<T>,
+            flush: Boolean,
+            level: LogLevel? = null,
+            vararg publishers: AbstractPublisher
+        ) =
+            create(klass.simpleName, flush, level, *publishers)
 
         /**
          * Flush all publishers of all loggers
@@ -151,48 +123,21 @@ class Logger private constructor(
     }
 
     var stackFrameOffset = 0
-    var useSharedHandlers = true
-    var useSLF4JHandlers = false
-
-    /**
-     * Own handlers for each logger
-     */
-    private val ownHandlers = publishers.toMutableSet()
 
     /**
      * Union sequence of own and shared handlers
      */
     private val allHandlersSeq
         get() = sequence {
-            if (useSharedHandlers) {
-                sharedHandlers.forEach { yield(it) }
-            }
-            if (useSLF4JHandlers) {
-                sharedSLF4JHandlers.forEach { yield(it) }
-            }
-
-            ownHandlers.forEach { yield(it) }
+            Config.publishers(name).forEach { yield(it) }
         }
 
     override fun toString() = name
 
-    /**
-     * Add new publisher to logger
-     *
-     * @param publisher publisher to add
-     *
-     * @since 0.2.0
-     */
-    fun addPublisher(publisher: AbstractPublisher) = ownHandlers.add(publisher)
 
-    /**
-     * Remove publisher to logger
-     *
-     * @param publisher publisher to remove
-     *
-     * @since 0.2.0
-     */
-    fun removePublisher(publisher: AbstractPublisher) = ownHandlers.remove(publisher)
+    fun addPublisher(publisher: AbstractPublisher) = Config.addPublisher(publisher, name)
+
+    fun removePublisher(publisher: AbstractPublisher) = Config.removePublisher(publisher, name)
 
     /**
      * Flush all publishers of logger
@@ -221,12 +166,12 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T:Any> log(level: LogLevel, flush: Boolean = false, message: Messenger<T>) {
+    inline fun <T : Any> log(level: LogLevel, flush: Boolean = false, message: Messenger<T>) {
         if (this.level permit level) log(level, flush, message().toString())
     }
 
     @Deprecated("please use log(level: LogLevel, ...)")
-    inline fun <T:Any> log(level: Level, flush: Boolean = false, message: Messenger<T>) =
+    inline fun <T : Any> log(level: Level, flush: Boolean = false, message: Messenger<T>) =
         log(level.logLevel(), flush, message)
 
     /**
@@ -236,7 +181,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> severe(flush: Boolean = false, message: Messenger<T>) = log(SEVERE, flush, message)
+    inline fun <T : Any> severe(flush: Boolean = false, message: Messenger<T>) = log(SEVERE, flush, message)
 
     /**
      * Emits a lazy warning log [message] (score = 900)
@@ -245,7 +190,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> warning(flush: Boolean = false, message: Messenger<T>) = log(WARNING, flush, message)
+    inline fun <T : Any> warning(flush: Boolean = false, message: Messenger<T>) = log(WARNING, flush, message)
 
     /**
      * Emits a lazy info log [message] (score = 800)
@@ -254,7 +199,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> info(flush: Boolean = false, message: Messenger<T>) = log(INFO, flush, message)
+    inline fun <T : Any> info(flush: Boolean = false, message: Messenger<T>) = log(INFO, flush, message)
 
     /**
      * Emits a lazy config log [message] (score = 700)
@@ -263,7 +208,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> config(flush: Boolean = false, message: Messenger<T>) = log(CONFIG, flush, message)
+    inline fun <T : Any> config(flush: Boolean = false, message: Messenger<T>) = log(CONFIG, flush, message)
 
     /**
      * Emits a lazy fine log [message] (score = 500)
@@ -272,7 +217,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> fine(flush: Boolean = false, message: Messenger<T>) = log(FINE, flush, message)
+    inline fun <T : Any> fine(flush: Boolean = false, message: Messenger<T>) = log(FINE, flush, message)
 
     /**
      * Emits a lazy finer log [message] (score = 400)
@@ -281,7 +226,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> finer(flush: Boolean = false, message: Messenger<T>) = log(FINER, flush, message)
+    inline fun <T : Any> finer(flush: Boolean = false, message: Messenger<T>) = log(FINER, flush, message)
 
     /**
      * Emits a lazy finest log [message] (score = 300)
@@ -290,7 +235,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> finest(flush: Boolean = false, message: Messenger<T>) = log(FINEST, flush, message)
+    inline fun <T : Any> finest(flush: Boolean = false, message: Messenger<T>) = log(FINEST, flush, message)
 
     /**
      * Emits a lazy debug log [message] (score = 200)
@@ -299,7 +244,7 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> debug(flush: Boolean = false, message: Messenger<T>) = log(DEBUG, flush, message)
+    inline fun <T : Any> debug(flush: Boolean = false, message: Messenger<T>) = log(DEBUG, flush, message)
 
     /**
      * Emits a lazy trace log [message] (score = 100)
@@ -308,5 +253,5 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    inline fun <T: Any> trace(flush: Boolean = false, message: Messenger<T>) = log(TRACE, flush, message)
+    inline fun <T : Any> trace(flush: Boolean = false, message: Messenger<T>) = log(TRACE, flush, message)
 }

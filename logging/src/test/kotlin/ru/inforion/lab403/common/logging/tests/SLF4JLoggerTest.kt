@@ -5,20 +5,22 @@ import org.junit.Test
 import org.slf4j.LoggerFactory
 import ru.inforion.lab403.common.logging.DEBUG
 import ru.inforion.lab403.common.logging.INFO
+import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.WARNING
+import ru.inforion.lab403.common.logging.logger.Config
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import kotlin.test.assertEquals
 
 class SLF4JLoggerTest {
-    private val publisher = TestMockPublisher().also {
-        Logger.addSLF4JPublisher(it)
-        Logger.addPublisher(it)
-    }
+    private lateinit var publisher: TestMockPublisher
 
     @Before
     fun initPublisher() {
-        publisher.clear()
+        Config.clearPublishers()
+        publisher = TestMockPublisher().also {
+            Config.addPublisher(it)
+        }
     }
 
     @Test
@@ -42,9 +44,11 @@ class SLF4JLoggerTest {
     @Test
     fun testDebugFormatCrash() {
         val log = LoggerFactory.getLogger(SLF4JLoggerTest::class.java)
+        Config.changeLevel(DEBUG)
 
         log.debug("message {} with {} args: {}", 1, "different", 3)
-        val secondMessage = "filterNameMap={org.apache.spark.ui.HttpSecurityFilter-7978e022=org.apache.spark.ui.HttpSecurityFilter-7978e022==org.apache.spark.ui.HttpSecurityFilter@7978e022{inst=false,async=true,src=EMBEDDED:null}}"
+        val secondMessage =
+            "filterNameMap={org.apache.spark.ui.HttpSecurityFilter-7978e022=org.apache.spark.ui.HttpSecurityFilter-7978e022==org.apache.spark.ui.HttpSecurityFilter@7978e022{inst=false,async=true,src=EMBEDDED:null}}"
         log.debug(secondMessage, *emptyList<String>().toTypedArray())
 
         assertEquals(2, publisher.size)

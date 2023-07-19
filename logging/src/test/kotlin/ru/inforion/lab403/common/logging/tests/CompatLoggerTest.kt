@@ -6,19 +6,21 @@ import org.junit.Before
 import org.junit.Test
 import ru.inforion.lab403.common.logging.SEVERE
 import ru.inforion.lab403.common.logging.logger
+import ru.inforion.lab403.common.logging.logger.Config
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import java.util.logging.Level
 import kotlin.test.assertEquals
 
 internal class CompatLoggerTest {
-    private val publisher = TestMockPublisher().also {
-        Logger.addPublisher(it)
-    }
+    private lateinit var publisher: TestMockPublisher
 
     @Before
     fun initPublisher() {
-        publisher.clear()
+        Config.clearPublishers()
+        publisher = TestMockPublisher().also {
+            Config.addPublisher(it)
+        }
     }
 
     @Test

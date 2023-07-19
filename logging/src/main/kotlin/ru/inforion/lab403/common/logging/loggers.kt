@@ -27,7 +27,7 @@ internal fun <T: Any> logger(
     vararg publishers: AbstractPublisher = arrayOf()
 ): Logger {
     val klass = unwrapCompanionClass(forClass)
-    return Logger.create(klass, level, flush, *publishers)
+    return Logger.create(klass, flush, level, *publishers)
 }
 
 /**
