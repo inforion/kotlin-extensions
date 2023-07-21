@@ -4,6 +4,7 @@ package ru.inforion.lab403.common.json
 
 import com.google.gson.*
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory
+import ru.inforion.lab403.common.reflection.javaType
 import ru.inforion.lab403.common.json.dontimport.classOrType
 import ru.inforion.lab403.common.json.dontimport.identifierOrName
 import ru.inforion.lab403.common.json.interfaces.JsonSerde
@@ -13,7 +14,6 @@ import java.io.OutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.javaType
 
 
 fun <T : Any> JsonBuilder.registerTypeAdapter(kClass: KClass<T>, serializer: JsonSerializer<T>): JsonBuilder =
@@ -112,7 +112,6 @@ inline fun <T> String.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.f
 
 inline fun <T> JsonElement.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(this, cls.classOrType)
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <T> JsonElement.fromJson(type: KType, mapper: Json = json): T = mapper.fromJson(this, type.javaType)
 
 inline fun <T> InputStream.fromJson(cls: Class<T>, mapper: Json = json): T = mapper.fromJson(reader(), cls.classOrType)

@@ -4,6 +4,7 @@ package ru.inforion.lab403.common.reflection
 
 import ru.inforion.lab403.common.extensions.className
 import kotlin.reflect.*
+import kotlin.reflect.javaType as kotlinJavaType
 
 /**
  * {EN}
@@ -17,6 +18,18 @@ import kotlin.reflect.*
  */
 
 fun KType.stringify() = this.toString().className()
+
+@OptIn(ExperimentalStdlibApi::class)
+inline val KType.javaType get() =
+    /**
+     * Works as kotlin.reflect.javaType
+     * Workflow for unsigned types (kotlin.reflect.javaType for ULong can return long)
+     */
+    when (val type = kotlinJavaType) {
+        is Class<*> -> if (type.isPrimitive) (this.classifier as KClass<*>).java else type
+        else -> type
+    }
+
 
 fun <T> KCallable<T>.stringify() = buildString {
     val visibility = visibility
