@@ -5,6 +5,8 @@ import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 
 object Config {
+    const val ALL = "*"
+
     data class PublisherInfo(val cls: String, val args: List<Any>)
 
     /**
@@ -17,22 +19,19 @@ object Config {
         var publishers: MutableList<AbstractPublisher>? = null
     ) {
         var level: LogLevel
-            get() = customLevel ?: level("all")
+            get() = customLevel ?: level(ALL)
             set(value) {
                 customLevel = value
             }
 
-        fun addPublisher(publisher: AbstractPublisher) {
-            if (publishers == null)
-                publishers = mutableListOf()
-            publishers!!.add(publisher)
 
+        fun addPublisher(publisher: AbstractPublisher) {
+            publishers = (publishers ?: mutableListOf())
+                .also { it.add(publisher) }
         }
 
         fun removePublisher(publisher: AbstractPublisher) {
-            if (publishers != null)
-                publishers!!.remove(publisher)
-
+            publishers?.remove(publisher)
         }
     }
 
@@ -56,25 +55,23 @@ object Config {
     private val mapOfLoggerRuntimeInfo = initMapOfLoggers()
 
     private fun initMapOfLoggers() = mutableMapOf(
-        "all" to LoggerRuntimeInfo(INFO, publishers = mutableListOf(Logger.defaultPublisher))
+        ALL to LoggerRuntimeInfo(INFO, publishers = mutableListOf(Logger.defaultPublisher))
     )
 
     /**
      * @since 0.2.4
      */
-    fun level(name: String): LogLevel = mapOfLoggerRuntimeInfo[name]?.level ?: mapOfLoggerRuntimeInfo["all"]!!.level
+    fun level(name: String = ALL): LogLevel = mapOfLoggerRuntimeInfo[name]?.level ?: mapOfLoggerRuntimeInfo[ALL]!!.level
 
     /**
      * @since 0.2.4
      */
-    fun publishers(
-        mask: String?
-    ): List<AbstractPublisher> {
+    fun publishers(mask: String = ALL): List<AbstractPublisher> {
         val suitableLoggers = getLoggerNamesByMask(mask)
         if (suitableLoggers.isEmpty())
-            return mapOfLoggerRuntimeInfo["all"]!!.publishers!!
+            return mapOfLoggerRuntimeInfo[ALL]!!.publishers!!
         return suitableLoggers
-            .flatMap { mapOfLoggerRuntimeInfo[it]?.publishers ?: mapOfLoggerRuntimeInfo["all"]!!.publishers!! }
+            .flatMap { mapOfLoggerRuntimeInfo[it]?.publishers ?: mapOfLoggerRuntimeInfo[ALL]!!.publishers!! }
             .toSet().toList()
     }
 
@@ -86,11 +83,12 @@ object Config {
      *
      * @since 0.4.TODO
      */
-    fun addPublisher(publisher: AbstractPublisher, mask: String? = null) {
+    fun addPublisher(publisher: AbstractPublisher, mask: String = ALL) {
         changeLoggersByMask(mask) { loggerName ->
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.addPublisher(publisher)
-            else mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(publishers = mutableListOf(publisher))
+            else
+                mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(publishers = mutableListOf(publisher))
         }
     }
 
@@ -102,15 +100,14 @@ object Config {
      *
      * @since 0.4.TODO
      */
-    fun removePublisher(publisher: AbstractPublisher, mask: String? = null) {
+    fun removePublisher(publisher: AbstractPublisher, mask: String = ALL) {
         changeLoggersByMask(mask) { loggerName ->
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.removePublisher(publisher)
             else {
-                val runtimeInfo = LoggerRuntimeInfo(publishers = publishers("all").toMutableList())
+                val runtimeInfo = LoggerRuntimeInfo(publishers = publishers(ALL).toMutableList())
                 runtimeInfo.removePublisher(publisher)
                 mapOfLoggerRuntimeInfo[loggerName] = runtimeInfo
-
             }
         }
     }
@@ -128,13 +125,12 @@ object Config {
      *
      * @since 0.4.TODO
      */
-    fun changeLevel(level: LogLevel, mask: String? = null) {
+    fun changeLevel(level: LogLevel, mask: String = ALL) {
         changeLoggersByMask(mask) { loggerName ->
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.level = level
-            else {
+            else
                 mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(level)
-            }
         }
     }
 
@@ -142,20 +138,19 @@ object Config {
      * Expect mask as `*.package.*`, with at most 2 asterisks (at the start and at the end)
      * `*` or null is for selecting every logger
      */
-    private inline fun changeLoggersByMask(
-        mask: String?,
-        changeFunction: (name: String) -> Unit
-    ) {
+    private fun changeLoggersByMask(mask: String, changeFunction: (name: String) -> Unit) {
         val suitableLoggers = getLoggerNamesByMask(mask)
-        for (name in suitableLoggers) {
+        for (name in suitableLoggers)
             changeFunction(name)
-        }
     }
 
-    private inline fun getLoggerNamesByMask(mask: String?): List<String> {
-        if (mask == null || mask == "*")
-            return listOf("all")
-        val modifiedMask = Regex(mask.replace(".", "\\.").replace("*", ".*"))
+    private fun getLoggerNamesByMask(mask: String): List<String> {
+        if (mask == ALL)
+            return listOf(ALL)
+        val modifiedMask = Regex(
+            mask.replace(".", "\\.")
+                .replace("*", ".*")
+        )
         return Logger.loggers.map { it.key }.filter { it.matches(modifiedMask) }
     }
 }

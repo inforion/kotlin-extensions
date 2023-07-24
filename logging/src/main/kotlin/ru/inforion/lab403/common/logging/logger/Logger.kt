@@ -5,6 +5,7 @@ package ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
+import java.util.ServiceLoader
 import java.util.logging.Level
 import kotlin.concurrent.thread
 
@@ -25,6 +26,11 @@ class Logger private constructor(
         }
 
     companion object {
+        init {
+            val loader: ServiceLoader<IConfigFileLoader> = ServiceLoader.load(IConfigFileLoader::class.java)
+            loader.forEach { it.load() }
+        }
+
         private val runtime = Runtime.getRuntime()
 
         /**

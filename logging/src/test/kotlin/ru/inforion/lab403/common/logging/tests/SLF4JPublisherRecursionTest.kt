@@ -11,12 +11,10 @@ import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import ru.inforion.lab403.common.logging.publishers.TestPublisherWithSlf4J
 import java.util.logging.Level
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
-import kotlin.test.assertTrue
 
 internal class SLF4JPublisherRecursionTest {
-    private lateinit var publisher : TestMockPublisher
-    private lateinit var publisherWithSlf4J : TestPublisherWithSlf4J
+    private lateinit var publisher: TestMockPublisher
+    private lateinit var publisherWithSlf4J: TestPublisherWithSlf4J
 
     @Before
     fun initPublisher() {
@@ -41,21 +39,10 @@ internal class SLF4JPublisherRecursionTest {
             assertEquals(SEVERE, it.record.level)
         }
 
-        assertEquals(Config.publishers("*").size, 2)
+        assertEquals(Config.publishers(Config.ALL).size, 2)
         assertEquals(Config.publishers("*.SLF4JLoggerTest").size, 1)
 
         Config.removePublisher(publisherWithSlf4J, "*.SLF4JLoggerTest")
         assertEquals(Config.publishers("*.SLF4JLoggerTest").size, 0)
     }
-
-//    @Test
-//    fun failRecursivePublisherLogging() {
-//        TestPublisherWithSlf4J().also {
-//            Config.addPublisher(it)
-//        }
-//
-//        val log = logger(Level.FINE)
-//        val stackOverflowError = assertFails { log.severe { "Failed logging" } }
-//        assertTrue(stackOverflowError is StackOverflowError)
-//    }
 }

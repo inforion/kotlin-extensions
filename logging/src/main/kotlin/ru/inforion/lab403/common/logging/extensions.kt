@@ -15,21 +15,18 @@ import ru.inforion.lab403.common.logging.logger.Logger
  *   "Or for all loggers if no '=' was found in value just logger level, i.e. FINE\n" +
  *   "Available levels: ${Levels.values().joinToString()}\n"
  */
-fun String.loggerConfigure() = when {
-    "=" !in this -> {
-        val value = Levels.valueOf(this)
-        Logger.onCreate { Config.changeLevel(value.level) }
-    }
-
-    else -> {
-        val map = split(",").associate { definition ->
-            val logger = definition.substringBefore("=")
-            val value = definition.substringAfter("=")
-            logger to Levels.valueOf(value).level
+fun String.loggerConfigure() {
+    when {
+        "=" !in this -> {
+            val value = Levels.valueOf(this)
+            Config.changeLevel(value.level)
         }
-
-        Logger.onCreate { logger ->
-            Config.changeLevel(map.getOrDefault(logger.name, logger.level))
+        else -> {
+            split(",").forEach { definition ->
+                val logger = definition.substringBefore("=")
+                val value = definition.substringAfter("=")
+                Config.changeLevel(Levels.valueOf(value).level, logger)
+            }
         }
     }
 }

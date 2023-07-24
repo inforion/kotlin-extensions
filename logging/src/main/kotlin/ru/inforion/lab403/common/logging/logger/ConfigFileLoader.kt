@@ -9,10 +9,10 @@ import ru.inforion.lab403.common.logging.Messenger
 import ru.inforion.lab403.common.logging.logger.Config.toPublisher
 import java.io.File
 
-object ConfigFileLoader {
-    private const val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
-    private const val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
-    private const val DEFAULT_LEVEL = "INFO"
+class ConfigFileLoader : IConfigFileLoader {
+    private val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
+    private val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
+    private val DEFAULT_LEVEL = "INFO"
 
     private inline fun <T> info(message: Messenger<T>) = System.err.println(message().toString())
 
@@ -24,12 +24,11 @@ object ConfigFileLoader {
         env(ENV_DEBUG_ENABLED) ifNotNull { toBoolean() } either { false }
     }
 
-
     private fun env(name: String): String? = System.getenv(name).also {
         if (it != null) info { "$name: $it" }
     }
 
-    private val configurations: File? by lazy {
+    private val configFile: File? by lazy {
         val path = env(ENV_CONF_PATH)
 
         if (path != null) {
@@ -37,25 +36,28 @@ object ConfigFileLoader {
                 info { "Logging configuration file can't be loaded: $this" }
             }
         } else {
-            debug { "INFORION_LOGGING_CONF_PATH not specified" }; null
+            debug { "$ENV_CONF_PATH not specified" }; null
         }
     }
 
-    fun getConfig() = configurations ifNotNull {
-        runCatching {
-            fromJson<Map<String, Config.LoggerInfo>>().mapValues {
-                val loggerInfo = it.value
-                Config.LoggerRuntimeInfo(Levels.valueOf(loggerInfo.level ?: DEFAULT_LEVEL).level,
-                    loggerInfo.publishers
-                            ifNotNull { map { it.toPublisher() }.toMutableList() }
-                            either { mutableListOf() })
-            }
-        }.onSuccess {
-            info { "Successfully loading logger configuration file '$this'" }
-        }.onFailure { error ->
-            info { "Can't parse logger configuration file '$this' due to $error" }
-        }.getOrNull()
-    } either {
-        emptyMap()
+    override fun load() {
+        configFile ifNotNull {
+            runCatching {
+                fromJson<Map<String, Config.LoggerInfo>>().forEach { name, loggerInfo ->
+                    if (loggerInfo.level != null)
+                        Config.changeLevel(Levels.valueOf(loggerInfo.level).level, name)
+
+                    if (loggerInfo.publishers != null)
+                        for (publisher in loggerInfo.publishers)
+                            Config.addPublisher(publisher.toPublisher(), name)
+                }
+            }.onSuccess {
+                info { "Successfully loading logger configuration file '$this'" }
+            }.onFailure { error ->
+                info { "Can't parse logger configuration file '$this' due to $error" }
+            }.getOrNull()
+        } either {
+            info { "Logger config file not found, default settings will be used" }
+        }
     }
 }
