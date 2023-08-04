@@ -247,7 +247,8 @@ fun String.toFile(child: String): File {
     // If parent is blank then absolute path will be created
     // "".toFile("temp") -> /temp
     if (isBlank()) return File(child)
-    if (child.isAbsolute()) return File(child)
+    // FIXME: We real need this?
+//    if (child.isAbsolute()) return File(child)
     return File(this, child)
 }
 
