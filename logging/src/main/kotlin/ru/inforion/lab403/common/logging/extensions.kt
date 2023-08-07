@@ -3,7 +3,7 @@
 package ru.inforion.lab403.common.logging
 
 import ru.inforion.lab403.common.extensions.emptyString
-import ru.inforion.lab403.common.logging.logger.Config
+import ru.inforion.lab403.common.logging.config.LoggerConfig
 import ru.inforion.lab403.common.logging.logger.Logger
 
 /**
@@ -19,13 +19,13 @@ fun String.loggerConfigure() {
     when {
         "=" !in this -> {
             val value = Levels.valueOf(this)
-            Config.changeLevel(value.level)
+            LoggerConfig.changeLevel(value.level)
         }
         else -> {
             split(",").forEach { definition ->
                 val logger = definition.substringBefore("=")
                 val value = definition.substringAfter("=")
-                Config.changeLevel(Levels.valueOf(value).level, logger)
+                LoggerConfig.changeLevel(Levels.valueOf(value).level, logger)
             }
         }
     }

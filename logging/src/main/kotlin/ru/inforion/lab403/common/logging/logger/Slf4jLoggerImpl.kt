@@ -3,12 +3,13 @@ package ru.inforion.lab403.common.logging.logger
 import org.slf4j.Marker
 import org.slf4j.event.Level
 import org.slf4j.helpers.MessageFormatter
+import ru.inforion.lab403.common.logging.config.LoggerConfig
 
 class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of the logger {EN}
      */
-    private val level = Config.level(loggerName)
+    private val level = LoggerConfig.level(loggerName)
 
     private val logger = Logger.create(
         loggerName,

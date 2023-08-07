@@ -26,3 +26,4 @@ class LoggerProvider : SLF4JServiceProvider {
         private const val VERSION = "2.0.6"
     }
 }
+

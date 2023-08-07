@@ -1,61 +1,21 @@
-package ru.inforion.lab403.common.logging.logger
+package ru.inforion.lab403.common.logging.config
 
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.LogLevel
+import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 
-object Config {
+object LoggerConfig {
+    const val DEFAULT_LEVEL = INFO
     const val ALL = "*"
 
-    data class PublisherInfo(val cls: String, val args: List<Any>)
 
-    /**
-     * Used only in ConfigFileLoader, seems redundant
-     */
-    data class LoggerInfo(val level: String? = null, val publishers: MutableList<PublisherInfo>? = null)
-
-    data class LoggerRuntimeInfo(
-        private var customLevel: LogLevel? = null,
-        var publishers: MutableList<AbstractPublisher>? = null
-    ) {
-        var level: LogLevel
-            get() = customLevel ?: level(ALL)
-            set(value) {
-                customLevel = value
-            }
-
-
-        fun addPublisher(publisher: AbstractPublisher) {
-            publishers = (publishers ?: mutableListOf())
-                .also { it.add(publisher) }
-        }
-
-        fun removePublisher(publisher: AbstractPublisher) {
-            publishers?.remove(publisher)
-        }
-    }
-
-    fun PublisherInfo.toPublisher(): AbstractPublisher {
-        val cls = Class.forName(cls)
-        val args = args.toTypedArray()
-        val types = args.map { arg ->
-            when (val type = arg.javaClass) {
-                java.lang.Byte::class.java -> Byte::class.java
-                java.lang.Short::class.java -> Short::class.java
-                java.lang.Integer::class.java -> Int::class.java
-                java.lang.Long::class.java -> Long::class.java
-                java.lang.Boolean::class.java -> Boolean::class.java
-                else -> type
-            }
-        }.toTypedArray()
-        val constructor = cls.getConstructor(*types)
-        return constructor.newInstance(*args) as AbstractPublisher
-    }
-
+    // TODO: а есть ли смысл вообще это хранить в одной мапе? Мб на две разделить
+    // UseCase: например, два паблишера и десять лог-левелов. Если одна мапа, то на каждый паблишер надо будет
     private val mapOfLoggerRuntimeInfo = initMapOfLoggers()
 
     private fun initMapOfLoggers() = mutableMapOf(
-        ALL to LoggerRuntimeInfo(INFO, publishers = mutableListOf(Logger.defaultPublisher))
+        ALL to LoggerConfigStringConverter.LoggerRuntimeInfo(INFO, publishers = mutableListOf(Logger.defaultPublisher))
     )
 
     /**
@@ -88,7 +48,11 @@ object Config {
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.addPublisher(publisher)
             else
-                mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(publishers = mutableListOf(publisher))
+                mapOfLoggerRuntimeInfo[loggerName] =
+                    LoggerConfigStringConverter.LoggerRuntimeInfo(publishers = mutableListOf(publisher))
+
+            // TODO: а какой в результате у нас инвариант? Мы не кэшируем всё, а в рантайме достаём? Так это же будет медленнее
+            //  Вот тут если не было данных, то родительские паблишеры не будут работать
         }
     }
 
@@ -105,7 +69,8 @@ object Config {
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.removePublisher(publisher)
             else {
-                val runtimeInfo = LoggerRuntimeInfo(publishers = publishers(ALL).toMutableList())
+                val runtimeInfo =
+                    LoggerConfigStringConverter.LoggerRuntimeInfo(publishers = publishers(ALL).toMutableList())
                 runtimeInfo.removePublisher(publisher)
                 mapOfLoggerRuntimeInfo[loggerName] = runtimeInfo
             }
@@ -130,7 +95,7 @@ object Config {
             if (mapOfLoggerRuntimeInfo[loggerName] != null)
                 mapOfLoggerRuntimeInfo[loggerName]!!.level = level
             else
-                mapOfLoggerRuntimeInfo[loggerName] = LoggerRuntimeInfo(level)
+                mapOfLoggerRuntimeInfo[loggerName] = LoggerConfigStringConverter.LoggerRuntimeInfo(level)
         }
     }
 

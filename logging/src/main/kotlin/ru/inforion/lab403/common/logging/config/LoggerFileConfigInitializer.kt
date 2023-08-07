@@ -1,4 +1,4 @@
-package ru.inforion.lab403.common.logging.logger
+package ru.inforion.lab403.common.logging.config
 
 import ru.inforion.lab403.common.extensions.either
 import ru.inforion.lab403.common.extensions.ifNotNull
@@ -6,13 +6,13 @@ import ru.inforion.lab403.common.extensions.otherwise
 import ru.inforion.lab403.common.json.fromJson
 import ru.inforion.lab403.common.logging.Levels
 import ru.inforion.lab403.common.logging.Messenger
-import ru.inforion.lab403.common.logging.logger.Config.toPublisher
 import java.io.File
 
-class ConfigFileLoader : IConfigFileLoader {
-    private val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
-    private val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
-    private val DEFAULT_LEVEL = "INFO"
+class LoggerFileConfigInitializer : ILoggerConfigInitializer {
+    companion object {
+        const val ENV_CONF_PATH = "INFORION_LOGGING_CONF_PATH"
+        const val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
+    }
 
     private inline fun <T> info(message: Messenger<T>) = System.err.println(message().toString())
 
@@ -43,13 +43,19 @@ class ConfigFileLoader : IConfigFileLoader {
     override fun load() {
         configFile ifNotNull {
             runCatching {
-                fromJson<Map<String, Config.LoggerInfo>>().forEach { name, loggerInfo ->
+                fromJson<Map<String, LoggerConfigStringConverter.LoggerInfo>>().forEach { (name, loggerInfo) ->
+
+                    // TODO: если какой-то один инициализатор (changeLevel или addPublisher) сломался, что лучше?
+                    // 1. Откатить все остальные
+                    // 2. Оставить то, что удалось инициализиоровать и свалиться в ошибку
+                    // 3. Пропустить ошибочный инициализатор и продолжить?
+
                     if (loggerInfo.level != null)
-                        Config.changeLevel(Levels.valueOf(loggerInfo.level).level, name)
+                        LoggerConfig.changeLevel(Levels.valueOf(loggerInfo.level).level, name)
 
                     if (loggerInfo.publishers != null)
                         for (publisher in loggerInfo.publishers)
-                            Config.addPublisher(publisher.toPublisher(), name)
+                            LoggerConfig.addPublisher(publisher.toPublisher(), name)
                 }
             }.onSuccess {
                 info { "Successfully loading logger configuration file '$this'" }

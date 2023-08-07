@@ -2,8 +2,7 @@ package ru.inforion.lab403.common.logging.examples
 
 import ru.inforion.lab403.common.logging.TRACE
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.logging.logger.Config
-import ru.inforion.lab403.common.logging.logger.Logger
+import ru.inforion.lab403.common.logging.config.LoggerConfig
 import ru.inforion.lab403.common.logging.logger.Record
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 
@@ -20,7 +19,7 @@ object Application {
             }
         }
 
-        Config.addPublisher(publisher)
+        LoggerConfig.addPublisher(publisher)
 
         log.severe { "This is severe message" }
         log.warning { "This is warning message" }

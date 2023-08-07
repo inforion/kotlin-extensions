@@ -3,6 +3,8 @@
 package ru.inforion.lab403.common.logging.logger
 
 import ru.inforion.lab403.common.logging.*
+import ru.inforion.lab403.common.logging.config.ILoggerConfigInitializer
+import ru.inforion.lab403.common.logging.config.LoggerConfig
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.util.ServiceLoader
@@ -15,19 +17,21 @@ class Logger private constructor(
 ) {
     init {
         assert(
+            // TODO: regexp энкапсулировать
             !name.contains(Regex("[\\[\\]{}()+*?^\$\\\\|]"))
         ) { "Logger name shouldn't contain Regex special characters" }
     }
 
     var level: LogLevel
-        get() = Config.level(name)
+        get() = LoggerConfig.level(name)
         set(value) {
-            Config.changeLevel(value, name)
+            LoggerConfig.changeLevel(value, name)
         }
 
     companion object {
         init {
-            val loader: ServiceLoader<IConfigFileLoader> = ServiceLoader.load(IConfigFileLoader::class.java)
+            // TODO: почему не унести это в LoggerConfig?
+            val loader = ServiceLoader.load(ILoggerConfigInitializer::class.java)
             loader.forEach { it.load() }
         }
 
@@ -93,9 +97,9 @@ class Logger private constructor(
                 }
                 loggers[name] = newLogger
                 if (level != null)
-                    Config.changeLevel(level, name)
+                    LoggerConfig.changeLevel(level, name)
                 for (publisher in publishers)
-                    Config.addPublisher(publisher, name)
+                    LoggerConfig.addPublisher(publisher, name)
 
                 newLogger
             }
@@ -135,15 +139,15 @@ class Logger private constructor(
      */
     private val allHandlersSeq
         get() = sequence {
-            Config.publishers(name).forEach { yield(it) }
+            LoggerConfig.publishers(name).forEach { yield(it) }
         }
 
     override fun toString() = name
 
 
-    fun addPublisher(publisher: AbstractPublisher) = Config.addPublisher(publisher, name)
+    fun addPublisher(publisher: AbstractPublisher) = LoggerConfig.addPublisher(publisher, name)
 
-    fun removePublisher(publisher: AbstractPublisher) = Config.removePublisher(publisher, name)
+    fun removePublisher(publisher: AbstractPublisher) = LoggerConfig.removePublisher(publisher, name)
 
     /**
      * Flush all publishers of logger

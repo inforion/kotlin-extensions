@@ -3,11 +3,9 @@ package ru.inforion.lab403.common.logging.tests
 import org.junit.Before
 import org.junit.Test
 import ru.inforion.lab403.common.logging.FINE
-import ru.inforion.lab403.common.logging.SEVERE
 import ru.inforion.lab403.common.logging.WARNING
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.logging.logger.Config
-import ru.inforion.lab403.common.logging.logger.Logger
+import ru.inforion.lab403.common.logging.config.LoggerConfig
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import kotlin.test.assertEquals
 
@@ -17,9 +15,9 @@ internal class SimpleLoggerTest {
 
     @Before
     fun initPublisher() {
-        Config.clearPublishers()
+        LoggerConfig.clearPublishers()
         publisher = TestMockPublisher().also {
-            Config.addPublisher(it)
+            LoggerConfig.addPublisher(it)
         }
     }
 

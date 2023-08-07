@@ -1,6 +1,5 @@
 package ru.inforion.lab403.common.logging.publishers
 
-import ru.inforion.lab403.common.logging.logger.Record
 import java.io.StringWriter
 import java.io.Writer
 

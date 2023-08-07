@@ -1,6 +1,5 @@
 package ru.inforion.lab403.common.logging.logger
 
-import ru.inforion.lab403.common.logging.Caller
 import ru.inforion.lab403.common.logging.LogLevel
 
 class Record constructor(

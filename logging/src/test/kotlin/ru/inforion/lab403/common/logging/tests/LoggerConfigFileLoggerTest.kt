@@ -7,7 +7,7 @@ import org.junit.Test
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.logger
 
-internal class ConfigFileLoggerTest {
+internal class LoggerConfigFileLoggerTest {
     @Test
     fun test1() {
         withEnvironmentVariable("INFORION_LOGGING_CONF_PATH", "src/test/resources/config.json")
