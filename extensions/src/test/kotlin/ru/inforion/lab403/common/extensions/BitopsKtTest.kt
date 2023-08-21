@@ -614,143 +614,143 @@ internal class BitopsKtTest {
     fun uint_rotl32_32() = assertEquals(0xAABBCCDDu, 0xAABBCCDDu.rotl32(32))
 
     @Test
-    fun ulong_signext_00() = assertEquals(0xFFFF_FFFF_FFFF_FFFFuL, 0x0001uL signextRenameMeAfter 0)
+    fun ulong_signext_00() = assertEquals(0xFFFF_FFFF_FFFF_FFFFuL, 0x0001uL signext 0)
     @Test
-    fun ulong_signext_01() = assertEquals(0xFFFF_FFFF_FFFF_FFFEuL, 0x0002uL signextRenameMeAfter 1)
+    fun ulong_signext_01() = assertEquals(0xFFFF_FFFF_FFFF_FFFEuL, 0x0002uL signext 1)
     @Test
-    fun ulong_signext_02() = assertEquals(0xFFFF_FFFF_FFFF_FFFCuL, 0x0004uL signextRenameMeAfter 2)
+    fun ulong_signext_02() = assertEquals(0xFFFF_FFFF_FFFF_FFFCuL, 0x0004uL signext 2)
     @Test
-    fun ulong_signext_03() = assertEquals(0xFFFF_FFFF_FFFF_FFF8uL, 0x0008uL signextRenameMeAfter 3)
+    fun ulong_signext_03() = assertEquals(0xFFFF_FFFF_FFFF_FFF8uL, 0x0008uL signext 3)
     @Test
-    fun ulong_signext_04() = assertEquals(0xFFFF_FFFF_FFFF_FFF0uL, 0x0010uL signextRenameMeAfter 4)
+    fun ulong_signext_04() = assertEquals(0xFFFF_FFFF_FFFF_FFF0uL, 0x0010uL signext 4)
     @Test
-    fun ulong_signext_05() = assertEquals(0xFFFF_FFFF_FFFF_FFE0uL, 0x0020uL signextRenameMeAfter 5)
+    fun ulong_signext_05() = assertEquals(0xFFFF_FFFF_FFFF_FFE0uL, 0x0020uL signext 5)
     @Test
-    fun ulong_signext_06() = assertEquals(0xFFFF_FFFF_FFFF_FFC0uL, 0x0040uL signextRenameMeAfter 6)
+    fun ulong_signext_06() = assertEquals(0xFFFF_FFFF_FFFF_FFC0uL, 0x0040uL signext 6)
     @Test
-    fun ulong_signext_07() = assertEquals(0xFFFF_FFFF_FFFF_FF80uL, 0x0080uL signextRenameMeAfter 7)
+    fun ulong_signext_07() = assertEquals(0xFFFF_FFFF_FFFF_FF80uL, 0x0080uL signext 7)
     @Test
-    fun ulong_signext_08() = assertEquals(0xFFFF_FFFF_FFFF_FF00uL, 0x0100uL signextRenameMeAfter 8)
+    fun ulong_signext_08() = assertEquals(0xFFFF_FFFF_FFFF_FF00uL, 0x0100uL signext 8)
     @Test
-    fun ulong_signext_09() = assertEquals(0xFFFF_FFFF_FFFF_FE00uL, 0x0200uL signextRenameMeAfter 9)
+    fun ulong_signext_09() = assertEquals(0xFFFF_FFFF_FFFF_FE00uL, 0x0200uL signext 9)
     @Test
-    fun ulong_signext_10() = assertEquals(0xFFFF_FFFF_FFFF_FC00uL, 0x0400uL signextRenameMeAfter 10)
+    fun ulong_signext_10() = assertEquals(0xFFFF_FFFF_FFFF_FC00uL, 0x0400uL signext 10)
     @Test
-    fun ulong_signext_11() = assertEquals(0xFFFF_FFFF_FFFF_F800uL, 0x0800uL signextRenameMeAfter 11)
+    fun ulong_signext_11() = assertEquals(0xFFFF_FFFF_FFFF_F800uL, 0x0800uL signext 11)
     @Test
-    fun ulong_signext_12() = assertEquals(0xFFFF_FFFF_FFFF_F000uL, 0x1000uL signextRenameMeAfter 12)
+    fun ulong_signext_12() = assertEquals(0xFFFF_FFFF_FFFF_F000uL, 0x1000uL signext 12)
     @Test
-    fun ulong_signext_13() = assertEquals(0xFFFF_FFFF_FFFF_E000uL, 0x2000uL signextRenameMeAfter 13)
+    fun ulong_signext_13() = assertEquals(0xFFFF_FFFF_FFFF_E000uL, 0x2000uL signext 13)
     @Test
-    fun ulong_signext_14() = assertEquals(0xFFFF_FFFF_FFFF_C000uL, 0x4000uL signextRenameMeAfter 14)
+    fun ulong_signext_14() = assertEquals(0xFFFF_FFFF_FFFF_C000uL, 0x4000uL signext 14)
     @Test
-    fun ulong_signext_15() = assertEquals(0xFFFF_FFFF_FFFF_8000uL, 0x8000uL signextRenameMeAfter 15)
+    fun ulong_signext_15() = assertEquals(0xFFFF_FFFF_FFFF_8000uL, 0x8000uL signext 15)
 
     @Test
-    fun ulong_signext_16() = assertEquals(0xFFFF_FFFF_FFFF_0000uL, 0x0001_0000uL signextRenameMeAfter 16)
+    fun ulong_signext_16() = assertEquals(0xFFFF_FFFF_FFFF_0000uL, 0x0001_0000uL signext 16)
     @Test
-    fun ulong_signext_17() = assertEquals(0xFFFF_FFFF_FFFE_0000uL, 0x0002_0000uL signextRenameMeAfter 17)
+    fun ulong_signext_17() = assertEquals(0xFFFF_FFFF_FFFE_0000uL, 0x0002_0000uL signext 17)
     @Test
-    fun ulong_signext_18() = assertEquals(0xFFFF_FFFF_FFFC_0000uL, 0x0004_0000uL signextRenameMeAfter 18)
+    fun ulong_signext_18() = assertEquals(0xFFFF_FFFF_FFFC_0000uL, 0x0004_0000uL signext 18)
     @Test
-    fun ulong_signext_19() = assertEquals(0xFFFF_FFFF_FFF8_0000uL, 0x0008_0000uL signextRenameMeAfter 19)
+    fun ulong_signext_19() = assertEquals(0xFFFF_FFFF_FFF8_0000uL, 0x0008_0000uL signext 19)
     @Test
-    fun ulong_signext_20() = assertEquals(0xFFFF_FFFF_FFF0_0000uL, 0x0010_0000uL signextRenameMeAfter 20)
+    fun ulong_signext_20() = assertEquals(0xFFFF_FFFF_FFF0_0000uL, 0x0010_0000uL signext 20)
     @Test
-    fun ulong_signext_21() = assertEquals(0xFFFF_FFFF_FFE0_0000uL, 0x0020_0000uL signextRenameMeAfter 21)
+    fun ulong_signext_21() = assertEquals(0xFFFF_FFFF_FFE0_0000uL, 0x0020_0000uL signext 21)
     @Test
-    fun ulong_signext_22() = assertEquals(0xFFFF_FFFF_FFC0_0000uL, 0x0040_0000uL signextRenameMeAfter 22)
+    fun ulong_signext_22() = assertEquals(0xFFFF_FFFF_FFC0_0000uL, 0x0040_0000uL signext 22)
     @Test
-    fun ulong_signext_23() = assertEquals(0xFFFF_FFFF_FF80_0000uL, 0x0080_0000uL signextRenameMeAfter 23)
+    fun ulong_signext_23() = assertEquals(0xFFFF_FFFF_FF80_0000uL, 0x0080_0000uL signext 23)
     @Test
-    fun ulong_signext_24() = assertEquals(0xFFFF_FFFF_FF00_0000uL, 0x0100_0000uL signextRenameMeAfter 24)
+    fun ulong_signext_24() = assertEquals(0xFFFF_FFFF_FF00_0000uL, 0x0100_0000uL signext 24)
     @Test
-    fun ulong_signext_25() = assertEquals(0xFFFF_FFFF_FE00_0000uL, 0x0200_0000uL signextRenameMeAfter 25)
+    fun ulong_signext_25() = assertEquals(0xFFFF_FFFF_FE00_0000uL, 0x0200_0000uL signext 25)
     @Test
-    fun ulong_signext_26() = assertEquals(0xFFFF_FFFF_FC00_0000uL, 0x0400_0000uL signextRenameMeAfter 26)
+    fun ulong_signext_26() = assertEquals(0xFFFF_FFFF_FC00_0000uL, 0x0400_0000uL signext 26)
     @Test
-    fun ulong_signext_27() = assertEquals(0xFFFF_FFFF_F800_0000uL, 0x0800_0000uL signextRenameMeAfter 27)
+    fun ulong_signext_27() = assertEquals(0xFFFF_FFFF_F800_0000uL, 0x0800_0000uL signext 27)
     @Test
-    fun ulong_signext_28() = assertEquals(0xFFFF_FFFF_F000_0000uL, 0x1000_0000uL signextRenameMeAfter 28)
+    fun ulong_signext_28() = assertEquals(0xFFFF_FFFF_F000_0000uL, 0x1000_0000uL signext 28)
     @Test
-    fun ulong_signext_29() = assertEquals(0xFFFF_FFFF_E000_0000uL, 0x2000_0000uL signextRenameMeAfter 29)
+    fun ulong_signext_29() = assertEquals(0xFFFF_FFFF_E000_0000uL, 0x2000_0000uL signext 29)
     @Test
-    fun ulong_signext_30() = assertEquals(0xFFFF_FFFF_C000_0000uL, 0x4000_0000uL signextRenameMeAfter 30)
+    fun ulong_signext_30() = assertEquals(0xFFFF_FFFF_C000_0000uL, 0x4000_0000uL signext 30)
     @Test
-    fun ulong_signext_31() = assertEquals(0xFFFF_FFFF_8000_0000uL, 0x8000_0000uL signextRenameMeAfter 31)
+    fun ulong_signext_31() = assertEquals(0xFFFF_FFFF_8000_0000uL, 0x8000_0000uL signext 31)
 
     @Test
-    fun ulong_signext_32() = assertEquals(0xFFFF_FFFF_0000_0000uL, 0x0000_0001_0000_0000uL signextRenameMeAfter 32)
+    fun ulong_signext_32() = assertEquals(0xFFFF_FFFF_0000_0000uL, 0x0000_0001_0000_0000uL signext 32)
     @Test
-    fun ulong_signext_33() = assertEquals(0xFFFF_FFFE_0000_0000uL, 0x0000_0002_0000_0000uL signextRenameMeAfter 33)
+    fun ulong_signext_33() = assertEquals(0xFFFF_FFFE_0000_0000uL, 0x0000_0002_0000_0000uL signext 33)
     @Test
-    fun ulong_signext_34() = assertEquals(0xFFFF_FFFC_0000_0000uL, 0x0000_0004_0000_0000uL signextRenameMeAfter 34)
+    fun ulong_signext_34() = assertEquals(0xFFFF_FFFC_0000_0000uL, 0x0000_0004_0000_0000uL signext 34)
     @Test
-    fun ulong_signext_35() = assertEquals(0xFFFF_FFF8_0000_0000uL, 0x0000_0008_0000_0000uL signextRenameMeAfter 35)
+    fun ulong_signext_35() = assertEquals(0xFFFF_FFF8_0000_0000uL, 0x0000_0008_0000_0000uL signext 35)
     @Test
-    fun ulong_signext_36() = assertEquals(0xFFFF_FFF0_0000_0000uL, 0x0000_0010_0000_0000uL signextRenameMeAfter 36)
+    fun ulong_signext_36() = assertEquals(0xFFFF_FFF0_0000_0000uL, 0x0000_0010_0000_0000uL signext 36)
     @Test
-    fun ulong_signext_37() = assertEquals(0xFFFF_FFE0_0000_0000uL, 0x0000_0020_0000_0000uL signextRenameMeAfter 37)
+    fun ulong_signext_37() = assertEquals(0xFFFF_FFE0_0000_0000uL, 0x0000_0020_0000_0000uL signext 37)
     @Test
-    fun ulong_signext_38() = assertEquals(0xFFFF_FFC0_0000_0000uL, 0x0000_0040_0000_0000uL signextRenameMeAfter 38)
+    fun ulong_signext_38() = assertEquals(0xFFFF_FFC0_0000_0000uL, 0x0000_0040_0000_0000uL signext 38)
     @Test
-    fun ulong_signext_39() = assertEquals(0xFFFF_FF80_0000_0000uL, 0x0000_0080_0000_0000uL signextRenameMeAfter 39)
+    fun ulong_signext_39() = assertEquals(0xFFFF_FF80_0000_0000uL, 0x0000_0080_0000_0000uL signext 39)
     @Test
-    fun ulong_signext_40() = assertEquals(0xFFFF_FF00_0000_0000uL, 0x0000_0100_0000_0000uL signextRenameMeAfter 40)
+    fun ulong_signext_40() = assertEquals(0xFFFF_FF00_0000_0000uL, 0x0000_0100_0000_0000uL signext 40)
     @Test
-    fun ulong_signext_41() = assertEquals(0xFFFF_FE00_0000_0000uL, 0x0000_0200_0000_0000uL signextRenameMeAfter 41)
+    fun ulong_signext_41() = assertEquals(0xFFFF_FE00_0000_0000uL, 0x0000_0200_0000_0000uL signext 41)
     @Test
-    fun ulong_signext_42() = assertEquals(0xFFFF_FC00_0000_0000uL, 0x0000_0400_0000_0000uL signextRenameMeAfter 42)
+    fun ulong_signext_42() = assertEquals(0xFFFF_FC00_0000_0000uL, 0x0000_0400_0000_0000uL signext 42)
     @Test
-    fun ulong_signext_43() = assertEquals(0xFFFF_F800_0000_0000uL, 0x0000_0800_0000_0000uL signextRenameMeAfter 43)
+    fun ulong_signext_43() = assertEquals(0xFFFF_F800_0000_0000uL, 0x0000_0800_0000_0000uL signext 43)
     @Test
-    fun ulong_signext_44() = assertEquals(0xFFFF_F000_0000_0000uL, 0x0000_1000_0000_0000uL signextRenameMeAfter 44)
+    fun ulong_signext_44() = assertEquals(0xFFFF_F000_0000_0000uL, 0x0000_1000_0000_0000uL signext 44)
     @Test
-    fun ulong_signext_45() = assertEquals(0xFFFF_E000_0000_0000uL, 0x0000_2000_0000_0000uL signextRenameMeAfter 45)
+    fun ulong_signext_45() = assertEquals(0xFFFF_E000_0000_0000uL, 0x0000_2000_0000_0000uL signext 45)
     @Test
-    fun ulong_signext_46() = assertEquals(0xFFFF_C000_0000_0000uL, 0x0000_4000_0000_0000uL signextRenameMeAfter 46)
+    fun ulong_signext_46() = assertEquals(0xFFFF_C000_0000_0000uL, 0x0000_4000_0000_0000uL signext 46)
     @Test
-    fun ulong_signext_47() = assertEquals(0xFFFF_8000_0000_0000uL, 0x0000_8000_0000_0000uL signextRenameMeAfter 47)
+    fun ulong_signext_47() = assertEquals(0xFFFF_8000_0000_0000uL, 0x0000_8000_0000_0000uL signext 47)
 
     @Test
-    fun ulong_signext_48() = assertEquals(0xFFFF_0000_0000_0000uL, 0x0001_0000_0000_0000uL signextRenameMeAfter 48)
+    fun ulong_signext_48() = assertEquals(0xFFFF_0000_0000_0000uL, 0x0001_0000_0000_0000uL signext 48)
     @Test
-    fun ulong_signext_49() = assertEquals(0xFFFE_0000_0000_0000uL, 0x0002_0000_0000_0000uL signextRenameMeAfter 49)
+    fun ulong_signext_49() = assertEquals(0xFFFE_0000_0000_0000uL, 0x0002_0000_0000_0000uL signext 49)
     @Test
-    fun ulong_signext_50() = assertEquals(0xFFFC_0000_0000_0000uL, 0x0004_0000_0000_0000uL signextRenameMeAfter 50)
+    fun ulong_signext_50() = assertEquals(0xFFFC_0000_0000_0000uL, 0x0004_0000_0000_0000uL signext 50)
     @Test
-    fun ulong_signext_51() = assertEquals(0xFFF8_0000_0000_0000uL, 0x0008_0000_0000_0000uL signextRenameMeAfter 51)
+    fun ulong_signext_51() = assertEquals(0xFFF8_0000_0000_0000uL, 0x0008_0000_0000_0000uL signext 51)
     @Test
-    fun ulong_signext_52() = assertEquals(0xFFF0_0000_0000_0000uL, 0x0010_0000_0000_0000uL signextRenameMeAfter 52)
+    fun ulong_signext_52() = assertEquals(0xFFF0_0000_0000_0000uL, 0x0010_0000_0000_0000uL signext 52)
     @Test
-    fun ulong_signext_53() = assertEquals(0xFFE0_0000_0000_0000uL, 0x0020_0000_0000_0000uL signextRenameMeAfter 53)
+    fun ulong_signext_53() = assertEquals(0xFFE0_0000_0000_0000uL, 0x0020_0000_0000_0000uL signext 53)
     @Test
-    fun ulong_signext_54() = assertEquals(0xFFC0_0000_0000_0000uL, 0x0040_0000_0000_0000uL signextRenameMeAfter 54)
+    fun ulong_signext_54() = assertEquals(0xFFC0_0000_0000_0000uL, 0x0040_0000_0000_0000uL signext 54)
     @Test
-    fun ulong_signext_55() = assertEquals(0xFF80_0000_0000_0000uL, 0x0080_0000_0000_0000uL signextRenameMeAfter 55)
+    fun ulong_signext_55() = assertEquals(0xFF80_0000_0000_0000uL, 0x0080_0000_0000_0000uL signext 55)
     @Test
-    fun ulong_signext_56() = assertEquals(0xFF00_0000_0000_0000uL, 0x0100_0000_0000_0000uL signextRenameMeAfter 56)
+    fun ulong_signext_56() = assertEquals(0xFF00_0000_0000_0000uL, 0x0100_0000_0000_0000uL signext 56)
     @Test
-    fun ulong_signext_57() = assertEquals(0xFE00_0000_0000_0000uL, 0x0200_0000_0000_0000uL signextRenameMeAfter 57)
+    fun ulong_signext_57() = assertEquals(0xFE00_0000_0000_0000uL, 0x0200_0000_0000_0000uL signext 57)
     @Test
-    fun ulong_signext_58() = assertEquals(0xFC00_0000_0000_0000uL, 0x0400_0000_0000_0000uL signextRenameMeAfter 58)
+    fun ulong_signext_58() = assertEquals(0xFC00_0000_0000_0000uL, 0x0400_0000_0000_0000uL signext 58)
     @Test
-    fun ulong_signext_59() = assertEquals(0xF800_0000_0000_0000uL, 0x0800_0000_0000_0000uL signextRenameMeAfter 59)
+    fun ulong_signext_59() = assertEquals(0xF800_0000_0000_0000uL, 0x0800_0000_0000_0000uL signext 59)
     @Test
-    fun ulong_signext_60() = assertEquals(0xF000_0000_0000_0000uL, 0x1000_0000_0000_0000uL signextRenameMeAfter 60)
+    fun ulong_signext_60() = assertEquals(0xF000_0000_0000_0000uL, 0x1000_0000_0000_0000uL signext 60)
     @Test
-    fun ulong_signext_61() = assertEquals(0xE000_0000_0000_0000uL, 0x2000_0000_0000_0000uL signextRenameMeAfter 61)
+    fun ulong_signext_61() = assertEquals(0xE000_0000_0000_0000uL, 0x2000_0000_0000_0000uL signext 61)
     @Test
-    fun ulong_signext_62() = assertEquals(0xC000_0000_0000_0000uL, 0x4000_0000_0000_0000uL signextRenameMeAfter 62)
+    fun ulong_signext_62() = assertEquals(0xC000_0000_0000_0000uL, 0x4000_0000_0000_0000uL signext 62)
     @Test
-    fun ulong_signext_63() = assertEquals(0x8000_0000_0000_0000uL, 0x8000_0000_0000_0000uL signextRenameMeAfter 63)
+    fun ulong_signext_63() = assertEquals(0x8000_0000_0000_0000uL, 0x8000_0000_0000_0000uL signext 63)
 
     @Test
-    fun ulong_signext_15_63() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signextRenameMeAfter 15)
+    fun ulong_signext_15_63() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signext 15)
     @Test
-    fun ulong_signext_15_63_2() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_FFFF_0000_0003uL signextRenameMeAfter 15)
+    fun ulong_signext_15_63_2() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_FFFF_0000_0003uL signext 15)
     @Test
-    fun ulong_signext_49_63() = assertEquals(0xFFFF_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signextRenameMeAfter 49)
+    fun ulong_signext_49_63() = assertEquals(0xFFFF_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signext 49)
 
     @Test
     fun isIntegerOverflow() {

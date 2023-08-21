@@ -23,12 +23,12 @@ open class BitopsKtBenchmark {
 
     @Benchmark
     fun signext1Test1(blackhole: Blackhole) {
-        blackhole.consume(x signextRenameMeAfter 27)
+        blackhole.consume(x signext 27)
     }
 
     @Benchmark
     fun signext1Test2(blackhole: Blackhole) {
-        blackhole.consume(x signextRenameMeAfter 26)
+        blackhole.consume(x signext 26)
     }
 
     @Benchmark
