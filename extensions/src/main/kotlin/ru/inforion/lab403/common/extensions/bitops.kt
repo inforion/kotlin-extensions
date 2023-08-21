@@ -599,21 +599,49 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-infix fun ULong.signextRenameMeAfter(n: Int) =
-    if ((this ushr n).int.truth) ULONG_MAX shl n or this else inv(ULONG_MAX shl n) and this // 64 - n?
+infix fun ULong.signextRenameMeAfter(n: Int): ULong {
+    ((this ushr n) and 0xFFFF_FFFF_FFFF_FFFEu).let {
+        if (it.truth) {
+            println(
+                "[ULong.signextRenameMeAfter] this=0x${this.hex} n=0x${n.hex}. Remaining=0x${it.hex}. " +
+                        "This is REFACTORING warning. Please use signext instead"
+            )
+        }
+    }
+    return if ((this ushr n).int.truth) ULONG_MAX shl n or this else inv(ULONG_MAX shl n) and this // 64 - n?
+}
 
-infix fun ULong.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun ULong.signext(n: Int): ULong =
+    if (((this ushr n) and 0b1u).truth) {
+        ULONG_MAX shl n or this
+    } else {
+        inv(ULONG_MAX shl n) and this
+    }
 
 fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
-fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+fun Long.signext(n: Int) = ulong.signext(n).long
 
-infix fun UInt.signextRenameMeAfter(n: Int) =
-    if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
+infix fun UInt.signextRenameMeAfter(n: Int): UInt {
+    ((this ushr n) and 0xFFFF_FFFEu).let {
+        if (it.truth) {
+            println(
+                "[UInt.signextRenameMeAfter] this=0x${this.hex} n=0x${n.hex}. Remaining=0x${it.hex}. " +
+                        "This is REFACTORING warning. Please use signext instead"
+            )
+        }
+    }
+    return if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
+}
 
-infix fun UInt.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun UInt.signext(n: Int): UInt =
+    if (((this ushr n) and 0b1u).truth) {
+        UINT_MAX shl n or this
+    } else {
+        inv(UINT_MAX shl n) and this
+    }
 
 fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
-fun Int.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+fun Int.signext(n: Int) = uint.signext(n).int
 
 // =====================================================================================================================
 // Overflow check operation

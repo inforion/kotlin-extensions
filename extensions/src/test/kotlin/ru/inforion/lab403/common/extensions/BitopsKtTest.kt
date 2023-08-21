@@ -746,6 +746,13 @@ internal class BitopsKtTest {
     fun ulong_signext_63() = assertEquals(0x8000_0000_0000_0000uL, 0x8000_0000_0000_0000uL signextRenameMeAfter 63)
 
     @Test
+    fun ulong_signext_15_63() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signextRenameMeAfter 15)
+    @Test
+    fun ulong_signext_15_63_2() = assertEquals(0x0000_0000_0000_0003uL, 0xFFFF_FFFF_0000_0003uL signextRenameMeAfter 15)
+    @Test
+    fun ulong_signext_49_63() = assertEquals(0xFFFF_0000_0000_0003uL, 0xFFFF_0000_0000_0003uL signextRenameMeAfter 49)
+
+    @Test
     fun isIntegerOverflow() {
         // TODO
     }
