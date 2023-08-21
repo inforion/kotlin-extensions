@@ -761,6 +761,20 @@ internal class BitopsKtTest {
 
         assertEquals(15, 15[31..0])
     }
+
+    @Test
+    fun indexesXBits() {
+        assertEquals(1uL, 0xFFFF_FFFF_FFFF_FFFFuL[63..63])
+        assertEquals(1uL, 0xFFFF_FFFF_FFFF_FFFFuL[0..0])
+        assertEquals(1uL, 0xFFFF_FFFF_FFFF_FFFFuL[31..31])
+        assertEquals(1uL, 0xFFFF_FFFF_FFFF_FFFFuL[32..32])
+
+        assertEquals(0u, 0xFFFF_FFFFu[63..63])
+        assertEquals(1u, 0xFFFF_FFFFu[0..0])
+        assertEquals(1u, 0xFFFF_FFFFu[31..31])
+        assertEquals(0u, 0xFFFF_FFFFu[32..32])
+    }
+
     @Test
     fun performanceXbits() {
         Benchmark().bench {
