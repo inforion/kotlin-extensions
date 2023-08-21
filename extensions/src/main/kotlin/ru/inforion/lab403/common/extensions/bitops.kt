@@ -35,16 +35,17 @@ inline infix fun UInt.ushr(n: Int) = this shr n
 // shl should not be converted to byte because i.e. 0xFFu shl 16 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UShort.shl(n: Int) = uint_z shl n
-inline infix fun UShort.ashr(n: Int) = (int_s ashr n).uint
+inline infix fun UShort.ashr(n: Int) = (int_s ashr n).ushort
 inline infix fun UShort.ushr(n: Int) = uint_z shr n
 
 // shl should not be converted to byte because i.e. 0xFFu shl 8 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UByte.shl(n: Int) = uint_z shl n
-inline infix fun UByte.ashr(n: Int) = (int_s ashr n).uint
+inline infix fun UByte.ashr(n: Int) = (int_s ashr n).ubyte
 inline infix fun UByte.ushr(n: Int) = uint_z shr n
 
-inline infix fun BigInteger.ashr(n: Int): BigInteger { throw NotImplementedError("Arithmetic shift isn't implemented") }
+// String -> compilation error instead of the runtime
+inline infix fun BigInteger.ashr(n: Int): String { throw NotImplementedError("Arithmetic shift isn't implemented") }
 inline infix fun BigInteger.ushr(n: Int) = this shr n
 
 // =====================================================================================================================
