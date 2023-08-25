@@ -600,6 +600,7 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("ULong.signext(n)"))
 infix fun ULong.signextRenameMeAfter(n: Int): ULong {
     ((this ushr n) and 0xFFFF_FFFF_FFFF_FFFEu).let {
         if (it.truth) {
@@ -619,9 +620,11 @@ infix fun ULong.signext(n: Int): ULong =
         inv(ULONG_MAX shl n) and this
     }
 
-fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
-fun Long.signext(n: Int) = ulong.signext(n).long
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("Long.signext(n)"))
+infix fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
+infix fun Long.signext(n: Int) = ulong.signext(n).long
 
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("UInt.signext(n)"))
 infix fun UInt.signextRenameMeAfter(n: Int): UInt {
     ((this ushr n) and 0xFFFF_FFFEu).let {
         if (it.truth) {
@@ -641,8 +644,9 @@ infix fun UInt.signext(n: Int): UInt =
         inv(UINT_MAX shl n) and this
     }
 
-fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
-fun Int.signext(n: Int) = uint.signext(n).int
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("Int.signext(n)"))
+infix fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
+infix fun Int.signext(n: Int) = uint.signext(n).int
 
 // =====================================================================================================================
 // Overflow check operation
