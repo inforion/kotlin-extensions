@@ -186,15 +186,23 @@ fun Number.bext(n: Int): ULong {
 // =====================================================================================================================
 
 /**
- * Before we did this: `(this ushr low) and ((1uL shl (high - low)) - 1u)`
- * Overflow was possible, so now algorithm is simple: shift left and then right
+ * **WARNING:** Do not pass negative indexes.
+ *
+ * If low is greater than high, 0 will be returned.
+ * If low is greater than 63, 0 will be returned.
  */
 fun ULong.xbits(high: Int, low: Int): ULong =
-    if (low > 63) 0uL
+    if ((low > 63) or (low > high)) 0uL
+    else if ((low < 0) or (high < 0)) 0uL.also {
+            println("[ULong.xbits] Вы чево творите, ироды, high=${high} low=${low}")
+        }
     else (this shl (63 - min(63, high))) ushr (low + (63 - min(63, high)))
 
 fun UInt.xbits(high: Int, low: Int): UInt =
-    if (low > 31) 0u
+    if ((low > 31) or (low > high)) 0u
+    else if ((low < 0) or (high < 0)) 0u.also {
+            println("[ULong.xbits] Вы чево творите, ироды, high=${high} low=${low}")
+        }
     else (this shl (31 - min(31, high))) ushr (low + (31 - min(31, high)))
 
 inline fun UShort.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
