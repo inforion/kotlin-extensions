@@ -194,14 +194,14 @@ fun Number.bext(n: Int): ULong {
 fun ULong.xbits(high: Int, low: Int): ULong =
     if ((low > 63) or (low > high)) 0uL
     else if ((low < 0) or (high < 0)) 0uL.also {
-            println("[ULong.xbits] Вы чево творите, ироды, high=${high} low=${low}")
+            println("[ULong.xbits] Index underflow. high=${high} low=${low}")
         }
     else (this shl (63 - min(63, high))) ushr (low + (63 - min(63, high)))
 
 fun UInt.xbits(high: Int, low: Int): UInt =
     if ((low > 31) or (low > high)) 0u
     else if ((low < 0) or (high < 0)) 0u.also {
-            println("[ULong.xbits] Вы чево творите, ироды, high=${high} low=${low}")
+            println("[ULong.xbits] Index underflow. high=${high} low=${low}")
         }
     else (this shl (31 - min(31, high))) ushr (low + (31 - min(31, high)))
 
