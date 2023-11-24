@@ -40,4 +40,7 @@ class GettableHashSet<E> private constructor(
     override val size get(): Int = map.size
 
     override fun clear(): Unit = map.clear()
+
+    // Workflow, we can't call extension functions from python scripts
+    fun take(n: Int) = (this as Set<E>).take(n)
 }
