@@ -428,6 +428,14 @@ fun ULong.swap16() =
     (this and 0x00FFuL shl  8) or
     (this and 0xFF00uL ushr 8)
 
+fun ULong.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    8 -> swap64()
+    else -> throw IllegalArgumentException("Wrong ULong.swap argument size=${size} for number=${this}")
+}
+
 inline fun UInt.swap32() =
     (this and 0x0000_00FFu shl  24) or
     (this and 0x0000_FF00u shl   8) or
@@ -438,6 +446,13 @@ inline fun UInt.swap16() =
     (this and 0x00FFu shl 8) or
     (this and 0xFF00u ushr 8)
 
+fun UInt.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    else -> throw IllegalArgumentException("Wrong UInt.swap argument size=${size} for number=${this}")
+}
+
 inline fun UShort.swap16() = uint_z.swap16().ushort
 
 
@@ -445,8 +460,23 @@ inline fun Long.swap64() = ulong.swap64().long
 inline fun Long.swap32() = ulong.swap32().long
 inline fun Long.swap16() = ulong.swap16().long
 
+fun Long.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    8 -> swap64()
+    else -> throw IllegalArgumentException("Wrong Long.swap argument size=${size} for number=${this}")
+}
+
 inline fun Int.swap32() = uint.swap32().int
 inline fun Int.swap16() = uint.swap16().int
+
+fun Int.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    else -> throw IllegalArgumentException("Wrong Int.swap argument size=${size} for number=${this}")
+}
 
 inline fun Short.swap16() = ushort.swap16().short
 
@@ -470,6 +500,15 @@ fun BigInteger.swap128() = (this[63..0].ulong.swap64().bigint shl 64) or
 
 fun BigInteger.swap80(): BigInteger = (0 until 10).fold(BigInteger.ZERO) { acc, i ->
     acc or (this[(i + 1) * 8 - 1..i * 8] shl (80 - (i + 1) * 8))
+}
+
+fun BigInteger.swap(size: Int) = when (size) {
+    1 -> this
+    4 -> swap32()
+    8 -> swap64()
+    16 -> swap128()
+    10 -> swap80()
+    else -> throw IllegalArgumentException("Wrong BigInteger.swap argument size=${size} for number=${this}")
 }
 
 
