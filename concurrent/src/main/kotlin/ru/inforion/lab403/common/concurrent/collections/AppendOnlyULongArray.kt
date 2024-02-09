@@ -14,7 +14,8 @@ import kotlin.math.max
  */
 
 
-class AppendOnlyULongArray(capacity: Int = 0): List<ULong>, RandomAccess, Cloneable, Serializable {
+class AppendOnlyULongArray(capacity: Int = 0, vararg elements: ULong):
+    List<ULong> by elements.toList(), RandomAccess, Cloneable, Serializable {
     companion object {
         private const val DEFAULT_CAPACITY = 10
         private val EMPTY_ELEMENTDATA = ulongArrayOf()
