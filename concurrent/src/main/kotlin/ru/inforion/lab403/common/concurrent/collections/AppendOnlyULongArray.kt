@@ -14,8 +14,7 @@ import kotlin.math.max
  */
 
 
-class AppendOnlyULongArray(capacity: Int = 0, vararg elements: ULong):
-    List<ULong> by elements.toList(), RandomAccess, Cloneable, Serializable {
+class AppendOnlyULongArray(size: Int = 0, init: (Int) -> ULong): List<ULong>, RandomAccess, Cloneable, Serializable {
     companion object {
         private const val DEFAULT_CAPACITY = 10
         private val EMPTY_ELEMENTDATA = ulongArrayOf()
@@ -32,10 +31,11 @@ class AppendOnlyULongArray(capacity: Int = 0, vararg elements: ULong):
         get() = currentSize.get()
 
     init {
-        if (capacity > 0) {
-            data = ULongArray(capacity)
-        }
+        data = ULongArray(size, init)
+        currentSize.set(size)
     }
+
+    constructor(size: Int) : this(size, { 0uL })
 
     private fun updateSize(size: Int) {
         currentSize.getAndAccumulate(size, Math::max)// need for synchronize array size, MB to slow
@@ -65,7 +65,7 @@ class AppendOnlyULongArray(capacity: Int = 0, vararg elements: ULong):
         val toAdd = elements.cast<Collection<Any?>>().toTypedArray()
         val startIndex = futureSize.getAndAdd(elements.size)
         if (startIndex > data.size) { grow(size) }
-        System.arraycopy(toAdd, 0, data, startIndex, toAdd.size)
+        elements.forEachIndexed { i, it -> data[i] = it }
         updateSize(startIndex + toAdd.size)
         return true
     }
@@ -139,14 +139,13 @@ class AppendOnlyULongArray(capacity: Int = 0, vararg elements: ULong):
     }
 }
 
+
 fun Collection<ULong>.toAppendOnlyULongArray(): AppendOnlyULongArray {
-    val array = AppendOnlyULongArray(size)
-    array.unsafeAddAll(this)
-    return array
+    val iter = iterator()
+    return AppendOnlyULongArray(size) { iter.next() }
 }
 
 fun appendOnlyULongArrayOf(vararg args: ULong): AppendOnlyULongArray {
-    val array = AppendOnlyULongArray(args.size)
-    args.forEach { array.add(it) }
-    return array
+    val iter: Iterator<ULong> = args.iterator()
+    return AppendOnlyULongArray(args.size) { iter.next() }
 }
