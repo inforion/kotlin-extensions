@@ -20,7 +20,7 @@ repositories {
             project.logger.info("Using mavenCentral repository")
             mavenCentral()
         } else {
-            project.logger.info("Using internal URL repository: ${localUrl}")
+            project.logger.info("Using internal URL repository: $localUrl")
             maven {
                 url = uri(localUrl)
 
@@ -127,7 +127,7 @@ subprojects
                             password = project.properties["mavenPassword"] as String?
                         }
 
-                        val internalReleasesRepoUrl = (project.properties["mavenInternalRepositoryUrl"] as String?)
+                        val internalReleasesRepoUrl = (project.properties["mavenInternalReleasesUrl"] as String?)
                             ?.let { url -> uri(url) }
                         val internalSnapshotsRepoUrl = (project.properties["mavenInternalSnapshotsUrl"] as String?)
                             ?.let { url -> uri(url) }
