@@ -75,6 +75,9 @@ inline fun <K, V> KafkaConsumer<K, V>.consume(timeout: Duration) = sequence {
 inline fun <K, V> KafkaProducer<K, V>.send(topic: String, key: K, value: V): Future<RecordMetadata> =
     send(ProducerRecord(topic, key, value))
 
+inline fun <K, V> KafkaProducer<K, V>.send(topic: String, value: V): Future<RecordMetadata> =
+    send(ProducerRecord(topic, value))
+
 inline fun TopicDescription.toTopicPartitions() = partitions().map { TopicPartition(name(), it.partition()) }
 
 @OptIn(ExperimentalStdlibApi::class)

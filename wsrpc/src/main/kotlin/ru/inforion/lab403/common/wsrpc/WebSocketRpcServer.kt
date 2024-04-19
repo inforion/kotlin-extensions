@@ -3,7 +3,6 @@
 package ru.inforion.lab403.common.wsrpc
 
 import org.java_websocket.WebSocket
-import org.java_websocket.exceptions.InvalidDataException
 import org.java_websocket.exceptions.WebsocketNotConnectedException
 import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ClientHandshake
@@ -145,6 +144,8 @@ class WebSocketRpcServer constructor(
     fun start() = server.start()
 
     fun stop() = server.stop()
+
+    fun run() = server.run()
 
     override fun close() {
         stop()

@@ -60,7 +60,8 @@ internal class FunctionDeserializer(val registry: WebSocketPackageRegistry) : Js
                     evalAndSet(name, desc.code)
                 }
                 FunctionType.FUNCTION -> {
-                    log.severe { "Function closure variables currently not implemented!" }
+                    // TODO: Function function closure variables
+//                    log.severe { "Function closure variables currently not implemented!" }
                     evalGetNames(desc.code)
                 }
             }

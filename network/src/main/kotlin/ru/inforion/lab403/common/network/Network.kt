@@ -11,8 +11,9 @@ import kotlin.concurrent.thread
 
 
 class Network(
-    val desiredPort: Int,
     val name: String,
+    val desiredPort: Int,
+    val desiredAddress: String = "0.0.0.0",
     val bufSize: Int = 1024,
     val maxClients: Int = 10,
     start: Boolean = true
@@ -26,8 +27,7 @@ class Network(
 
     private var running = false
 
-    val address: String get() = InetAddress.getLocalHost().hostAddress
-    val port get() = server.localPort
+    val address: SocketAddress get() = server.localSocketAddress
 
     private var onStart: OnStartCallback? = null
     private var onConnect: OnConnectCallback? = null
@@ -65,7 +65,7 @@ class Network(
     private fun serve() = server
         .runCatching {
             semaphore.acquire()
-            log.info { "$name waited for clients on [$address:$port]" }
+            log.info { "$name waited for clients on [$address]" }
             accept()
         }.onSuccess { client ->
             log.info { "$name: client $client connected" }
@@ -93,7 +93,7 @@ class Network(
         }.isSuccess
 
     private val thread = thread(start, name = name) {
-        val address = InetSocketAddress(desiredPort)
+        val address = InetSocketAddress(InetAddress.getByName(desiredAddress), desiredPort)
         server.bind(address)
         onStart?.invoke(server.inetAddress)
         running = true
@@ -116,5 +116,5 @@ class Network(
             }.forEach { it.join() }
     }
 
-    override fun toString() = "$name(port=$port,alive=${thread.isAlive})"
+    override fun toString() = "$name(address=$address,alive=${thread.isAlive})"
 }

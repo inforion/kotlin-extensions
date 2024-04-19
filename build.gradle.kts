@@ -13,7 +13,24 @@ plugins {
 
 repositories {
     mavenLocal()
-    mavenCentral()
+
+    project.properties.getOrDefault("mavenInternalRepositoryUrl", "").let { _localUrl ->
+        val localUrl = _localUrl as String
+        if (localUrl.isEmpty()) {
+            project.logger.info("Using mavenCentral repository")
+            mavenCentral()
+        } else {
+            project.logger.info("Using internal URL repository: $localUrl")
+            maven {
+                url = uri(localUrl)
+
+                credentials(PasswordCredentials::class) {
+                    username = project.properties["mavenUsername"] as String?
+                    password = project.properties["mavenPassword"] as String?
+                }
+            }
+        }
+    }
 }
 
 val isPublishMavenCentral = project.hasProperty("signing.gnupg.keyName")
@@ -30,11 +47,28 @@ subprojects
 
             repositories {
                 mavenLocal()
-                mavenCentral()
+
+                project.properties.getOrDefault("mavenInternalRepositoryUrl", "").let { _localUrl ->
+                    val localUrl = _localUrl as String
+                    if (localUrl.isEmpty()) {
+                        project.logger.info("Using mavenCentral repository")
+                        mavenCentral()
+                    } else {
+                        project.logger.info("Using internal URL repository: ${localUrl}")
+                        maven {
+                            url = uri(localUrl)
+
+                            credentials(PasswordCredentials::class) {
+                                username = project.properties["mavenUsername"] as String?
+                                password = project.properties["mavenPassword"] as String?
+                            }
+                        }
+                    }
+                }
             }
 
             group = "com.github.inforion.common"
-            version = "0.4.5"
+            version = "0.4.8"
         }
 
         it.afterEvaluate {
@@ -93,7 +127,7 @@ subprojects
                             password = project.properties["mavenPassword"] as String?
                         }
 
-                        val internalReleasesRepoUrl = (project.properties["mavenInternalRepositoryUrl"] as String?)
+                        val internalReleasesRepoUrl = (project.properties["mavenInternalReleasesUrl"] as String?)
                             ?.let { url -> uri(url) }
                         val internalSnapshotsRepoUrl = (project.properties["mavenInternalSnapshotsUrl"] as String?)
                             ?.let { url -> uri(url) }

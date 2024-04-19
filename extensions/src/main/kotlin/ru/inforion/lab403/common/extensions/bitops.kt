@@ -35,16 +35,17 @@ inline infix fun UInt.ushr(n: Int) = this shr n
 // shl should not be converted to byte because i.e. 0xFFu shl 16 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UShort.shl(n: Int) = uint_z shl n
-inline infix fun UShort.ashr(n: Int) = (int_s ashr n).uint
+inline infix fun UShort.ashr(n: Int) = (int_s ashr n).ushort
 inline infix fun UShort.ushr(n: Int) = uint_z shr n
 
 // shl should not be converted to byte because i.e. 0xFFu shl 8 return 0 in this case
 // which may be not obvious at first glance
 inline infix fun UByte.shl(n: Int) = uint_z shl n
-inline infix fun UByte.ashr(n: Int) = (int_s ashr n).uint
+inline infix fun UByte.ashr(n: Int) = (int_s ashr n).ubyte
 inline infix fun UByte.ushr(n: Int) = uint_z shr n
 
-inline infix fun BigInteger.ashr(n: Int): BigInteger { throw NotImplementedError("Arithmetic shift isn't implemented") }
+// String -> compilation error instead of the runtime
+inline infix fun BigInteger.ashr(n: Int): String { throw NotImplementedError("Arithmetic shift isn't implemented") }
 inline infix fun BigInteger.ushr(n: Int) = this shr n
 
 // =====================================================================================================================
@@ -185,15 +186,23 @@ fun Number.bext(n: Int): ULong {
 // =====================================================================================================================
 
 /**
- * Before we did this: `(this ushr low) and ((1uL shl (high - low)) - 1u)`
- * Overflow was possible, so now algorithm is simple: shift left and then right
+ * **WARNING:** Do not pass negative indexes.
+ *
+ * If low is greater than high, 0 will be returned.
+ * If low is greater than 63, 0 will be returned.
  */
 fun ULong.xbits(high: Int, low: Int): ULong =
-    if (low >= 63) 0uL
+    if ((low > 63) or (low > high)) 0uL
+    else if ((low < 0) or (high < 0)) 0uL.also {
+            println("[ULong.xbits] Index underflow. high=${high} low=${low}")
+        }
     else (this shl (63 - min(63, high))) ushr (low + (63 - min(63, high)))
 
 fun UInt.xbits(high: Int, low: Int): UInt =
-    if (low >= 31) 0u
+    if ((low > 31) or (low > high)) 0u
+    else if ((low < 0) or (high < 0)) 0u.also {
+            println("[ULong.xbits] Index underflow. high=${high} low=${low}")
+        }
     else (this shl (31 - min(31, high))) ushr (low + (31 - min(31, high)))
 
 inline fun UShort.xbits(high: Int, low: Int) = uint_z.xbits(high, low)
@@ -419,6 +428,14 @@ fun ULong.swap16() =
     (this and 0x00FFuL shl  8) or
     (this and 0xFF00uL ushr 8)
 
+fun ULong.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    8 -> swap64()
+    else -> throw IllegalArgumentException("Wrong ULong.swap argument size=${size} for number=${this}")
+}
+
 inline fun UInt.swap32() =
     (this and 0x0000_00FFu shl  24) or
     (this and 0x0000_FF00u shl   8) or
@@ -429,6 +446,13 @@ inline fun UInt.swap16() =
     (this and 0x00FFu shl 8) or
     (this and 0xFF00u ushr 8)
 
+fun UInt.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    else -> throw IllegalArgumentException("Wrong UInt.swap argument size=${size} for number=${this}")
+}
+
 inline fun UShort.swap16() = uint_z.swap16().ushort
 
 
@@ -436,8 +460,23 @@ inline fun Long.swap64() = ulong.swap64().long
 inline fun Long.swap32() = ulong.swap32().long
 inline fun Long.swap16() = ulong.swap16().long
 
+fun Long.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    8 -> swap64()
+    else -> throw IllegalArgumentException("Wrong Long.swap argument size=${size} for number=${this}")
+}
+
 inline fun Int.swap32() = uint.swap32().int
 inline fun Int.swap16() = uint.swap16().int
+
+fun Int.swap(size: Int) = when (size) {
+    1 -> this
+    2 -> swap16()
+    4 -> swap32()
+    else -> throw IllegalArgumentException("Wrong Int.swap argument size=${size} for number=${this}")
+}
 
 inline fun Short.swap16() = ushort.swap16().short
 
@@ -461,6 +500,15 @@ fun BigInteger.swap128() = (this[63..0].ulong.swap64().bigint shl 64) or
 
 fun BigInteger.swap80(): BigInteger = (0 until 10).fold(BigInteger.ZERO) { acc, i ->
     acc or (this[(i + 1) * 8 - 1..i * 8] shl (80 - (i + 1) * 8))
+}
+
+fun BigInteger.swap(size: Int) = when (size) {
+    1 -> this
+    4 -> swap32()
+    8 -> swap64()
+    16 -> swap128()
+    10 -> swap80()
+    else -> throw IllegalArgumentException("Wrong BigInteger.swap argument size=${size} for number=${this}")
 }
 
 
@@ -599,21 +647,53 @@ inline fun pow2(n: Int) = 1uL shl n
 // Signed extensions operations
 // =====================================================================================================================
 
-infix fun ULong.signextRenameMeAfter(n: Int) =
-    if ((this ushr n).int.truth) ULONG_MAX shl n or this else inv(ULONG_MAX shl n) and this // 64 - n?
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("ULong.signext(n)"))
+infix fun ULong.signextRenameMeAfter(n: Int): ULong {
+    ((this ushr n) and 0xFFFF_FFFF_FFFF_FFFEu).let {
+        if (it.truth) {
+            println(
+                "[ULong.signextRenameMeAfter] this=0x${this.hex} n=0x${n.hex}. Remaining=0x${it.hex}. " +
+                        "This is REFACTORING warning. Please use signext instead"
+            )
+        }
+    }
+    return if ((this ushr n).int.truth) ULONG_MAX shl n or this else inv(ULONG_MAX shl n) and this // 64 - n?
+}
 
-infix fun ULong.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun ULong.signext(n: Int): ULong =
+    if (((this ushr n) and 0b1u).truth) {
+        ULONG_MAX shl n or this
+    } else {
+        inv(ULONG_MAX shl n) and this
+    }
 
-fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
-fun Long.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("Long.signext(n)"))
+infix fun Long.signextRenameMeAfter(n: Int) = ulong.signextRenameMeAfter(n).long
+infix fun Long.signext(n: Int) = ulong.signext(n).long
 
-infix fun UInt.signextRenameMeAfter(n: Int) =
-    if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("UInt.signext(n)"))
+infix fun UInt.signextRenameMeAfter(n: Int): UInt {
+    ((this ushr n) and 0xFFFF_FFFEu).let {
+        if (it.truth) {
+            println(
+                "[UInt.signextRenameMeAfter] this=0x${this.hex} n=0x${n.hex}. Remaining=0x${it.hex}. " +
+                        "This is REFACTORING warning. Please use signext instead"
+            )
+        }
+    }
+    return if ((this ushr n).int.truth) UINT_MAX shl n or this else inv(UINT_MAX shl n) and this // 32 - n?
+}
 
-infix fun UInt.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+infix fun UInt.signext(n: Int): UInt =
+    if (((this ushr n) and 0b1u).truth) {
+        UINT_MAX shl n or this
+    } else {
+        inv(UINT_MAX shl n) and this
+    }
 
-fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
-fun Int.signext(n: Int): String = throw IllegalStateException("Refactor is in progress")
+@Deprecated("signextRenameMeAfter is deprecated", replaceWith = ReplaceWith("Int.signext(n)"))
+infix fun Int.signextRenameMeAfter(n: Int) = uint.signextRenameMeAfter(n).int
+infix fun Int.signext(n: Int) = uint.signext(n).int
 
 // =====================================================================================================================
 // Overflow check operation

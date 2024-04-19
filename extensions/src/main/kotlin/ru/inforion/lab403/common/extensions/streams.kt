@@ -223,6 +223,13 @@ fun DataOutputStream.writeByteArrayOptional(value: ByteArray?) {
 
 fun DataInputStream.readByteArrayOrNull(): ByteArray? = if (readBoolean()) readByteArray() else null
 
+fun DataOutputStream.writeULongArray(value: ULongArray) {
+    writeInt(value.size)
+    value.forEach { writeULong(it) }
+}
+
+fun DataInputStream.readULongArray() = ULongArray(readInt()) { readULong() }
+
 fun <K, V> DataOutputStream.writeDictionary(
     value: Dictionary<K, V>,
     write: DataOutputStream.(Map.Entry<K, V>) -> Unit
