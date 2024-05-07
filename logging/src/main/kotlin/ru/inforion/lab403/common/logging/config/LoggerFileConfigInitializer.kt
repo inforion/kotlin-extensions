@@ -4,8 +4,9 @@ import ru.inforion.lab403.common.extensions.either
 import ru.inforion.lab403.common.extensions.ifNotNull
 import ru.inforion.lab403.common.extensions.otherwise
 import ru.inforion.lab403.common.json.fromJson
-import ru.inforion.lab403.common.logging.Levels
 import ru.inforion.lab403.common.logging.Messenger
+import ru.inforion.lab403.common.logging.logLevel
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import java.io.File
 
 class LoggerFileConfigInitializer : ILoggerConfigInitializer {
@@ -43,19 +44,13 @@ class LoggerFileConfigInitializer : ILoggerConfigInitializer {
     override fun load() {
         configFile ifNotNull {
             runCatching {
-                fromJson<Map<String, LoggerConfigStringConverter.LoggerInfo>>().forEach { (name, loggerInfo) ->
-
-                    // TODO: если какой-то один инициализатор (changeLevel или addPublisher) сломался, что лучше?
-                    // 1. Откатить все остальные
-                    // 2. Оставить то, что удалось инициализиоровать и свалиться в ошибку
-                    // 3. Пропустить ошибочный инициализатор и продолжить?
-
-                    if (loggerInfo.level != null)
-                        LoggerConfig.changeLevel(Levels.valueOf(loggerInfo.level).level, name)
-
-                    if (loggerInfo.publishers != null)
-                        for (publisher in loggerInfo.publishers)
-                            LoggerConfig.addPublisher(publisher.toPublisher(), name)
+                val configurationInfo = fromJson<LoggerConfigStringConverter.ConfigurationInfo>()
+                configurationInfo.loggers.forEach { (name, loggerInfo) ->
+                    val level = loggerInfo.level?.logLevel()
+                    val publishers = loggerInfo.publishers?.mapNotNull { pubId ->
+                        configurationInfo.publishers[pubId]?.toPublisher()
+                    }?.toMutableList()
+                    LoggerStorage.addLoggerInfo(name, level, publishers, loggerInfo.additivity)
                 }
             }.onSuccess {
                 info { "Successfully loading logger configuration file '$this'" }

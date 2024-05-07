@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import ru.inforion.lab403.common.logging.DEBUG
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.WARNING
-import ru.inforion.lab403.common.logging.config.LoggerConfig
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import kotlin.test.assertEquals
 
@@ -15,9 +15,9 @@ class SLF4JLoggerTest {
 
     @Before
     fun initPublisher() {
-        LoggerConfig.clearPublishers()
+        LoggerStorage.clearPublishers()
         publisher = TestMockPublisher().also {
-            LoggerConfig.addPublisher(it)
+            LoggerStorage.addPublisher(it)
         }
     }
 
@@ -42,7 +42,9 @@ class SLF4JLoggerTest {
     @Test
     fun testDebugFormatCrash() {
         val log = LoggerFactory.getLogger(SLF4JLoggerTest::class.java)
-        LoggerConfig.changeLevel(DEBUG)
+        LoggerStorage.changeLevel(DEBUG)
+
+        println(LoggerStorage.getLoggerConfigurationsString())
 
         log.debug("message {} with {} args: {}", 1, "different", 3)
         val secondMessage =

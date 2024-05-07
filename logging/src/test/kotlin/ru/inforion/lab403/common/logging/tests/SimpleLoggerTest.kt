@@ -5,7 +5,7 @@ import org.junit.Test
 import ru.inforion.lab403.common.logging.FINE
 import ru.inforion.lab403.common.logging.WARNING
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.logging.config.LoggerConfig
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import kotlin.test.assertEquals
 
@@ -15,9 +15,9 @@ internal class SimpleLoggerTest {
 
     @Before
     fun initPublisher() {
-        LoggerConfig.clearPublishers()
+        LoggerStorage.clearPublishers()
         publisher = TestMockPublisher().also {
-            LoggerConfig.addPublisher(it)
+            LoggerStorage.addPublisher(it)
         }
     }
 

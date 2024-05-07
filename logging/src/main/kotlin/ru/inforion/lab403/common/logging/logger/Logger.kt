@@ -4,7 +4,7 @@ package ru.inforion.lab403.common.logging.logger
 
 import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.config.ILoggerConfigInitializer
-import ru.inforion.lab403.common.logging.config.LoggerConfig
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.util.ServiceLoader
@@ -23,10 +23,35 @@ class Logger private constructor(
     }
 
     var level: LogLevel
-        get() = LoggerConfig.level(name)
-        set(value) {
-            LoggerConfig.changeLevel(value, name)
+        get() {
+            return cacheLevel ?: LoggerStorage.level(name).also {
+                this.cacheLevel = it
+            }
         }
+        set(value) {
+            LoggerStorage.changeLevel(value, name)
+            cacheLevel = value
+        }
+
+    fun addPublisher(publisher: AbstractPublisher) {
+        LoggerStorage.addPublisher(publisher = publisher, name = name)
+        invalidate()
+        cachePublishers = LoggerStorage.publishers(name)
+    }
+
+    fun removePublisher(publisher: AbstractPublisher) {
+        LoggerStorage.removePublisher(publisher, name)
+        invalidate()
+        cachePublishers = LoggerStorage.publishers(name)
+    }
+
+    private var cacheLevel: LogLevel? = null
+    private var cachePublishers: List<AbstractPublisher>? = null
+
+    internal fun invalidate() {
+        cacheLevel = null
+        cachePublishers = null
+    }
 
     companion object {
         init {
@@ -50,18 +75,13 @@ class Logger private constructor(
         private val shutdownHook = thread(false) { flush() }.also { runtime.addShutdownHook(it) }
 
         /**
-         * All already created loggers
-         */
-        internal val loggers = mutableMapOf<String, Logger>()
-
-        /**
          * Execute given [action] for each known logger
          *
          * @param action is action to execute
          *
          * @since 0.2.3
          */
-        fun forEach(action: (logger: Logger) -> Unit) = apply { loggers.values.forEach(action) }
+        fun forEach(action: (logger: Logger) -> Unit) = apply { LoggerStorage.loggers.values.forEach(action) }
 
         /**
          * Execute given [action] for each known logger
@@ -91,15 +111,17 @@ class Logger private constructor(
             level: LogLevel? = null,
             vararg publishers: AbstractPublisher
         ): Logger {
-            return loggers[name] ?: run {
+            return LoggerStorage.loggers[name] ?: run {
                 val newLogger = Logger(name, flushOnPublish = flush).apply {
                     this@Companion.callbacks.forEach { it.invoke(this) }
                 }
-                loggers[name] = newLogger
+                LoggerStorage.loggers[name] = newLogger
                 if (level != null)
-                    LoggerConfig.changeLevel(level, name)
+                    // newLogger.level = level
+                    LoggerStorage.changeLevel(level, name)
                 for (publisher in publishers)
-                    LoggerConfig.addPublisher(publisher, name)
+                    // newLogger.addAndCachePublishers(publisher)
+                    LoggerStorage.addPublisher(publisher, name)
 
                 newLogger
             }
@@ -122,14 +144,14 @@ class Logger private constructor(
             level: LogLevel? = null,
             vararg publishers: AbstractPublisher
         ) =
-            create(klass.simpleName, flush, level, *publishers)
+            create(klass.name, flush, level, *publishers)
 
         /**
          * Flush all publishers of all loggers
          *
          * @since 0.2.0
          */
-        fun flush() = loggers.values.forEach { it.flush() }
+        fun flush() = LoggerStorage.loggers.values.forEach { it.flush() }
     }
 
     var stackFrameOffset = 0
@@ -139,15 +161,13 @@ class Logger private constructor(
      */
     private val allHandlersSeq
         get() = sequence {
-            LoggerConfig.publishers(name).forEach { yield(it) }
+            val publishers = cachePublishers ?: LoggerStorage.publishers(name).also {
+                cachePublishers = it
+            }
+            publishers.forEach { yield(it) }
         }
 
     override fun toString() = name
-
-
-    fun addPublisher(publisher: AbstractPublisher) = LoggerConfig.addPublisher(publisher, name)
-
-    fun removePublisher(publisher: AbstractPublisher) = LoggerConfig.removePublisher(publisher, name)
 
     /**
      * Flush all publishers of logger
@@ -162,7 +182,7 @@ class Logger private constructor(
         val thread = Thread.currentThread()
         val record = Record(this, level, timestamp, thread, stackFrameOffset)
         allHandlersSeq.forEach {
-            it.publish(message, record)
+            it.publishWrapper(message, record)
             if (flush || flushOnPublish) it.flush()
         }
     }

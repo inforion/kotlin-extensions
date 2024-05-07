@@ -22,7 +22,7 @@ internal fun <T: Any> unwrapCompanionClass(ofClass: Class<T>) = if (ofClass.encl
  */
 internal fun <T: Any> logger(
     forClass: Class<T>,
-    level: LogLevel,
+    level: LogLevel? = null,
     flush: Boolean,
     vararg publishers: AbstractPublisher = arrayOf()
 ): Logger {

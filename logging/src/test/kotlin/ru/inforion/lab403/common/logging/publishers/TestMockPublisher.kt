@@ -15,6 +15,7 @@ class TestMockPublisher : AbstractPublisher("TestMockPublisher") {
     val size get() = messages.size
 
     override fun publish(message: String, record: Record) {
+        println(message)
         messages.add(MockedMessage(message, record))
     }
 

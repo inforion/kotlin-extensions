@@ -2,24 +2,24 @@ package ru.inforion.lab403.common.logging.examples
 
 import ru.inforion.lab403.common.logging.TRACE
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.logging.config.LoggerConfig
-import ru.inforion.lab403.common.logging.logger.Record
-import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 
 object Application {
     val log = logger(TRACE)
 
+
     @JvmStatic
     fun main(args: Array<String>) {
-        val publisher = object : AbstractPublisher("MyPublisher") {
-            override fun flush() = Unit
+//        val publisher = object : AbstractPublisher("MyPublisher") {
+//            override fun flush() = Unit
+//
+//            override fun publish(message: String, record: Record) {
+//                println("${record.logger.name} -> $message")
+//            }
+//        }
+//
+//        LoggerConfig.addPublisher(publisher)
 
-            override fun publish(message: String, record: Record) {
-                println("${record.logger.name} -> $message")
-            }
-        }
-
-        LoggerConfig.addPublisher(publisher)
+        //LoggerFileConfigInitializer().load()
 
         log.severe { "This is severe message" }
         log.warning { "This is warning message" }

@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import ru.inforion.lab403.common.logging.SEVERE
 import ru.inforion.lab403.common.logging.logger
-import ru.inforion.lab403.common.logging.config.LoggerConfig
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
 import ru.inforion.lab403.common.logging.publishers.TestPublisherWithSlf4J
 import java.util.logging.Level
@@ -18,18 +18,20 @@ internal class SLF4JPublisherRecursionTest {
 
     @Before
     fun initPublisher() {
-        LoggerConfig.clearPublishers()
+        LoggerStorage.clearPublishers()
         publisher = TestMockPublisher().also {
-            LoggerConfig.addPublisher(it)
+            LoggerStorage.addPublisher(it)
         }
-        publisherWithSlf4J = TestPublisherWithSlf4J().also {
-            LoggerConfig.addPublisher(it, "*.SLF4JLoggerTest")
+        publisherWithSlf4J = TestPublisherWithSlf4J().also { // Из-за этого логгера не проходит первый assert
+            LoggerStorage.addPublisher(it, this::class.java.name)
         }
     }
 
     @Test
     fun test1() {
         val log = logger(Level.FINE)
+
+        LoggerStorage.getLoggerConfigurationsString()
 
         log.severe { "First severe message..." }
         log.debug { "Not logged message" }
@@ -39,10 +41,10 @@ internal class SLF4JPublisherRecursionTest {
             assertEquals(SEVERE, it.record.level)
         }
 
-        assertEquals(LoggerConfig.publishers(LoggerConfig.ALL).size, 2)
-        assertEquals(LoggerConfig.publishers("*.SLF4JLoggerTest").size, 1)
+        assertEquals(LoggerStorage.publishers(LoggerStorage.ALL).size, 2)
+        assertEquals(LoggerStorage.publishers(this::class.java.name).size, 3)
 
-        LoggerConfig.removePublisher(publisherWithSlf4J, "*.SLF4JLoggerTest")
-        assertEquals(LoggerConfig.publishers("*.SLF4JLoggerTest").size, 0)
+        LoggerStorage.removePublisher(publisherWithSlf4J, this::class.java.name)
+        assertEquals(LoggerStorage.publishers(this::class.java.name).size, 2)
     }
 }
