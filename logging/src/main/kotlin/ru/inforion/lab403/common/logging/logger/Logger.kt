@@ -3,11 +3,9 @@
 package ru.inforion.lab403.common.logging.logger
 
 import ru.inforion.lab403.common.logging.*
-import ru.inforion.lab403.common.logging.config.ILoggerConfigInitializer
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
-import java.util.ServiceLoader
 import java.util.logging.Level
 import kotlin.concurrent.thread
 
@@ -48,17 +46,12 @@ class Logger private constructor(
     private var cacheLevel: LogLevel? = null
     private var cachePublishers: List<AbstractPublisher>? = null
 
-    internal fun invalidate() {
+    fun invalidate() {
         cacheLevel = null
         cachePublishers = null
     }
 
     companion object {
-        init {
-            // TODO: почему не унести это в LoggerConfig?
-            val loader = ServiceLoader.load(ILoggerConfigInitializer::class.java)
-            loader.forEach { it.load() }
-        }
 
         private val runtime = Runtime.getRuntime()
 

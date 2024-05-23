@@ -7,12 +7,16 @@ import ru.inforion.lab403.common.logging.config.LoggerConfigStringConverter
 import ru.inforion.lab403.common.logging.config.LoggerFileConfigInitializer
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
+import java.util.*
 
 object LoggerStorage {
     private const val DEFAULT_LEVEL = INFO
     const val ALL = "."
     private val loggerFileConfigInitializer: ILoggerConfigInitializer = LoggerFileConfigInitializer()
 
+    /**
+     * Initial configurations
+     */
     private fun initMapOfLoggers() = mutableMapOf(
         ALL to LoggerConfigStringConverter.LoggerRuntimeInfo(
             DEFAULT_LEVEL,
@@ -31,7 +35,10 @@ object LoggerStorage {
     internal val loggers = mutableMapOf<String, Logger>()
 
     init {
-        loggerFileConfigInitializer.load()
+        //loggerFileConfigInitializer.load()
+
+        val loader = ServiceLoader.load(ILoggerConfigInitializer::class.java)
+        loader.forEach { it.load() }
     }
 
     /**
@@ -41,7 +48,7 @@ object LoggerStorage {
         val prefixes = name.split('.')
         return (prefixes.size downTo 1)
             .map { prefixes.take(it).joinToString(".") }
-            .firstNotNullOfOrNull { mapOfLoggerRuntimeInfo[it]?.level } ?: DEFAULT_LEVEL
+            .firstNotNullOfOrNull { mapOfLoggerRuntimeInfo[it]?.level } ?: mapOfLoggerRuntimeInfo[ALL]?.level!! // Переделать!
     }
 
     /**
@@ -123,6 +130,15 @@ object LoggerStorage {
 
     fun addLoggerInfo(name: String, level: LogLevel?, publishers: MutableList<AbstractPublisher>?, additivity: Boolean) {
         mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(level, publishers, additivity)
+    }
+
+    fun changeAdditivity(name: String, additivity: Boolean){
+        if (name.isNotBlank()) {
+            loggers[name]?.invalidate()
+            if (mapOfLoggerRuntimeInfo.contains(name))
+                mapOfLoggerRuntimeInfo[name]?.additivity = additivity
+            else mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(additivity = additivity)
+        }
     }
 
     fun getAllInfo() = mapOfLoggerRuntimeInfo.toMap()
