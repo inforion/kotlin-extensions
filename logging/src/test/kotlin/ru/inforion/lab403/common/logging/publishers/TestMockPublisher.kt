@@ -1,9 +1,10 @@
 package ru.inforion.lab403.common.logging.publishers
 
 import ru.inforion.lab403.common.logging.logger.Record
+import java.util.*
 
 
-class TestMockPublisher : AbstractPublisher("TestMockPublisher") {
+class TestMockPublisher(name: String) : AbstractPublisher((name)) {
     data class MockedMessage(
         val message: String,
         val record: Record,
@@ -25,3 +26,6 @@ class TestMockPublisher : AbstractPublisher("TestMockPublisher") {
         messages.clear()
     }
 }
+
+fun generateTestMockPublisher() =
+    TestMockPublisher("TestMockPublisher " + UUID.randomUUID().toString())

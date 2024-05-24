@@ -57,8 +57,9 @@ object LoggerStorage {
     fun publishers(name: String = ALL): List<AbstractPublisher> {
         if (name == ALL) return mapOfLoggerRuntimeInfo[name]?.publishers!!
         val publishersSet = publishers().toMutableSet()
-        val prefixes = name.split('.')
+
         if (name.isNotEmpty()) {
+            val prefixes = name.split('.')
             var i = prefixes.size
             do {
                 val subPath = prefixes.take(i).joinToString(".")
@@ -67,7 +68,7 @@ object LoggerStorage {
                     publishersSet.add(it)
                 }
                 i--
-            } while ((i != 0) or (conf?.additivity == true)) //?
+            } while ((i != 0) and ((conf == null) or (conf?.additivity == true))) //?
         }
         return publishersSet.toList()
     }
@@ -80,7 +81,7 @@ object LoggerStorage {
      *
      * @since 0.4.TODO
      */
-    fun addPublisher(publisher: AbstractPublisher, name: String = ALL) {
+    fun addPublisher(name: String, publisher: AbstractPublisher) {
         if (name.isNotBlank()) {
             loggers[name]?.invalidate()
             val loggerInfo = mapOfLoggerRuntimeInfo.getOrPut(name) {
@@ -98,9 +99,14 @@ object LoggerStorage {
      *
      * @since 0.4.TODO
      */
-    fun removePublisher(publisher: AbstractPublisher, name: String = ALL) {
+    fun removePublisher(name: String, publisher: AbstractPublisher? = null) {
         loggers[name]?.invalidate()
-        mapOfLoggerRuntimeInfo[name]?.removePublisher(publisher)
+
+        if (publisher != null) {
+            mapOfLoggerRuntimeInfo[name]?.removePublisher(publisher)
+        } else {
+            mapOfLoggerRuntimeInfo[name]?.publishers?.clear()
+        }
     }
 
     fun clearPublishers() {
@@ -111,6 +117,10 @@ object LoggerStorage {
         mapOfLoggerRuntimeInfo.putAll(initMapOfLoggers())
     }
 
+    fun clearLoggers() {
+        loggers.clear()
+    }
+
     /**
      * Change log level of loggers
      *
@@ -119,7 +129,7 @@ object LoggerStorage {
      *
      * @since 0.4.TODO
      */
-    fun changeLevel(level: LogLevel, name: String = ALL) {
+    fun setLevel(name: String, level: LogLevel) {
         if (name.isNotBlank()) {
             loggers[name]?.invalidate()
             if (mapOfLoggerRuntimeInfo.contains(name))
@@ -132,7 +142,7 @@ object LoggerStorage {
         mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(level, publishers, additivity)
     }
 
-    fun changeAdditivity(name: String, additivity: Boolean){
+    fun setAdditivity(name: String, additivity: Boolean) {
         if (name.isNotBlank()) {
             loggers[name]?.invalidate()
             if (mapOfLoggerRuntimeInfo.contains(name))

@@ -1,20 +1,18 @@
 package ru.inforion.lab403.common.logging.jmh
 
+import org.openjdk.jmh.infra.Blackhole
+import ru.inforion.lab403.common.extensions.long_z
 import ru.inforion.lab403.common.logging.logger.Record
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
+import ru.inforion.lab403.common.logging.publishers.setupPublishers
 
-class TestPublisher(name: String): AbstractPublisher(name) {
-    override fun flush() = Unit
+class JmhPublisher(name: String, val blackhole: Blackhole) : AbstractPublisher(name) {
+    override fun flush() = blackhole.consume(1)
 
     override fun publish(message: String, record: Record) {
-        println("TestPublisher says $message")
+        blackhole.consume(message)
     }
 }
 
-class TestPublisherSecond(name: String): AbstractPublisher(name) {
-    override fun flush() = Unit
-
-    override fun publish(message: String, record: Record) {
-        println("TestPublisherSecond says $message")
-    }
-}
+// TODO: мб можно куда-то унести, чтобы нормально было
+fun setupPublishersJmh(blackhole: Blackhole) = setupPublishers { JmhPublisher(it, blackhole) }

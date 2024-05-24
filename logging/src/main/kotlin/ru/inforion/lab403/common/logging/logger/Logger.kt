@@ -27,7 +27,7 @@ class Logger private constructor(
             }
         }
         set(value) {
-            LoggerStorage.changeLevel(value, name)
+            LoggerStorage.setLevel(name, value)
             cacheLevel = value
         }
 
@@ -38,7 +38,7 @@ class Logger private constructor(
     }
 
     fun removePublisher(publisher: AbstractPublisher) {
-        LoggerStorage.removePublisher(publisher, name)
+        LoggerStorage.removePublisher(name, publisher)
         invalidate()
         cachePublishers = LoggerStorage.publishers(name)
     }
@@ -111,10 +111,10 @@ class Logger private constructor(
                 LoggerStorage.loggers[name] = newLogger
                 if (level != null)
                     // newLogger.level = level
-                    LoggerStorage.changeLevel(level, name)
+                    LoggerStorage.setLevel(name, level)
                 for (publisher in publishers)
                     // newLogger.addAndCachePublishers(publisher)
-                    LoggerStorage.addPublisher(publisher, name)
+                    LoggerStorage.addPublisher(name, publisher)
 
                 newLogger
             }

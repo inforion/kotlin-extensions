@@ -17,8 +17,8 @@ internal class CompatLoggerTest {
     @Before
     fun initPublisher() {
         LoggerStorage.clearPublishers()
-        publisher = TestMockPublisher().also {
-            LoggerStorage.addPublisher(it)
+        publisher = TestMockPublisher("TestMockPublisher").also {
+            LoggerStorage.addPublisher(LoggerStorage.ALL, it)
         }
     }
 

@@ -22,3 +22,7 @@ tasks {
         kotlinOptions.jvmTarget = "11"
     }
 }
+
+jmh {
+//    includes.add("LoggerNoCacheTest")
+}

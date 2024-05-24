@@ -19,13 +19,13 @@ fun String.loggerConfigure() {
     when {
         "=" !in this -> {
             val value = Levels.valueOf(this)
-            LoggerStorage.changeLevel(value.level)
+            LoggerStorage.setLevel(LoggerStorage.ALL ,value.level)
         }
         else -> {
             split(",").forEach { definition ->
                 val logger = definition.substringBefore("=")
                 val value = definition.substringAfter("=")
-                LoggerStorage.changeLevel(Levels.valueOf(value).level, logger)
+                LoggerStorage.setLevel(logger, Levels.valueOf(value).level)
             }
         }
     }

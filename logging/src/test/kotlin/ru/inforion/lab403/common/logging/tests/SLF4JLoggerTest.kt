@@ -8,6 +8,7 @@ import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.WARNING
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
+import ru.inforion.lab403.common.logging.publishers.generateTestMockPublisher
 import kotlin.test.assertEquals
 
 class SLF4JLoggerTest {
@@ -16,8 +17,8 @@ class SLF4JLoggerTest {
     @Before
     fun initPublisher() {
         LoggerStorage.clearPublishers()
-        publisher = TestMockPublisher().also {
-            LoggerStorage.addPublisher(it)
+        publisher = generateTestMockPublisher().also {
+            LoggerStorage.addPublisher(LoggerStorage.ALL, it)
         }
     }
 
@@ -42,7 +43,7 @@ class SLF4JLoggerTest {
     @Test
     fun testDebugFormatCrash() {
         val log = LoggerFactory.getLogger(SLF4JLoggerTest::class.java)
-        LoggerStorage.changeLevel(DEBUG)
+        LoggerStorage.setLevel(LoggerStorage.ALL, level = DEBUG)
 
         println(LoggerStorage.getLoggerConfigurationsString())
 

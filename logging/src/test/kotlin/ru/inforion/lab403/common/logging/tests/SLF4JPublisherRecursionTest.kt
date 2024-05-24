@@ -19,11 +19,11 @@ internal class SLF4JPublisherRecursionTest {
     @Before
     fun initPublisher() {
         LoggerStorage.clearPublishers()
-        publisher = TestMockPublisher().also {
-            LoggerStorage.addPublisher(it)
+        publisher = TestMockPublisher("TestMockPublisher").also {
+            LoggerStorage.addPublisher(LoggerStorage.ALL, it)
         }
         publisherWithSlf4J = TestPublisherWithSlf4J().also { // Из-за этого логгера не проходит первый assert
-            LoggerStorage.addPublisher(it, this::class.java.name)
+            LoggerStorage.addPublisher(this::class.java.name, it)
         }
     }
 
@@ -44,7 +44,7 @@ internal class SLF4JPublisherRecursionTest {
         assertEquals(LoggerStorage.publishers(LoggerStorage.ALL).size, 2)
         assertEquals(LoggerStorage.publishers(this::class.java.name).size, 3)
 
-        LoggerStorage.removePublisher(publisherWithSlf4J, this::class.java.name)
+        LoggerStorage.removePublisher(this::class.java.name, publisherWithSlf4J)
         assertEquals(LoggerStorage.publishers(this::class.java.name).size, 2)
     }
 }
