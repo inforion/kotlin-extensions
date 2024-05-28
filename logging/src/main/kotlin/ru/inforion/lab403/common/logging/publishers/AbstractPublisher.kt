@@ -8,7 +8,7 @@ abstract class AbstractPublisher(val name: String) {
         private var mutex: Boolean = false
     }
 
-    open fun publishWrapper(message: String, record: Record){
+    open fun prepareAndPublish(message: String, record: Record){
         if (!mutex) {
             mutex = true
             try {

@@ -5,6 +5,7 @@ import org.slf4j.event.Level
 import org.slf4j.helpers.MessageFormatter
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
 
+// TODO: move into slf4jbinding package
 class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of the logger {EN}

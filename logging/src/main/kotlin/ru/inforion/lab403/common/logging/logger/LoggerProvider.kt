@@ -7,6 +7,7 @@ import org.slf4j.spi.MDCAdapter
 import org.slf4j.spi.SLF4JServiceProvider
 import org.slf4j.helpers.BasicMarkerFactory
 
+// TODO: move into slf4jbinding package
 class LoggerProvider : SLF4JServiceProvider {
     override fun getLoggerFactory(): ILoggerFactory {
         return LoggerFactory()

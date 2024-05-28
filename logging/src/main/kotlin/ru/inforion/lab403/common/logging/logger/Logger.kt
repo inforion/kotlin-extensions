@@ -131,13 +131,9 @@ class Logger private constructor(
     /**
      * Union sequence of own and shared handlers
      */
-    private val allHandlersSeq
-        get() = sequence {
-            val publishers = cachePublishers ?: LoggerStorage.publishers(name).also {
-                cachePublishers = it
-            }
-            publishers.forEach { yield(it) }
-        }
+    private val allPublishers get() = cachePublishers ?: LoggerStorage.publishers(name).also {
+        cachePublishers = it
+    }
 
     override fun toString() = name
 
@@ -146,15 +142,17 @@ class Logger private constructor(
      *
      * @since 0.2.0
      */
-    fun flush() = allHandlersSeq.forEach { it.flush() }
+    fun flush() = allPublishers.forEach { it.flush() }
 
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
+        // TODO: encapsulate inside publisher/formatter
         val timestamp = System.currentTimeMillis()
+        // TODO: encapsulate inside publisher/formatter
         val thread = Thread.currentThread()
         val record = Record(this, level, timestamp, thread, stackFrameOffset)
-        allHandlersSeq.forEach {
-            it.publishWrapper(message, record)
+        allPublishers.forEach {
+            it.prepareAndPublish(message, record)
             if (flush || flushOnPublish) it.flush()
         }
     }

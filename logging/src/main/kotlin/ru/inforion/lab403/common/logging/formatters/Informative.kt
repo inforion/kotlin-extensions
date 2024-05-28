@@ -44,9 +44,9 @@ class Informative(
 
     override fun format(message: String, record: Record): String {
         val level = record.level.abbreviation
-        val time = formatDate(record.millis)
+        val time = record.millis?.let { formatDate(it) } ?: "[No time]"
         val name = stretch(record.logger.name, nameLength)
-        val thread = record.thread.name
+        val thread = record.thread?.name ?: "[No thread]"
 
         // TODO: Make more efficient way
         val formatted = messageFormat
@@ -56,18 +56,20 @@ class Informative(
             .replace("%(thread)", thread)
             .replace("%(message)", message)
             .let {
-                if ("%(location)" in it) {
-                    val trace = record.thread.stackTrace
-                    val index = STACK_TRACE_CALLER_INDEX + record.stackFrameIndex
-                    it.replace(
-                        "%(location)", formatLocation(
-                            record.thread.stackTrace[
+                record.thread?.let { thread ->
+                    if ("%(location)" in it) {
+                        val trace = thread.stackTrace
+                        val index = STACK_TRACE_CALLER_INDEX + record.stackFrameIndex
+                        it.replace(
+                            "%(location)", formatLocation(
+                                thread.stackTrace[
                                     if (index in trace.indices) index
                                     else trace.lastIndex
-                            ]
+                                ]
+                            )
                         )
-                    )
-                } else it
+                    } else it
+                } ?: it
             }
         return painter.format(formatted, record)
     }

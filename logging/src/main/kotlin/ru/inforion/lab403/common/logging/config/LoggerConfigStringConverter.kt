@@ -6,7 +6,7 @@ import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.io.File
 import java.util.*
 
-class LoggerConfigStringConverter  {
+class LoggerConfigStringConverter {
     data class PublisherInfo(
         val cls: String,
         val args: List<Any>? = null,
@@ -28,7 +28,6 @@ class LoggerConfigStringConverter  {
         var publishers: MutableList<AbstractPublisher>? = null,
         var additivity: Boolean = true,
     ) {
-        // Це тоже непонятно зачем, пока решил оставить, но потом уберу мб
         var level: LogLevel?
             get() = customLevel
             set(value) {
@@ -50,7 +49,7 @@ class LoggerConfigStringConverter  {
 
 
 fun LoggerConfigStringConverter.PublisherInfo.toPublisher(): AbstractPublisher {
-    when(cls){
+    when (cls) {
         "STDOUT" -> return BeautyPublisher.stdout()
         "STDERR" -> return BeautyPublisher.stderr()
         else -> {

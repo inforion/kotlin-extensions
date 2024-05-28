@@ -10,7 +10,8 @@ import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 
 /**
- * LoggerStorage object used to store and control configuration of all loggers
+ * LoggerStorage object used to store and control configuration
+ * of all loggers
  */
 object LoggerStorage {
 
@@ -56,6 +57,7 @@ object LoggerStorage {
      * @since 0.2.4
      */
     fun level(name: String = ALL): LogLevel {
+        // TODO: optimize, убрать take, сделать через индексы
         val prefixes = name.split('.')
         return (prefixes.size downTo 1)
             .map { prefixes.take(it).joinToString(".") }
@@ -68,6 +70,11 @@ object LoggerStorage {
     fun publishers(name: String = ALL): List<AbstractPublisher> {
         val publishersSet = mutableSetOf<AbstractPublisher>()
 
+        // TODO (лень открывать ютрек): а точно этот вариант нужно рассматривать?
+        // Он, кажется, покроется while'ом
+        // TODO: как вариант, хранить set не из всех паблишеров, а только из названий
+        // TODO: а сами паблишеры возвращать через yield
+        // TODO: можно это побенчмаркать даже
         if (name == ALL) {
             mapOfLoggerRuntimeInfo[ALL]?.publishers?.let { publishersSet.addAll(it) }
             return publishersSet.toList()
@@ -78,6 +85,7 @@ object LoggerStorage {
 
         var i = dotIndices.size
 
+        // TODO: why not for-loop?
         while (i > 0) {
             val subPath = name.substring(0, dotIndices[i - 1])
             val conf = mapOfLoggerRuntimeInfo[subPath]
