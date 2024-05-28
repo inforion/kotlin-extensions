@@ -39,9 +39,10 @@ open class LoggerNoCacheTest {
 
     @Benchmark
     fun noCacheLoggerTest(state: LoggerState) {
+//        println("Bench")
         state.loggers.forEach {
             it.info {
-                "My message 1"
+                "My message ${it.name}"
             }
         }
     }

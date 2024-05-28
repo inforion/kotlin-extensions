@@ -16,11 +16,12 @@ fun setupPublishers(lambda: (name: String) -> AbstractPublisher) {
     }
     lambda("Publisher-3").also {
         LoggerStorage.addPublisher(".a.b.c.d.h.i", it)
-        LoggerStorage.setAdditivity(".a.b.c.d", false)
     }
     lambda("Publisher-4").also {
         LoggerStorage.addPublisher(".a", it)
     }
+
+    LoggerStorage.setAdditivity(".a.b.c.d", false)
 
     LoggerStorage.setLevel(".a.b.c", INFO)
     LoggerStorage.setLevel(".a.b.c.d", FINE)

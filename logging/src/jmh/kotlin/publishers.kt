@@ -11,6 +11,7 @@ class JmhPublisher(name: String, val blackhole: Blackhole) : AbstractPublisher(n
 
     override fun publish(message: String, record: Record) {
         blackhole.consume(message)
+//        println("JmhAppender: $name $message")
     }
 }
 
