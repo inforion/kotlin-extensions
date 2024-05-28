@@ -23,7 +23,7 @@ internal class SLF4JPublisherRecursionTest {
             LoggerStorage.addPublisher(LoggerStorage.ALL, it)
         }
         publisherWithSlf4J = TestPublisherWithSlf4J().also { // Из-за этого логгера не проходит первый assert
-            LoggerStorage.addPublisher(this::class.java.name, it)
+            LoggerStorage.addPublisher(".${this::class.java.name}", it)
         }
     }
 
@@ -31,7 +31,7 @@ internal class SLF4JPublisherRecursionTest {
     fun test1() {
         val log = logger(Level.FINE)
 
-        LoggerStorage.getLoggerConfigurationsString()
+        println(LoggerStorage.getLoggerConfigurationsString())
 
         log.severe { "First severe message..." }
         log.debug { "Not logged message" }
@@ -42,9 +42,9 @@ internal class SLF4JPublisherRecursionTest {
         }
 
         assertEquals(LoggerStorage.publishers(LoggerStorage.ALL).size, 2)
-        assertEquals(LoggerStorage.publishers(this::class.java.name).size, 3)
+        assertEquals(LoggerStorage.publishers(".${this::class.java.name}").size, 3)
 
-        LoggerStorage.removePublisher(this::class.java.name, publisherWithSlf4J)
-        assertEquals(LoggerStorage.publishers(this::class.java.name).size, 2)
+        LoggerStorage.removePublisher(".${this::class.java.name}", publisherWithSlf4J)
+        assertEquals(LoggerStorage.publishers(".${this::class.java.name}").size, 2)
     }
 }

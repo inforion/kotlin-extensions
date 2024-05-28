@@ -5,7 +5,6 @@ package ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
 import java.util.logging.Level
 import kotlin.concurrent.thread
 
@@ -31,18 +30,6 @@ class Logger private constructor(
             cacheLevel = value
         }
 
-    fun addPublisher(publisher: AbstractPublisher) {
-        LoggerStorage.addPublisher(publisher = publisher, name = name)
-        invalidate()
-        cachePublishers = LoggerStorage.publishers(name)
-    }
-
-    fun removePublisher(publisher: AbstractPublisher) {
-        LoggerStorage.removePublisher(name, publisher)
-        invalidate()
-        cachePublishers = LoggerStorage.publishers(name)
-    }
-
     private var cacheLevel: LogLevel? = null
     private var cachePublishers: List<AbstractPublisher>? = null
 
@@ -54,13 +41,6 @@ class Logger private constructor(
     companion object {
 
         private val runtime = Runtime.getRuntime()
-
-        /**
-         * Default publisher for loggers
-         *
-         * @since 0.2.4
-         */
-        val defaultPublisher: AbstractPublisher = BeautyPublisher.stdout()
 
         /**
          * Shutdown hook to flush all loggers when program exit
@@ -105,16 +85,15 @@ class Logger private constructor(
             vararg publishers: AbstractPublisher
         ): Logger {
             return LoggerStorage.loggers[name] ?: run {
-                val newLogger = Logger(name, flushOnPublish = flush).apply {
+                val logName = ".$name"
+                val newLogger = Logger(logName, flushOnPublish = flush).apply {
                     this@Companion.callbacks.forEach { it.invoke(this) }
                 }
-                LoggerStorage.loggers[name] = newLogger
+                LoggerStorage.loggers[logName] = newLogger
                 if (level != null)
-                    // newLogger.level = level
-                    LoggerStorage.setLevel(name, level)
+                    LoggerStorage.setLevel(logName, level)
                 for (publisher in publishers)
-                    // newLogger.addAndCachePublishers(publisher)
-                    LoggerStorage.addPublisher(name, publisher)
+                    LoggerStorage.addPublisher(logName, publisher)
 
                 newLogger
             }

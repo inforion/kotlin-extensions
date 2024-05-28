@@ -12,19 +12,19 @@ fun setupPublishers(lambda: (name: String) -> AbstractPublisher) {
         LoggerStorage.addPublisher(LoggerStorage.ALL, it)
     }
     lambda("Publisher-2").also {
-        LoggerStorage.addPublisher("a.b.c", it)
+        LoggerStorage.addPublisher(".a.b.c", it)
     }
     lambda("Publisher-3").also {
-        LoggerStorage.addPublisher("a.b.c.d.h.i", it)
-        LoggerStorage.setAdditivity("a.b.c.d", false)
+        LoggerStorage.addPublisher(".a.b.c.d.h.i", it)
+        LoggerStorage.setAdditivity(".a.b.c.d", false)
     }
     lambda("Publisher-4").also {
-        LoggerStorage.addPublisher("a", it)
+        LoggerStorage.addPublisher(".a", it)
     }
 
-    LoggerStorage.setLevel("a.b.c", INFO)
-    LoggerStorage.setLevel("a.b.c.d", FINE)
-    LoggerStorage.setLevel("a", SEVERE)
+    LoggerStorage.setLevel(".a.b.c", INFO)
+    LoggerStorage.setLevel(".a.b.c.d", FINE)
+    LoggerStorage.setLevel(".a", SEVERE)
 }
 
 fun setupPublishersTestNull() = setupPublishers { TestNullPublisher(it) }
