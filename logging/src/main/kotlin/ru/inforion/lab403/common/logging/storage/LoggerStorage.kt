@@ -68,9 +68,13 @@ object LoggerStorage {
     }
 
     /**
+     * Returns LogLevel of logger, that will be used for logging
+     *
+     * @param name name of the logger or module/package with loggers
+     *
      * @since 0.2.4
      */
-    fun getLevel(name: String): LogLevel {
+    fun collectLevel(name: String): LogLevel {
         var result: LogLevel? = null
         takeRuntimeInfoWhile(name) taker@{ conf ->
             result = conf.level
@@ -80,9 +84,13 @@ object LoggerStorage {
     }
 
     /**
+     * Returns publishers list of logger, that will be used for logging
+     *
+     * @param name name of the logger or module/package with loggers
+     *
      * @since 0.2.4
      */
-    fun getPublishers(name: String = ALL): List<AbstractPublisher> {
+    fun collectPublishers(name: String = ALL): List<AbstractPublisher> {
         val publishersSet = mutableSetOf<AbstractPublisher>()
         takeRuntimeInfoWhile(name) taker@{ conf ->
             conf.publishers?.let { publishersSet.addAll(it) }
@@ -91,6 +99,23 @@ object LoggerStorage {
         return publishersSet.toList()
     }
 
+    /**
+     * Get LogLevel of logger from configuration map by his name
+     *
+     * @param name name of the logger or module/package with loggers
+     *
+     * @since 0.4.8
+     */
+    fun getLevel(name: String) = mapOfLoggerRuntimeInfo[name]?.level
+
+    /**
+     * Get publishers of logger from configuration map by his name
+     *
+     * @param name name of the logger or module/package with loggers
+     *
+     * @since 0.4.8
+     */
+    fun getPublishers(name: String) = mapOfLoggerRuntimeInfo[name]?.publishers
 
     /**
      * Add new publisher to loggers

@@ -21,7 +21,7 @@ class Logger private constructor(
 
     var level: LogLevel
         get() {
-            return cacheLevel ?: LoggerStorage.getLevel(name).also {
+            return cacheLevel ?: LoggerStorage.collectLevel(name).also {
                 this.cacheLevel = it
             }
         }
@@ -131,7 +131,7 @@ class Logger private constructor(
     /**
      * Union sequence of own and shared handlers
      */
-    private val allPublishers get() = cachePublishers ?: LoggerStorage.getPublishers(name).also {
+    private val allPublishers get() = cachePublishers ?: LoggerStorage.collectPublishers(name).also {
         cachePublishers = it
     }
 
