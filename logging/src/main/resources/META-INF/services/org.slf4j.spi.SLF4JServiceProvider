@@ -1,1 +1,1 @@
-ru.inforion.lab403.common.logging.logger.LoggerProvider
+ru.inforion.lab403.common.logging.logger.slf4jbinding.LoggerProvider
