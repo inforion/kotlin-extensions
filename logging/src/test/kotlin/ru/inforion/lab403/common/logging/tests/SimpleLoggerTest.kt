@@ -2,9 +2,7 @@ package ru.inforion.lab403.common.logging.tests
 
 import org.junit.Before
 import org.junit.Test
-import ru.inforion.lab403.common.logging.FINE
-import ru.inforion.lab403.common.logging.WARNING
-import ru.inforion.lab403.common.logging.logger
+import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
 import ru.inforion.lab403.common.logging.publishers.TestMockPublisher
@@ -23,6 +21,8 @@ internal class SimpleLoggerTest {
             LoggerStorage.addPublisher(LoggerStorage.ALL, it)
         }
         LoggerStorage.clearLoggers()
+
+        LoggerStorage.setLevel(LoggerStorage.ALL, INFO)
     }
 
     @Test
@@ -57,6 +57,42 @@ internal class SimpleLoggerTest {
         LoggerStorage.setAdditivity("a.b.c", false)
 
         log.severe { "Test" }
+    }
+
+    @Test
+    fun testLevelling() {
+        val logFine = Logger.create("a.b.c.d.e.f", false)
+        val logInfo = Logger.create("a.b.c.d.e", false)
+        val logSevere = Logger.create("a.b.c", false)
+
+        LoggerStorage.setLevel(".a.b.c", SEVERE)
+        LoggerStorage.setLevel(".a.b.c.d.e", INFO)
+        LoggerStorage.setLevel(".a.b.c.d.e.f", FINE)
+
+        assertEquals(publisher.size, 0)
+
+        logSevere.severe { "Test logSevere severe" }
+        logSevere.info { "Test logSevere info" }
+        logSevere.fine { "Test logSevere fine" }
+        assertEquals(publisher.size, 1)
+        assertEquals(publisher.messages[0].message, "Test logSevere severe")
+        publisher.clear()
+
+        logInfo.severe { "Test logInfo severe" }
+        logInfo.info { "Test logInfo info" }
+        logInfo.fine { "Test logInfo fine" }
+        assertEquals(publisher.size, 2)
+        assertEquals(publisher.messages[0].message, "Test logInfo severe")
+        assertEquals(publisher.messages[1].message, "Test logInfo info")
+        publisher.clear()
+
+        logFine.severe { "Test logFine severe" }
+        logFine.info { "Test logFine info" }
+        logFine.fine { "Test logFine fine" }
+        assertEquals(publisher.size, 3)
+        assertEquals(publisher.messages[0].message, "Test logFine severe")
+        assertEquals(publisher.messages[1].message, "Test logFine info")
+        assertEquals(publisher.messages[2].message, "Test logFine fine")
     }
 
     @Test
