@@ -10,7 +10,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     /**
      * {EN} All methods point to corresponding methods of the logger {EN}
      */
-    private val level = LoggerStorage.level(loggerName)
+    private val level = LoggerStorage.getLevel(loggerName)
 
     private val logger = Logger.create(
         loggerName,

@@ -21,7 +21,7 @@ class Logger private constructor(
 
     var level: LogLevel
         get() {
-            return cacheLevel ?: LoggerStorage.level(name).also {
+            return cacheLevel ?: LoggerStorage.getLevel(name).also {
                 this.cacheLevel = it
             }
         }
@@ -131,7 +131,7 @@ class Logger private constructor(
     /**
      * Union sequence of own and shared handlers
      */
-    private val allPublishers get() = cachePublishers ?: LoggerStorage.publishers(name).also {
+    private val allPublishers get() = cachePublishers ?: LoggerStorage.getPublishers(name).also {
         cachePublishers = it
     }
 
@@ -146,11 +146,11 @@ class Logger private constructor(
 
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
-        // TODO: encapsulate inside publisher/formatter
-        val timestamp = System.currentTimeMillis()
-        // TODO: encapsulate inside publisher/formatter
-        val thread = Thread.currentThread()
-        val record = Record(this, level, timestamp, thread, stackFrameOffset)
+//        // TODO: encapsulate inside publisher/formatter
+//        val timestamp = System.currentTimeMillis()
+//        // TODO: encapsulate inside publisher/formatter
+//        val thread = Thread.currentThread()
+        val record = Record(this, level, null, null, stackFrameOffset)
         allPublishers.forEach {
             it.prepareAndPublish(message, record)
             if (flush || flushOnPublish) it.flush()

@@ -41,10 +41,10 @@ internal class SLF4JPublisherRecursionTest {
             assertEquals(SEVERE, it.record.level)
         }
 
-        assertEquals(LoggerStorage.publishers(LoggerStorage.ALL).size, 2)
-        assertEquals(LoggerStorage.publishers(".${this::class.java.name}").size, 3)
+        assertEquals(LoggerStorage.getPublishers(LoggerStorage.ALL).size, 2)
+        assertEquals(LoggerStorage.getPublishers(".${this::class.java.name}").size, 3)
 
         LoggerStorage.removePublisher(".${this::class.java.name}", publisherWithSlf4J)
-        assertEquals(LoggerStorage.publishers(".${this::class.java.name}").size, 2)
+        assertEquals(LoggerStorage.getPublishers(".${this::class.java.name}").size, 2)
     }
 }

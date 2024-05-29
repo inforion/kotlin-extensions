@@ -45,6 +45,7 @@ object LoggerStorage {
      * loggerFileConfigInitializer used to load configuration from json file
      */
     private val loggerFileConfigInitializer: ILoggerConfigInitializer = LoggerFileConfigInitializer()
+
     init {
         loggerFileConfigInitializer.load()
 
@@ -53,45 +54,40 @@ object LoggerStorage {
     }
 
     /**
-     * @since 0.2.4
+     * @since 0.4.8
      */
-    fun level(name: String = ALL): LogLevel {
-        // TODO: optimize, убрать take, сделать через индексы
-        val prefixes = name.split('.')
-        return (prefixes.size downTo 1)
-            .map { prefixes.take(it).joinToString(".") }
-            .firstNotNullOfOrNull { mapOfLoggerRuntimeInfo[it]?.level } ?: DEFAULT_LEVEL
+    fun takeRuntimeInfoWhile(name: String, callback: (LoggerConfigStringConverter.LoggerRuntimeInfo) -> Boolean) {
+        val dotIndices = name.indices.filter { name[it] == '.' }.toMutableList()
+        dotIndices.add(name.length)
+
+        for (i in dotIndices.reversed()) {
+            val subPath = name.substring(0, i)
+            val conf = mapOfLoggerRuntimeInfo[subPath]
+            if (conf != null && !callback(conf)) break
+        }
     }
 
     /**
      * @since 0.2.4
      */
-    fun publishers(name: String = ALL): List<AbstractPublisher> {
+    fun getLevel(name: String): LogLevel {
+        var result: LogLevel? = null
+        takeRuntimeInfoWhile(name) taker@{ conf ->
+            result = conf.level
+            return@taker result == null
+        }
+        return result ?: DEFAULT_LEVEL
+    }
+
+    /**
+     * @since 0.2.4
+     */
+    fun getPublishers(name: String = ALL): List<AbstractPublisher> {
         val publishersSet = mutableSetOf<AbstractPublisher>()
-
-        // TODO (лень открывать ютрек): а точно этот вариант нужно рассматривать?
-        // Он, кажется, покроется while'ом
-        // TODO: как вариант, хранить set не из всех паблишеров, а только из названий
-        // TODO: а сами паблишеры возвращать через yield
-        // TODO: можно это побенчмаркать даже
-        if (name == ALL) {
-            return mapOfLoggerRuntimeInfo[ALL]?.publishers?.toSet()?.toList() ?: emptyList()
+        takeRuntimeInfoWhile(name) taker@{ conf ->
+            conf.publishers?.let { publishersSet.addAll(it) }
+            return@taker conf.additivity
         }
-
-        val dotIndices = name.indices.filter { name[it] == '.' }.toMutableList()
-        dotIndices.add(name.length)
-
-        var i = dotIndices.size
-
-        // TODO: why not for-loop?
-        while (i > 0) {
-            val subPath = name.substring(0, dotIndices[i - 1])
-            val conf = mapOfLoggerRuntimeInfo[subPath]
-            conf?.publishers?.let { publishersSet.addAll(it) }
-            if (conf?.additivity == false) break
-            i--
-        }
-
         return publishersSet.toList()
     }
 
@@ -105,7 +101,6 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun addPublisher(name: String, publisher: AbstractPublisher) {
-        // loggers[name]?.invalidate()
         invalidateLoggersCacheByName(name)
         val loggerInfo = mapOfLoggerRuntimeInfo.getOrPut(name) {
             LoggerConfigStringConverter.LoggerRuntimeInfo()
@@ -122,7 +117,6 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun removePublisher(name: String, publisher: AbstractPublisher? = null) {
-        // loggers[name]?.invalidate()
         invalidateLoggersCacheByName(name)
         if (publisher != null) {
             mapOfLoggerRuntimeInfo[name]?.removePublisher(publisher)
@@ -137,7 +131,7 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun clearPublishers() {
-        loggers.forEach{
+        loggers.forEach {
             it.value.invalidate()
         }
         mapOfLoggerRuntimeInfo.clear()
@@ -162,7 +156,6 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun setLevel(name: String, level: LogLevel) {
-        //loggers[name]?.invalidate()
         invalidateLoggersCacheByName(name)
         if (mapOfLoggerRuntimeInfo.contains(name))
             mapOfLoggerRuntimeInfo[name]?.level = level
@@ -179,7 +172,6 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun setAdditivity(name: String, additivity: Boolean) {
-        //loggers[name]?.invalidate()
         invalidateLoggersCacheByName(name)
         if (mapOfLoggerRuntimeInfo.contains(name))
             mapOfLoggerRuntimeInfo[name]?.additivity = additivity
@@ -193,11 +185,16 @@ object LoggerStorage {
      *
      * @since 0.4.8
      */
-    fun invalidateLoggersCacheByName(name: String){
+    fun invalidateLoggersCacheByName(name: String) {
         loggers.filter { it.key.contains(name) }.map { it.value.invalidate() }
     }
 
-    fun addLoggerInfo(name: String, level: LogLevel?, publishers: MutableList<AbstractPublisher>?, additivity: Boolean) {
+    fun addLoggerInfo(
+        name: String,
+        level: LogLevel?,
+        publishers: MutableList<AbstractPublisher>?,
+        additivity: Boolean
+    ) {
         mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(level, publishers, additivity)
     }
 
@@ -209,7 +206,7 @@ object LoggerStorage {
      *
      * @since 0.4.8
      */
-    fun getLoggerConfigurationsString(): String  = buildString {
+    fun getLoggerConfigurationsString(): String = buildString {
         appendLine("Current Logger Configurations:")
         appendLine("----------------------------")
         mapOfLoggerRuntimeInfo.forEach { (name, info) ->
