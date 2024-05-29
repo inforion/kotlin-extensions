@@ -2,9 +2,9 @@ package ru.inforion.lab403.common.logging.config
 
 import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
-import java.io.File
-import java.util.*
+import ru.inforion.lab403.common.logging.publishers.PrintStreamBeautyPublisher
+import ru.inforion.lab403.common.logging.publishers.StderrBeautyPublisher
+import ru.inforion.lab403.common.logging.publishers.StdoutBeautyPublisher
 
 class LoggerConfigStringConverter {
     data class PublisherInfo(
@@ -50,8 +50,8 @@ class LoggerConfigStringConverter {
 
 fun LoggerConfigStringConverter.PublisherInfo.toPublisher(): AbstractPublisher {
     when (cls) {
-        "STDOUT" -> return BeautyPublisher.stdout()
-        "STDERR" -> return BeautyPublisher.stderr()
+        "STDOUT" -> return StdoutBeautyPublisher()
+        "STDERR" -> return StderrBeautyPublisher()
         else -> {
             val cls = Class.forName(cls)
             val args = args?.toTypedArray()

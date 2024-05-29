@@ -106,15 +106,15 @@ inline val LogLevel.abbreviation get() = when (this) {
  *
  * @since 0.2.3
  */
-val LogLevel.color get() = if (isWindowsOperatingSystem) Colors.ANSI_NONE else when (this) {
+val LogLevel.color get() = when (this) {
     SEVERE -> Colors.ANSI_RED
     WARNING -> Colors.ANSI_YELLOW
     INFO -> Colors.ANSI_RESET
-    CONFIG -> Colors.ANSI_GREEN
+    CONFIG -> Colors.ANSI_BRIGHT_CYAN
     FINE -> Colors.ANSI_PURPLE
     FINER -> Colors.ANSI_BLUE
     FINEST -> Colors.ANSI_CYAN
-    DEBUG -> Colors.ANSI_BRIGHT_RED
+    DEBUG -> Colors.ANSI_GREEN
     TRACE -> Colors.ANSI_GRAY
     OFF -> Colors.ANSI_BLACK
     else -> Colors.ANSI_WHITE

@@ -32,11 +32,11 @@ class SLF4JLoggerTest {
         assertEquals(2, publisher.size)
         publisher.removeFirst().also {
             assertEquals("message 1 with different args: 3", it.message)
-            assertEquals(WARNING, it.record.level)
+            assertEquals(WARNING, it.level)
         }
         publisher.removeFirst().also {
             assertEquals("message 3 with another args: 4", it.message)
-            assertEquals(INFO, it.record.level)
+            assertEquals(INFO, it.level)
         }
     }
 
@@ -55,11 +55,11 @@ class SLF4JLoggerTest {
         assertEquals(2, publisher.size)
         publisher.removeFirst().also {
             assertEquals("message 1 with different args: 3", it.message)
-            assertEquals(DEBUG, it.record.level)
+            assertEquals(DEBUG, it.level)
         }
         publisher.removeFirst().also {
             assertEquals(secondMessage, it.message)
-            assertEquals(DEBUG, it.record.level)
+            assertEquals(DEBUG, it.level)
         }
     }
 }

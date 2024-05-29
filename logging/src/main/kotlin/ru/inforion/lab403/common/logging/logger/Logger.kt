@@ -10,12 +10,10 @@ import kotlin.concurrent.thread
 
 class Logger private constructor(
     val name: String,
-    var flushOnPublish: Boolean = true
 ) {
     init {
         assert(
-            // TODO: regexp энкапсулировать
-            !name.contains(Regex("[\\[\\]{}()+*?^\$\\\\|]"))
+            !name.contains(NAME_REGEXP)
         ) { "Logger name shouldn't contain Regex special characters" }
     }
 
@@ -39,6 +37,7 @@ class Logger private constructor(
     }
 
     companion object {
+        val NAME_REGEXP = Regex("[\\[\\]{}()+*?^\$\\\\|]")
 
         private val runtime = Runtime.getRuntime()
 
@@ -46,26 +45,6 @@ class Logger private constructor(
          * Shutdown hook to flush all loggers when program exit
          */
         private val shutdownHook = thread(false) { flush() }.also { runtime.addShutdownHook(it) }
-
-        /**
-         * Execute given [action] for each known logger
-         *
-         * @param action is action to execute
-         *
-         * @since 0.2.3
-         */
-        fun forEach(action: (logger: Logger) -> Unit) = apply { LoggerStorage.loggers.values.forEach(action) }
-
-        /**
-         * Execute given [action] for each known logger
-         *
-         * @param action is action to execute
-         *
-         * @since 0.2.3
-         */
-        fun onCreate(action: (logger: Logger) -> Unit) = apply { callbacks.add(action) }
-
-        private val callbacks = mutableListOf<LoggerActionCallback>()
 
         /**
          * Create new logger by name with specified publishers or get it (logger) if it already exists for the class
@@ -80,20 +59,14 @@ class Logger private constructor(
          */
         fun create(
             name: String,
-            flush: Boolean,
             level: LogLevel? = null,
-            vararg publishers: AbstractPublisher
         ): Logger {
             return LoggerStorage.loggers[name] ?: run {
                 val logName = ".$name"
-                val newLogger = Logger(logName, flushOnPublish = flush).apply {
-                    this@Companion.callbacks.forEach { it.invoke(this) }
-                }
+                val newLogger = Logger(logName)
                 LoggerStorage.loggers[logName] = newLogger
                 if (level != null)
                     LoggerStorage.setLevel(logName, level)
-                for (publisher in publishers)
-                    LoggerStorage.addPublisher(logName, publisher)
 
                 newLogger
             }
@@ -112,11 +85,9 @@ class Logger private constructor(
          */
         fun <T> create(
             klass: Class<T>,
-            flush: Boolean,
             level: LogLevel? = null,
-            vararg publishers: AbstractPublisher
         ) =
-            create(klass.name, flush, level, *publishers)
+            create(klass.name, level)
 
         /**
          * Flush all publishers of all loggers
@@ -131,9 +102,10 @@ class Logger private constructor(
     /**
      * Union sequence of own and shared handlers
      */
-    private val allPublishers get() = cachePublishers ?: LoggerStorage.collectPublishers(name).also {
-        cachePublishers = it
-    }
+    private val allPublishers
+        get() = cachePublishers ?: LoggerStorage.collectPublishers(name).also {
+            cachePublishers = it
+        }
 
     override fun toString() = name
 
@@ -146,14 +118,13 @@ class Logger private constructor(
 
     @PublishedApi
     internal fun log(level: LogLevel, flush: Boolean, message: String) {
-//        // TODO: encapsulate inside publisher/formatter
-//        val timestamp = System.currentTimeMillis()
-//        // TODO: encapsulate inside publisher/formatter
-//        val thread = Thread.currentThread()
-        val record = Record(this, level, null, null, stackFrameOffset)
         allPublishers.forEach {
-            it.prepareAndPublish(message, record)
-            if (flush || flushOnPublish) it.flush()
+            it.prepareAndPublish(message, level, this)
+            if (flush) {
+                it.flush()
+            } else {
+                it.checkAndFlush()
+            }
         }
     }
 
@@ -161,7 +132,6 @@ class Logger private constructor(
      * Log message using defined publishers in logger
      *
      * @param level message log level
-     * @param flush force to flush the record immediately
      * @param message message supplier
      *
      * @since 0.2.0
@@ -177,7 +147,7 @@ class Logger private constructor(
     /**
      * Emits a lazy severe log [message] (score = 1000)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -186,7 +156,7 @@ class Logger private constructor(
     /**
      * Emits a lazy warning log [message] (score = 900)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -195,7 +165,7 @@ class Logger private constructor(
     /**
      * Emits a lazy info log [message] (score = 800)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -204,7 +174,7 @@ class Logger private constructor(
     /**
      * Emits a lazy config log [message] (score = 700)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -213,7 +183,7 @@ class Logger private constructor(
     /**
      * Emits a lazy fine log [message] (score = 500)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -222,7 +192,7 @@ class Logger private constructor(
     /**
      * Emits a lazy finer log [message] (score = 400)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -231,7 +201,7 @@ class Logger private constructor(
     /**
      * Emits a lazy finest log [message] (score = 300)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -240,7 +210,7 @@ class Logger private constructor(
     /**
      * Emits a lazy debug log [message] (score = 200)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */
@@ -249,7 +219,7 @@ class Logger private constructor(
     /**
      * Emits a lazy trace log [message] (score = 100)
      *
-     * @param flush if true or [flushOnPublish] is true message will be emitted immediately
+     * @param flush if true message will be emitted immediately
      *
      * @since 0.2.0
      */

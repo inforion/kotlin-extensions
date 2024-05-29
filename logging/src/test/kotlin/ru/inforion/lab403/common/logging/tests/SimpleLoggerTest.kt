@@ -33,13 +33,13 @@ internal class SimpleLoggerTest {
         assertEquals(1, publisher.size)
         publisher.removeFirst().also {
             assertEquals("First severe message...", it.message)
-            assertEquals(WARNING, it.record.level)
+            assertEquals(WARNING, it.level)
         }
     }
 
     @Test
     fun testCustomName() {
-        val log = Logger.create("a.b.c.d.e.f", false)
+        val log = Logger.create("a.b.c.d.e.f")
 
         LoggerStorage.addPublisher(LoggerStorage.ALL,
             TestNullPublisher("TestNullPublisher-1")
@@ -61,9 +61,9 @@ internal class SimpleLoggerTest {
 
     @Test
     fun testLevelling() {
-        val logFine = Logger.create("a.b.c.d.e.f", false)
-        val logInfo = Logger.create("a.b.c.d.e", false)
-        val logSevere = Logger.create("a.b.c", false)
+        val logFine = Logger.create("a.b.c.d.e.f")
+        val logInfo = Logger.create("a.b.c.d.e")
+        val logSevere = Logger.create("a.b.c")
 
         LoggerStorage.setLevel(".a.b.c", SEVERE)
         LoggerStorage.setLevel(".a.b.c.d.e", INFO)
@@ -100,10 +100,10 @@ internal class SimpleLoggerTest {
         setupPublishersTestNull()
 
         val loggers = listOf(
-            Logger.create("a.b.c.d.e.f", false),
-            Logger.create("a.b.c.d.h.i", false),
-            Logger.create("a.b.c.x", false),
-            Logger.create("a.y", false),
+            Logger.create("a.b.c.d.e.f"),
+            Logger.create("a.b.c.d.h.i"),
+            Logger.create("a.b.c.x"),
+            Logger.create("a.y"),
         )
 
         loggers.forEach {

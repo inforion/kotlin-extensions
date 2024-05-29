@@ -1,7 +1,8 @@
 package ru.inforion.lab403.common.logging.formatters
 
-import ru.inforion.lab403.common.logging.logger.Record
+import ru.inforion.lab403.common.logging.LogLevel
+import ru.inforion.lab403.common.logging.logger.Logger
 
-object Absent : Formatter {
-    override fun format(message: String, record: Record) = message
+class Absent : IFormatter {
+    override fun format(message: String, level: LogLevel, logger: Logger): String = message
 }

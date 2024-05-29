@@ -5,9 +5,13 @@ import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.config.ILoggerConfigInitializer
 import ru.inforion.lab403.common.logging.config.LoggerConfigStringConverter
 import ru.inforion.lab403.common.logging.config.LoggerFileConfigInitializer
+import ru.inforion.lab403.common.logging.formatters.Informative
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
+import ru.inforion.lab403.common.logging.publishers.PrintStreamBeautyPublisher
+import ru.inforion.lab403.common.logging.publishers.StdoutBeautyPublisher
+import ru.inforion.lab403.common.logging.publishers.fallback.AbstractFallbackPublisher
+import ru.inforion.lab403.common.logging.publishers.fallback.StderrFallbackPublisher
 
 /**
  * LoggerStorage object used to store and control configuration
@@ -17,9 +21,12 @@ object LoggerStorage {
     /**
      * Default logger's configurations
      */
-    val defaultPublisher: AbstractPublisher = BeautyPublisher.stdout()
+    val defaultPublisher: AbstractPublisher = StdoutBeautyPublisher(formatter = Informative())
     const val DEFAULT_LEVEL = INFO
     const val ALL = ""
+
+    val defaultFallbackPublisher = StderrFallbackPublisher()
+    val fallbackPublishers = mutableListOf<AbstractFallbackPublisher>(defaultFallbackPublisher)
 
     /**
      * Initial configurations
@@ -211,6 +218,7 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun invalidateLoggersCacheByName(name: String) {
+        // TODO: проверить
         loggers.filter { it.key.contains(name) }.map { it.value.invalidate() }
     }
 
@@ -223,8 +231,17 @@ object LoggerStorage {
         mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(level, publishers, additivity)
     }
 
-    fun getAllInfo() = mapOfLoggerRuntimeInfo.toMap()
+    fun addFallbackPublisher(publisher: AbstractFallbackPublisher) {
+        fallbackPublishers.add(publisher)
+    }
 
+    fun removeFallbackPublisher(publisher: AbstractFallbackPublisher) {
+        fallbackPublishers.remove(publisher)
+    }
+
+    fun iterateFallbackPublishers() = fallbackPublishers.asIterable()
+
+    fun getAllInfo() = mapOfLoggerRuntimeInfo.toMap()
 
     /**
      * Returns all configs as String

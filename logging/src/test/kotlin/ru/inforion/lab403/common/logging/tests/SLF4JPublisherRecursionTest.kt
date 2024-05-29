@@ -38,7 +38,7 @@ internal class SLF4JPublisherRecursionTest {
         assertEquals(1, publisher.size)
         publisher.removeFirst().also {
             assertEquals("First severe message...", it.message)
-            assertEquals(SEVERE, it.record.level)
+            assertEquals(SEVERE, it.level)
         }
 
         assertEquals(LoggerStorage.collectPublishers(LoggerStorage.ALL).size, 2)

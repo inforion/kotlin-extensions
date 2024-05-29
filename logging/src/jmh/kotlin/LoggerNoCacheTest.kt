@@ -17,10 +17,10 @@ open class LoggerNoCacheTest {
     @State(Scope.Benchmark)
     open class LoggerState {
         val loggers = listOf(
-            Logger.create("a.b.c.d.e.f", false),
-            Logger.create("a.b.c.d.h.i", false),
-            Logger.create("a.b.c.x", false),
-            Logger.create("a.y", false),
+            Logger.create("a.b.c.d.e.f"),
+            Logger.create("a.b.c.d.h.i"),
+            Logger.create("a.b.c.x"),
+            Logger.create("a.y"),
         )
 
         @Setup(Level.Invocation)

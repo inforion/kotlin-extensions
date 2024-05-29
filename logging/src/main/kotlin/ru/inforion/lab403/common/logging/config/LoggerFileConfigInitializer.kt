@@ -15,7 +15,9 @@ class LoggerFileConfigInitializer : ILoggerConfigInitializer {
         const val ENV_DEBUG_ENABLED = "INFORION_LOGGING_PRINT"
     }
 
-    private inline fun <T> info(message: Messenger<T>) = System.err.println(message().toString())
+    private inline fun <T> info(message: Messenger<T>) = LoggerStorage.fallbackPublishers.forEach {
+        it.publish("LoggerFileConfigInitializer: " + message().toString())
+    }
 
     private inline fun <T> debug(message: Messenger<T>) {
         if (isDebugEnabled) info(message)
@@ -34,7 +36,7 @@ class LoggerFileConfigInitializer : ILoggerConfigInitializer {
 
         if (path != null) {
             File(path).takeIf { it.isFile } otherwise {
-                info { "Logging configuration file can't be loaded: $this" }
+                info { "Logging configuration file '$path' can't be loaded: $this" }
             }
         } else {
             debug { "$ENV_CONF_PATH not specified" }; null
@@ -58,7 +60,7 @@ class LoggerFileConfigInitializer : ILoggerConfigInitializer {
                 info { "Can't parse logger configuration file '$this' due to $error" }
             }.getOrNull()
         } either {
-            info { "Logger config file not found, default settings will be used" }
+            info { "Logger config file not specified ($ENV_CONF_PATH empty), default settings will be used" }
         }
     }
 }

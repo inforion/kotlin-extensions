@@ -1,26 +1,40 @@
 package ru.inforion.lab403.common.logging.publishers
 
-import ru.inforion.lab403.common.logging.logger.Record
+import ru.inforion.lab403.common.logging.LogLevel
+import ru.inforion.lab403.common.logging.logger.Logger
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 
-abstract class AbstractPublisher(val name: String) {
-
-    companion object{
+abstract class AbstractPublisher(
+    val name: String,
+    val flushEnabled: Boolean,
+) {
+    companion object {
         private var mutex: Boolean = false
     }
 
-    open fun prepareAndPublish(message: String, record: Record){
+    open fun prepareAndPublish(message: String, level: LogLevel, logger: Logger) {
         if (!mutex) {
             mutex = true
             try {
-                publish(message, record)
+                publish(message, level, logger)
+            } catch (e: Exception) {
+                LoggerStorage.fallbackPublishers.forEach {
+                    // TODO: maybe encapsulate
+                    it.publish("Publisher [$name] failed to publish message '$message' with error: $e")
+                }
             } finally {
-                // TODO: capture exceptions
                 mutex = false
             }
         }
     }
 
-    abstract fun publish(message: String, record: Record)
+    abstract fun publish(message: String, level: LogLevel, logger: Logger)
+
+    fun checkAndFlush() {
+        if (flushEnabled) {
+            flush()
+        }
+    }
 
     abstract fun flush()
 

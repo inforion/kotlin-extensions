@@ -13,8 +13,7 @@ class Slf4jLoggerImpl(private val loggerName: String) : org.slf4j.Logger {
     private val level = LoggerStorage.collectLevel(loggerName)
 
     private val logger = Logger.create(
-        loggerName,
-        flush = false
+        loggerName
     ).also {
         it.stackFrameOffset = 2
     }

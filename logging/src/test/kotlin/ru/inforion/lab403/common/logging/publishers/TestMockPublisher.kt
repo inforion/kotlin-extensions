@@ -1,13 +1,15 @@
 package ru.inforion.lab403.common.logging.publishers
 
-import ru.inforion.lab403.common.logging.logger.Record
+import ru.inforion.lab403.common.logging.LogLevel
+import ru.inforion.lab403.common.logging.logger.Logger
 import java.util.*
 
 
-class TestMockPublisher(name: String) : AbstractPublisher((name)) {
+class TestMockPublisher(name: String) : AbstractPublisher(name, false) {
     data class MockedMessage(
         val message: String,
-        val record: Record,
+        val level: LogLevel,
+        val logger: Logger,
     );
 
     val messages = mutableListOf<MockedMessage>()
@@ -15,9 +17,9 @@ class TestMockPublisher(name: String) : AbstractPublisher((name)) {
     fun removeFirst() = messages.removeFirst()
     val size get() = messages.size
 
-    override fun publish(message: String, record: Record) {
+    override fun publish(message: String, level: LogLevel, logger: Logger) {
         println(message)
-        messages.add(MockedMessage(message, record))
+        messages.add(MockedMessage(message, level, logger))
     }
 
     override fun flush() = Unit

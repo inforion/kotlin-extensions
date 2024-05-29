@@ -1,12 +1,12 @@
 package ru.inforion.lab403.common.logging.publishers
 
-import ru.inforion.lab403.common.logging.logger.Record
+import ru.inforion.lab403.common.logging.LogLevel
+import ru.inforion.lab403.common.logging.logger.Logger
 import java.util.UUID
-import kotlin.random.Random
 
 
-class TestNullPublisher(name: String) : AbstractPublisher(name) {
-    override fun publish(message: String, record: Record) = Unit
+class TestNullPublisher(name: String) : AbstractPublisher(name, false) {
+    override fun publish(message: String, level: LogLevel, logger: Logger) = Unit
 
     override fun flush() = Unit
 }

@@ -1,7 +1,10 @@
 package ru.inforion.lab403.common.logging.examples
 
 import ru.inforion.lab403.common.logging.TRACE
+import ru.inforion.lab403.common.logging.formatters.NotInformative
 import ru.inforion.lab403.common.logging.logger
+import ru.inforion.lab403.common.logging.publishers.StdoutBeautyPublisher
+import ru.inforion.lab403.common.logging.storage.LoggerStorage
 
 object Application {
     val log = logger(TRACE)
@@ -20,6 +23,13 @@ object Application {
 //        LoggerConfig.addPublisher(publisher)
 
         //LoggerFileConfigInitializer().load()
+
+        LoggerStorage.removePublisher(LoggerStorage.ALL)
+
+        LoggerStorage.addPublisher(
+            LoggerStorage.ALL,
+            StdoutBeautyPublisher(formatter = NotInformative())
+        )
 
         log.severe { "This is severe message" }
         log.warning { "This is warning message" }

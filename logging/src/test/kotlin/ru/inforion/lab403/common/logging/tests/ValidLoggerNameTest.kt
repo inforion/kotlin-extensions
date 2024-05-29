@@ -9,7 +9,7 @@ class ValidLoggerNameTest {
     fun testInvalidLoggerName() {
         val invalidChars = "][{}()+*?^\$\\|"
         for(char in invalidChars) {
-            val assertionError = assertFails {  Logger.create("Logger$char", false) }
+            val assertionError = assertFails {  Logger.create("Logger$char") }
             assert(assertionError.message!!.contains("special characters"))
         }
     }

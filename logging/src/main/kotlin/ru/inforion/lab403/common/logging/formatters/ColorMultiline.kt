@@ -3,19 +3,23 @@
 package ru.inforion.lab403.common.logging.formatters
 
 import ru.inforion.lab403.common.extensions.isWindowsOperatingSystem
+import ru.inforion.lab403.common.logging.LogLevel
 import ru.inforion.lab403.common.logging.color
-import ru.inforion.lab403.common.logging.logger.Record
+import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.misc.Colors
 
-object ColorMultiline: Formatter {
+val colorResetChar = Colors.ANSI_RESET
 
-    private val resetChar = if (isWindowsOperatingSystem) Colors.ANSI_NONE else Colors.ANSI_RESET
-
-    private fun String.paint(color: String) = "${color}$this$resetChar"
-
-    override fun format(message: String, record: Record): String {
+class ColorMultiline : IFormatter {
+    override fun format(message: String, level: LogLevel, logger: Logger): String {
         val lines = message.lines()
-        val color = record.level.color
-        return lines.joinToString(separator = "\n") { it.paint(color) }
+        val color = level.color
+        return buildString {
+            lines.forEach { line ->
+                append(color)
+                append(line)
+                appendLine(colorResetChar)
+            }
+        }
     }
 }

@@ -1,8 +1,6 @@
 package ru.inforion.lab403.common.logging
 
-import ru.inforion.lab403.common.logging.dsl.PublishersArrayConfig
 import ru.inforion.lab403.common.logging.logger.Logger
-import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
 import java.util.logging.Level
 import kotlin.reflect.full.companionObject
 
@@ -23,11 +21,9 @@ internal fun <T: Any> unwrapCompanionClass(ofClass: Class<T>) = if (ofClass.encl
 internal fun <T: Any> logger(
     forClass: Class<T>,
     level: LogLevel? = null,
-    flush: Boolean,
-    vararg publishers: AbstractPublisher = arrayOf()
 ): Logger {
     val klass = unwrapCompanionClass(forClass)
-    return Logger.create(klass, flush, level, *publishers)
+    return Logger.create(klass, level)
 }
 
 /**
@@ -39,27 +35,11 @@ internal fun <T: Any> logger(
  * @param publishers publishers list
  */
 fun <T: Any> T.logger(
-    level: LogLevel = FINE,
-    flush: Boolean = true,
-    vararg publishers: AbstractPublisher = arrayOf()
-) = logger(javaClass, level, flush, *publishers)
-
-/**
- * Creates logger with configuration [configuration] or get existed and
- *   returns logger from extended class (or the enclosing class)
- *
- * @param level logger level
- * @param flush flush message when publish it
- * @param configuration publishers configuration
- */
-fun <T: Any> T.logger(
-    level: LogLevel = FINE,
-    flush: Boolean = true,
-    configuration: PublishersArrayConfig.() -> PublishersArrayConfig
-) = logger(javaClass, level, flush, *PublishersArrayConfig().configuration().generate())
+    level: LogLevel? = null,
+) = logger(javaClass, level)
 
 /**
  * Returns logger from extended class (or the enclosing class)
  */
 @Deprecated("please use logger(level: LogLevel, ...)")
-fun <T: Any> T.logger(level: Level) = logger(javaClass, level.logLevel(), true)
+fun <T: Any> T.logger(level: Level) = logger(javaClass, level.logLevel())

@@ -24,6 +24,7 @@ tasks {
 }
 
 jmh {
-    includes.add("LoggerNoCacheTest")
+//    includes.add("LoggerNoCacheTest")
+    includes.add("CacheBenchMarkTest")
 //    verbosity.set("SILENT")
 }
