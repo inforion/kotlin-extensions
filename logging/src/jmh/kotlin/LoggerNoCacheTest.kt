@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 @BenchmarkMode(Mode.AverageTime)
 @Fork(value = 16, warmups = 2)
-@Warmup(iterations = 200, time = 500, timeUnit = TimeUnit.NANOSECONDS)
+@Warmup(iterations = 2000, time = 500, timeUnit = TimeUnit.NANOSECONDS)
 @Measurement(iterations = 10000, time = 600, timeUnit = TimeUnit.NANOSECONDS)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 open class LoggerNoCacheTest {
