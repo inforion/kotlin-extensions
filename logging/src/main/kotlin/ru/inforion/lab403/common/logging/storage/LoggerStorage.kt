@@ -14,7 +14,6 @@ import ru.inforion.lab403.common.logging.publishers.BeautyPublisher
  * of all loggers
  */
 object LoggerStorage {
-
     /**
      * Default logger's configurations
      */
@@ -76,8 +75,7 @@ object LoggerStorage {
         // TODO: а сами паблишеры возвращать через yield
         // TODO: можно это побенчмаркать даже
         if (name == ALL) {
-            mapOfLoggerRuntimeInfo[ALL]?.publishers?.let { publishersSet.addAll(it) }
-            return publishersSet.toList()
+            return mapOfLoggerRuntimeInfo[ALL]?.publishers?.toSet()?.toList() ?: emptyList()
         }
 
         val dotIndices = name.indices.filter { name[it] == '.' }.toMutableList()

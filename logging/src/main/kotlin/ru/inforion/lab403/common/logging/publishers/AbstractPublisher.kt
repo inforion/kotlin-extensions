@@ -14,6 +14,7 @@ abstract class AbstractPublisher(val name: String) {
             try {
                 publish(message, record)
             } finally {
+                // TODO: capture exceptions
                 mutex = false
             }
         }

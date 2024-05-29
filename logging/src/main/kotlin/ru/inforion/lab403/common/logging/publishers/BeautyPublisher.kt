@@ -51,6 +51,11 @@ class BeautyPublisher constructor(
     }
 
     override fun publish(message: String, record: Record) {
+//        val data = formatter.collectData()
+//
+//        lockedCollection.add(message, data)
+        /// ------
+
         if (level permit record.level) {
             val formatted = formatter.format(message, record)
             writer.write(formatted)
