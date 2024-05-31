@@ -50,6 +50,7 @@ class LoggerFileConfigInitializer : ILoggerConfigInitializer {
                 configurationInfo.loggers.forEach { (name, loggerInfo) ->
                     val level = loggerInfo.level?.logLevel()
                     val publishers = loggerInfo.publishers?.mapNotNull { pubId ->
+                        // TODO: печатать если не нашли паблишер
                         configurationInfo.publishers[pubId]?.toPublisher()
                     }?.toMutableList()
                     LoggerStorage.addLoggerInfo(name, level, publishers, loggerInfo.additivity)

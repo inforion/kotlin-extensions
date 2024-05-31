@@ -11,11 +11,11 @@ import kotlin.concurrent.thread
 class Logger private constructor(
     val name: String,
 ) {
-    init {
-        assert(
-            !name.contains(NAME_REGEXP)
-        ) { "Logger name shouldn't contain Regex special characters" }
-    }
+//    init {
+//        assert(
+//            !name.contains(NAME_REGEXP)
+//        ) { "Logger name shouldn't contain Regex special characters" }
+//    }
 
     var level: LogLevel
         get() {
@@ -36,8 +36,10 @@ class Logger private constructor(
         cachePublishers = null
     }
 
+    fun hasCache() = !((cachePublishers == null) && (cacheLevel == null))
+
     companion object {
-        val NAME_REGEXP = Regex("[\\[\\]{}()+*?^\$\\\\|]")
+//        val NAME_REGEXP = Regex("[\\[\\]{}()+*?^\$\\\\|]")
 
         private val runtime = Runtime.getRuntime()
 
@@ -62,7 +64,7 @@ class Logger private constructor(
             level: LogLevel? = null,
         ): Logger {
             return LoggerStorage.loggers[name] ?: run {
-                val logName = ".$name"
+                val logName = validateLoggerName(name)
                 val newLogger = Logger(logName)
                 LoggerStorage.loggers[logName] = newLogger
                 if (level != null)

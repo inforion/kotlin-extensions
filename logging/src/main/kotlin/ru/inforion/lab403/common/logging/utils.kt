@@ -1,8 +1,14 @@
-package ru.inforion.lab403.common.logging.formatters
+package ru.inforion.lab403.common.logging
 
 import ru.inforion.lab403.common.extensions.stretch
 import java.text.SimpleDateFormat
 import java.util.*
+
+fun validateLoggerName(name: String): String {
+    if (name.isNotEmpty() && name.first() != '.')
+        return ".$name"
+    return name
+}
 
 fun formatDate(millis: Long, format: String) =
     SimpleDateFormat(format).format(Date(millis))

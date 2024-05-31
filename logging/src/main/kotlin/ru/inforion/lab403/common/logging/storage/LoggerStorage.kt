@@ -8,10 +8,10 @@ import ru.inforion.lab403.common.logging.config.LoggerFileConfigInitializer
 import ru.inforion.lab403.common.logging.formatters.Informative
 import ru.inforion.lab403.common.logging.logger.Logger
 import ru.inforion.lab403.common.logging.publishers.AbstractPublisher
-import ru.inforion.lab403.common.logging.publishers.PrintStreamBeautyPublisher
 import ru.inforion.lab403.common.logging.publishers.StdoutBeautyPublisher
 import ru.inforion.lab403.common.logging.publishers.fallback.AbstractFallbackPublisher
 import ru.inforion.lab403.common.logging.publishers.fallback.StderrFallbackPublisher
+import ru.inforion.lab403.common.logging.validateLoggerName
 
 /**
  * LoggerStorage object used to store and control configuration
@@ -64,11 +64,12 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun takeRuntimeInfoWhile(name: String, callback: (LoggerConfigStringConverter.LoggerRuntimeInfo) -> Boolean) {
-        val dotIndices = name.indices.filter { name[it] == '.' }.toMutableList()
-        dotIndices.add(name.length)
+        val validatedName = validateLoggerName(name)
+        val dotIndices = validatedName.indices.filter { validatedName[it] == '.' }.toMutableList()
+        dotIndices.add(validatedName.length)
 
         for (i in dotIndices.reversed()) {
-            val subPath = name.substring(0, i)
+            val subPath = validatedName.substring(0, i)
             val conf = mapOfLoggerRuntimeInfo[subPath]
             if (conf != null && !callback(conf)) break
         }
@@ -113,7 +114,7 @@ object LoggerStorage {
      *
      * @since 0.4.8
      */
-    fun getLevel(name: String) = mapOfLoggerRuntimeInfo[name]?.level
+    fun getLevel(name: String) = mapOfLoggerRuntimeInfo[validateLoggerName(name)]?.level
 
     /**
      * Get publishers of logger from configuration map by his name
@@ -122,7 +123,7 @@ object LoggerStorage {
      *
      * @since 0.4.8
      */
-    fun getPublishers(name: String) = mapOfLoggerRuntimeInfo[name]?.publishers
+    fun getPublishers(name: String) = mapOfLoggerRuntimeInfo[validateLoggerName(name)]?.publishers
 
     /**
      * Add new publisher to loggers
@@ -133,8 +134,9 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun addPublisher(name: String, publisher: AbstractPublisher) {
-        invalidateLoggersCacheByName(name)
-        val loggerInfo = mapOfLoggerRuntimeInfo.getOrPut(name) {
+        val validatedName = validateLoggerName(name)
+        invalidateLoggersCacheByName(validatedName)
+        val loggerInfo = mapOfLoggerRuntimeInfo.getOrPut(validatedName) {
             LoggerConfigStringConverter.LoggerRuntimeInfo()
         }
         loggerInfo.addPublisher(publisher)
@@ -149,11 +151,12 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun removePublisher(name: String, publisher: AbstractPublisher? = null) {
-        invalidateLoggersCacheByName(name)
+        val validatedName = validateLoggerName(name)
+        invalidateLoggersCacheByName(validatedName)
         if (publisher != null) {
-            mapOfLoggerRuntimeInfo[name]?.removePublisher(publisher)
+            mapOfLoggerRuntimeInfo[validatedName]?.removePublisher(publisher)
         } else {
-            mapOfLoggerRuntimeInfo[name]?.publishers?.clear()
+            mapOfLoggerRuntimeInfo[validatedName]?.publishers?.clear()
         }
     }
 
@@ -188,10 +191,11 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun setLevel(name: String, level: LogLevel) {
-        invalidateLoggersCacheByName(name)
-        if (mapOfLoggerRuntimeInfo.contains(name))
-            mapOfLoggerRuntimeInfo[name]?.level = level
-        else mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(level)
+        val validatedName = validateLoggerName(name)
+        invalidateLoggersCacheByName(validatedName)
+        if (mapOfLoggerRuntimeInfo.contains(validatedName))
+            mapOfLoggerRuntimeInfo[validatedName]?.level = level
+        else mapOfLoggerRuntimeInfo[validatedName] = LoggerConfigStringConverter.LoggerRuntimeInfo(level)
     }
 
     /**
@@ -204,10 +208,11 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun setAdditivity(name: String, additivity: Boolean) {
-        invalidateLoggersCacheByName(name)
-        if (mapOfLoggerRuntimeInfo.contains(name))
-            mapOfLoggerRuntimeInfo[name]?.additivity = additivity
-        else mapOfLoggerRuntimeInfo[name] = LoggerConfigStringConverter.LoggerRuntimeInfo(additivity = additivity)
+        val validatedName = validateLoggerName(name)
+        invalidateLoggersCacheByName(validatedName)
+        if (mapOfLoggerRuntimeInfo.contains(validatedName))
+            mapOfLoggerRuntimeInfo[validatedName]?.additivity = additivity
+        else mapOfLoggerRuntimeInfo[validatedName] = LoggerConfigStringConverter.LoggerRuntimeInfo(additivity = additivity)
     }
 
     /**
@@ -218,8 +223,7 @@ object LoggerStorage {
      * @since 0.4.8
      */
     fun invalidateLoggersCacheByName(name: String) {
-        // TODO: проверить
-        loggers.filter { it.key.contains(name) }.map { it.value.invalidate() }
+        loggers.filter { it.key.startsWith(name) }.map { it.value.invalidate() }
     }
 
     fun addLoggerInfo(
@@ -260,4 +264,5 @@ object LoggerStorage {
             appendLine("----------------------------")
         }
     }
+
 }

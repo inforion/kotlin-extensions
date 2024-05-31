@@ -1,8 +1,6 @@
 package ru.inforion.lab403.common.logging.formatters
 
-import ru.inforion.lab403.common.logging.LogLevel
-import ru.inforion.lab403.common.logging.abbreviation
-import ru.inforion.lab403.common.logging.color
+import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.logger.Logger
 
 private object defaultFormatCallback : InformativeFormatCallback {
