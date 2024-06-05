@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.json
 
 import com.squareup.moshi.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 

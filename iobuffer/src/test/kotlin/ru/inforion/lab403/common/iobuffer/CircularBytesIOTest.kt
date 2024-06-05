@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.iobuffer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.extensions.byte
 import ru.inforion.lab403.common.extensions.int_z
 import kotlin.test.assertEquals

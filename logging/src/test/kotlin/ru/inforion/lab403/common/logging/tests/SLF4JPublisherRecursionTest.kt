@@ -2,8 +2,8 @@
 
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.logging.SEVERE
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
@@ -16,7 +16,7 @@ internal class SLF4JPublisherRecursionTest {
     private lateinit var publisher: TestMockPublisher
     private lateinit var publisherWithSlf4J: TestPublisherWithSlf4J
 
-    @Before
+    @BeforeEach
     fun initPublisher() {
         LoggerStorage.clearPublishers()
         publisher = TestMockPublisher("TestMockPublisher").also {

@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.*
 import java.nio.ByteBuffer
 import kotlin.test.assertEquals
@@ -53,7 +53,7 @@ internal class ByteBufferTest {
         val buffer = ByteBuffer.allocateDirect(0x1000_0000)
         val stream = ByteArrayOutputStream()
         DataOutputStream(stream).writeByteBuffer(buffer)
-        assertThrows(OutOfMemoryError::class.java) {
+        assertThrows<OutOfMemoryError> {
             DataInputStream(stream.toByteArray().inputStream()).readByteBuffer()
         }
     }

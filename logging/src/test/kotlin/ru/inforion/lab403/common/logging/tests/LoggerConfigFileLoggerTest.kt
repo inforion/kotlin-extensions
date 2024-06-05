@@ -3,7 +3,7 @@
 package ru.inforion.lab403.common.logging.tests
 
 import com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.logger
 

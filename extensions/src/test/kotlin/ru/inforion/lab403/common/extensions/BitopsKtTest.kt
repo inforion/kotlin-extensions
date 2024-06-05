@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.utils.Benchmark
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -473,6 +473,17 @@ internal class BitopsKtTest {
     fun ulong_swap32() = assertEquals(0xDDCCBBAAuL, 0xAABBCCDDuL.swap32())
     @Test
     fun ulong_swap16() = assertEquals(0xBBAAuL, 0xAABBuL.swap16())
+    @Test
+    fun ulong_swap() {
+        assertEquals(0xDE, 0xDE.swap(1))
+        assertEquals(0xAD_DE, 0xDE_AD.swap(2))
+        assertEquals(0xBE_AD_DEuL, 0xDE_AD_BEuL.swap(3))
+        assertEquals(0xEF_BE_AD_DEuL, 0xDE_AD_BE_EFuL.swap(4))
+        assertEquals(0xCA_EF_BE_AD_DEuL, 0xDE_AD_BE_EF_CAuL.swap(5))
+        assertEquals(0xFE_CA_EF_BE_AD_DEuL, 0xDE_AD_BE_EF_CA_FEuL.swap(6))
+        assertEquals(0xBA_FE_CA_EF_BE_AD_DEuL, 0xDE_AD_BE_EF_CA_FE_BAuL.swap(7))
+        assertEquals(0xBE_BA_FE_CA_EF_BE_AD_DEuL, 0xDE_AD_BE_EF_CA_FE_BA_BEuL.swap(8))
+    }
 
     @Test
     fun uint_swap32() = assertEquals(0xDDCCBBAAu, 0xAABBCCDDu.swap32())

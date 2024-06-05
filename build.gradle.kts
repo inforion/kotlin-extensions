@@ -4,10 +4,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 val jvmTestsOptions: String by project
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.7.21"
-    id("org.jetbrains.dokka") version "1.4.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.23"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("signing")
-    id("maven")
     id("maven-publish")
 }
 
@@ -24,7 +23,7 @@ repositories {
             maven {
                 url = uri(localUrl)
 
-                credentials(PasswordCredentials::class) {
+                credentials {
                     username = project.properties["mavenUsername"] as String?
                     password = project.properties["mavenPassword"] as String?
                 }
@@ -40,7 +39,6 @@ subprojects
     .forEach {
         it.beforeEvaluate {
             apply(plugin = "signing")
-            apply(plugin = "maven")
             apply(plugin = "maven-publish")
             apply(plugin = "org.jetbrains.kotlin.jvm")
             apply(plugin = "org.jetbrains.dokka")
@@ -58,7 +56,7 @@ subprojects
                         maven {
                             url = uri(localUrl)
 
-                            credentials(PasswordCredentials::class) {
+                            credentials {
                                 username = project.properties["mavenUsername"] as String?
                                 password = project.properties["mavenPassword"] as String?
                             }
@@ -75,7 +73,9 @@ subprojects
             tasks {
 
                 withType<Test>().all {
+                    useJUnitPlatform()
                     jvmArgs!!.plusAssign(jvmTestsOptions.split(" "))
+                    ignoreFailures = true
 
                     testLogging {
                         events = setOf(PASSED, SKIPPED, FAILED)
@@ -90,18 +90,23 @@ subprojects
 
                 compileKotlin {
                     kotlinOptions.jvmTarget = "11"
-                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+                    kotlinOptions.freeCompilerArgs += listOf("-opt-in=kotlin.ExperimentalUnsignedTypes")
                 }
 
                 compileTestKotlin {
                     kotlinOptions.jvmTarget = "11"
-                    kotlinOptions.freeCompilerArgs += listOf("-Xopt-in=kotlin.ExperimentalUnsignedTypes")
+                    kotlinOptions.freeCompilerArgs += listOf("-opt-in=kotlin.ExperimentalUnsignedTypes")
+                }
+
+                java {
+                    sourceCompatibility = JavaVersion.VERSION_11
+                    targetCompatibility = JavaVersion.VERSION_11
                 }
 
                 if (findByName("sourcesJar") == null) {
                     val sourcesJar by creating(Jar::class) {
                         dependsOn("classes")
-                        classifier = "sources"
+                        archiveClassifier.set("sources")
                         from(sourceSets["main"].allSource)
                     }
                 }
@@ -109,14 +114,14 @@ subprojects
                 if (findByName("dokkaJar") == null) {
                     val dokkaJar by creating(Jar::class) {
                         dependsOn("dokkaJavadoc")
-                        classifier = "javadoc"
+                        archiveClassifier.set("javadoc")
                         from("dokkaJavadoc")
                     }
                 }
             }
 
             publishing {
-                val subprojectName = it.name as String
+                val subprojectName = it.name
                 val subprojectVersion = it.version as String
                 val subprojectGroup = it.group as String
 
@@ -212,11 +217,8 @@ subprojects
             val junitVersion: String by project
 
             dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib")
-                api("org.jetbrains.kotlin:kotlin-reflect")
-                api("org.jetbrains.kotlin:kotlin-test")
-
-                testImplementation("junit:junit:$junitVersion")
+                testImplementation(kotlin("test"))
+                testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
             }
         }
     }

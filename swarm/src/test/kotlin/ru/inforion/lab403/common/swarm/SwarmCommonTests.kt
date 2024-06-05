@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.swarm
 
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.extensions.bytes
 import ru.inforion.lab403.common.extensions.hexlify
 import ru.inforion.lab403.common.extensions.random

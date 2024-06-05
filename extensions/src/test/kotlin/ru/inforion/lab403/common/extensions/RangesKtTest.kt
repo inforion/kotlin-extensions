@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

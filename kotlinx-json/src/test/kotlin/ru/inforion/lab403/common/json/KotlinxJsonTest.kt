@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.json
 
 import kotlinx.serialization.Serializable
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class KotlinxJsonTest {

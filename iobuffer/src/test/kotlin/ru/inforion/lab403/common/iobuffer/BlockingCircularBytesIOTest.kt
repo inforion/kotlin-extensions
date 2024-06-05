@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.iobuffer
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.concurrent.async
 import ru.inforion.lab403.common.concurrent.wait
 import ru.inforion.lab403.common.extensions.byte

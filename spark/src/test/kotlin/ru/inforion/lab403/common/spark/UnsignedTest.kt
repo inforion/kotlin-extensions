@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import org.apache.spark.serializer.KryoRegistrator
 import org.apache.spark.serializer.KryoSerializer
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.extensions.int
 import ru.inforion.lab403.common.extensions.split
 import ru.inforion.lab403.common.extensions.uint

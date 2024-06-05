@@ -3,7 +3,7 @@ package ru.inforion.lab403.common.spark
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.objenesis.strategy.StdInstantiatorStrategy
 import java.io.ByteArrayOutputStream
 import kotlin.test.assertEquals

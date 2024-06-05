@@ -1,12 +1,14 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.utils.Benchmark
 import java.nio.ByteOrder.BIG_ENDIAN
 import java.nio.ByteOrder.LITTLE_ENDIAN
-import kotlin.system.measureTimeMillis
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class ArraysTest {
     data class TestClass(val int: Int, val long: Long, val string: String)
@@ -50,7 +52,7 @@ internal class ArraysTest {
 
     lateinit var array: ByteArray
 
-    @Before fun initTest() {
+    @BeforeEach fun initTest() {
         array = "DEADBEEF CAFEAFFE BAADF00DAABBCCDD".unhexlify()
     }
 
@@ -157,17 +159,17 @@ internal class ArraysTest {
 
     @Test fun subByLongByteArray() {
         val sum = byteArrayOf(0, 1, 2, 3, 4, 5).sumOf { it }.long_s
-        assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
+        assertEquals(correctValueSumbyLong, sum, "Error summing: expected: $correctValueSumbyLong, real: $sum")
     }
 
     @Test fun subByLongIntArray() {
         val sum = intArrayOf(0, 1, 2, 3, 4, 5).sumOf { it.long_s }
-        assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
+        assertEquals(correctValueSumbyLong, sum, "Error summing: expected: $correctValueSumbyLong, real: $sum")
     }
 
     @Test fun subByLongLongArray() {
         val sum = longArrayOf(0, 1, 2, 3, 4, 5).sumOf { it }
-        assertEquals("Error summing: expected: $correctValueSumbyLong, real: $sum", correctValueSumbyLong, sum)
+        assertEquals(correctValueSumbyLong, sum, "Error summing: expected: $correctValueSumbyLong, real: $sum")
     }
 
     @Test fun subByLongDataClassArray() {
@@ -179,7 +181,7 @@ internal class ArraysTest {
                 TestClass(4, 4, "4"),
                 TestClass(5, 5, "5")
         ).sumOf { it.long * 2 }
-        assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
+        assertEquals(correctValueSumbyLong * 2, sum, "Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum")
     }
 
     @Test fun subByLongDataClassList() {
@@ -191,7 +193,7 @@ internal class ArraysTest {
                 TestClass(4, 4, "4"),
                 TestClass(5, 5, "5")
         ).sumOf { it.long * 2 }
-        assertEquals("Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum", correctValueSumbyLong * 2, sum)
+        assertEquals(correctValueSumbyLong * 2, sum, "Error summing: expected: ${correctValueSumbyLong * 2}, real: $sum")
     }
 
     @Test fun justPerformanceLittle() {

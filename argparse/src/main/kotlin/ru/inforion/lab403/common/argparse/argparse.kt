@@ -36,7 +36,7 @@ operator fun Namespace.contains(value: String?) = get<Any>(value) != null
  * @param defaultHelp ArgumentParser defaultHelp
  */
 fun argparser(name: String, description: String? = null, defaultHelp: Boolean = true): ArgumentParser {
-    return ArgumentParsers.newArgumentParser(name).apply {
+    return ArgumentParsers.newFor(name).build().apply {
         defaultHelp(defaultHelp)
         if (description != null)
             description(description)

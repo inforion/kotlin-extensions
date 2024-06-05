@@ -4,11 +4,13 @@ plugins {
 
 val systemLambdaVersion: String by project
 val jacksonVersion: String by project
+val slf4jVersion: String by project
 
 dependencies {
     implementation(project(":gson-json"))
     implementation(project(":extensions"))
-    api("org.slf4j:slf4j-api:2.0.6")
+    implementation(kotlin("reflect"))
+    api("org.slf4j:slf4j-api:$slf4jVersion")
 
     testImplementation("com.github.stefanbirkner:system-lambda:$systemLambdaVersion")
     jmh("commons-io:commons-io:2.7")

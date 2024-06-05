@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import ru.inforion.lab403.common.logging.DEBUG
 import ru.inforion.lab403.common.logging.INFO
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 class SLF4JLoggerTest {
     private lateinit var publisher: TestMockPublisher
 
-    @Before
+    @BeforeEach
     fun initPublisher() {
         LoggerStorage.clearPublishers()
         publisher = generateTestMockPublisher().also {

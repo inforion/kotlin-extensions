@@ -3,28 +3,12 @@
 package ru.inforion.lab403.common.javalin
 
 import io.javalin.Javalin
-import io.javalin.core.plugin.Plugin
 import io.javalin.http.Context
-import io.javalin.plugin.json.FromJsonMapper
-import io.javalin.plugin.json.JavalinJson
-import io.javalin.plugin.json.ToJsonMapper
+import io.javalin.json.JavalinGson
 import ru.inforion.lab403.common.json.defaultJsonBuilder
-import ru.inforion.lab403.common.json.fromJson
-import ru.inforion.lab403.common.json.toJson
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-
-var jsonFactory = {
-    defaultJsonBuilder()
-        .create()
-}
-
-internal class Mapper : FromJsonMapper, ToJsonMapper {
-    private val gson = jsonFactory.invoke()
-    override fun <T> map(json: String, targetClass: Class<T>) = json.fromJson(targetClass, gson)
-    override fun map(obj: Any) = obj.toJson(gson)
-}
 
 inline fun Context.errorResponse(status: Int, result: String) {
     status(status)
@@ -78,13 +62,6 @@ inline fun Javalin.getAnyExclusive(
     }
 }
 
-
-inline fun Javalin.applyRoutes(crossinline block: Javalin.() -> Unit) {
-    routes {
-        block(this)
-    }
-}
-
 inline fun Javalin.stopAndWait() {
     val lock = LinkedBlockingQueue<Int>(1)
     events {
@@ -96,11 +73,11 @@ inline fun Javalin.stopAndWait() {
 
 fun JavalinServer(
     port: Int,
-    vararg protocols: Plugin,
+    vararg protocols: Javalin.() -> Unit,
     start: Boolean = true,
     wait: Boolean = start
 ) = Javalin.create { config ->
-    protocols.forEach { config.registerPlugin(it) }
+    config.jsonMapper(JavalinGson(defaultJsonBuilder().create()))
 }.apply {
     val lock = LinkedBlockingQueue<Int>(1)
 
@@ -108,11 +85,8 @@ fun JavalinServer(
         it.serverStarted { lock.add(0) }
     }
 
-    val mapper = Mapper()
-
-    JavalinJson.apply {
-        fromJsonMapper = mapper
-        toJsonMapper = mapper
+    protocols.forEach {
+        it()
     }
 
     if (start) start(port)

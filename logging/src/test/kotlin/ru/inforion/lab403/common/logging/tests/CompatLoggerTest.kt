@@ -2,8 +2,8 @@
 
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.logging.SEVERE
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.storage.LoggerStorage
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 internal class CompatLoggerTest {
     private lateinit var publisher: TestMockPublisher
 
-    @Before
+    @BeforeEach
     fun initPublisher() {
         LoggerStorage.clearPublishers()
         publisher = TestMockPublisher("TestMockPublisher").also {

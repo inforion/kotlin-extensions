@@ -1,20 +1,13 @@
 package ru.inforion.lab403.common.scripts
 
-import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
-import org.junit.Test
-import javax.script.ScriptEngineManager
+import org.junit.jupiter.api.Test
 
 
 class TestKotlinScript {
 
-    val scriptManager = ScriptEngineManager()
-    val factory = scriptManager.getEngineByName("kotlin").factory
-    val engine = factory.scriptEngine as KotlinJsr223JvmLocalScriptEngine
-
     @Test
     fun testInterface() {
-
-        val testCLass = engine.eval("""
+        val testCLass = ScriptingManager.engine("kotlin").eval("""
             import ru.inforion.lab403.common.scripts.TestInterface
             
             class TestClass(val value: Any? = null) : TestInterface {

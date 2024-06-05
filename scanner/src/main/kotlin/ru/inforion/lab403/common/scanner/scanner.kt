@@ -3,7 +3,7 @@
 package ru.inforion.lab403.common.scanner
 
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import org.reflections.util.ClasspathHelper
 import org.reflections.util.ConfigurationBuilder
 import ru.inforion.lab403.common.extensions.packageName
@@ -13,8 +13,8 @@ inline fun <reified T : Any> String.scanSubtypesOf(cl: ClassLoader? = null): Set
     val url = ClasspathHelper.forPackage(this)
     val builder = ConfigurationBuilder().apply {
         addUrls(url)
-        addScanners(SubTypesScanner())
-        if (cl != null) addClassLoader(cl)
+        addScanners(Scanners.SubTypes)
+        if (cl != null) addClassLoaders(cl)
     }
     return Reflections(builder).getSubTypesOf(T::class.java)
 }

@@ -1,9 +1,9 @@
 package ru.inforion.lab403.common.swarm
 
 
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import ru.inforion.lab403.common.extensions.sequence
 import ru.inforion.lab403.common.logging.logger
 import kotlin.test.assertEquals
@@ -17,7 +17,7 @@ internal fun sha256_map_seq(swarm: Swarm, size: Int, count: Int) = sequence(size
 internal fun sha256_map2_seq(swarm: Swarm, size: Int, count: Int) = sequence(size) { it }.parallelize(swarm).map2 { sha256Test(it, count) }
 
 @ExperimentalTime
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName::class)
 internal abstract class SwarmMapTestsBase(private val threads: Int, private val size: Int, private val count: Int) {
     companion object {
         val log = logger()

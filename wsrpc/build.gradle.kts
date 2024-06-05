@@ -9,5 +9,6 @@ dependencies {
     implementation(project(":uuid"))
     implementation(project(":gson-json"))
 
+    implementation(kotlin("reflect"))
     api("org.java-websocket:Java-WebSocket:$javaWebSocketVersion")
 }

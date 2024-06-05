@@ -10,6 +10,7 @@ import java.util.concurrent.Semaphore
 import kotlin.concurrent.thread
 
 
+@Suppress("unused")
 class Network(
     val name: String,
     val desiredPort: Int,
@@ -79,7 +80,9 @@ class Network(
                         if (process) client.process()
                         onDisconnect?.invoke(client)
                     }.onFailure { error ->
-                        error.logStackTrace(log)
+                        if (running) {
+                            error.logStackTrace(log)
+                        }
                     }
 
                 semaphore.release()
@@ -89,12 +92,18 @@ class Network(
                 connections[client] = it
             }
         }.onFailure { error ->
-            log.info { "$name: connection closed due to $error" }
+            if (running) {
+                log.info { "$name: connection closed due to $error" }
+            }
         }.isSuccess
 
-    private val thread = thread(start, name = name) {
+    init {
         val address = InetSocketAddress(InetAddress.getByName(desiredAddress), desiredPort)
+        server.reuseAddress = true
         server.bind(address)
+    }
+
+    private val thread = thread(start, name = name) {
         onStart?.invoke(server.inetAddress)
         running = true
         while (running) serve()
@@ -107,6 +116,7 @@ class Network(
         running = false
 
         server.close()
+        semaphore.release()
         thread.join()
 
         connections.keys

@@ -1,8 +1,8 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.math.abs
+import kotlin.test.assertEquals
 
 internal class RandomTest {
 

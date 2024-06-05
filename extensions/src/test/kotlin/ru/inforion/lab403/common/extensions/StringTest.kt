@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.extensions
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Paths
 import kotlin.test.assertEquals

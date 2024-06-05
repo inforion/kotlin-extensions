@@ -433,7 +433,9 @@ fun ULong.swap(size: Int) = when (size) {
     2 -> swap16()
     4 -> swap32()
     8 -> swap64()
-    else -> throw IllegalArgumentException("Wrong ULong.swap argument size=${size} for number=${this}")
+    else -> (0 until size).fold(0uL) { acc, i ->
+        acc or (this[(i + 1) * 8 - 1..i * 8] shl ((size - i - 1) * 8))
+    }
 }
 
 inline fun UInt.swap32() =

@@ -1,6 +1,7 @@
 package ru.inforion.lab403.common.swarm
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -12,10 +13,12 @@ internal class SimpleSeparatorTest {
         assertEquals(src.toList(), result.flatten(), "$name: Source and flatten result not equal!")
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun testEmpty() {
-        val separatedList = emptyList<Int>().separate(0).toList()
-        assertTrue(separatedList.isEmpty(), "Empty: Test on empty collection failed!")
+        assertThrows<IllegalArgumentException> {
+            val separatedList = emptyList<Int>().separate(0).toList()
+            assertTrue(separatedList.isEmpty(), "Empty: Test on empty collection failed!")
+        }
     }
 
     @Test

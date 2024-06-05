@@ -12,7 +12,9 @@ import java.nio.ByteBuffer
 import java.util.concurrent.BrokenBarrierException
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
+import kotlin.concurrent.withLock
 
 /**
  * Threads realm for [Swarm]
@@ -39,6 +41,8 @@ class Threads(val size: Int, val compress: Boolean) : IRealm {
     private val barrier = CyclicBarrier(size + 1)
 
     private val threads = ArrayList<Thread>()
+
+    private val slavesLock = ReentrantLock()
 
     override fun pack(obj: Serializable) = obj.serialize(compress, false)
 
@@ -94,10 +98,17 @@ class Threads(val size: Int, val compress: Boolean) : IRealm {
     }
 
     override fun run(swarm: Swarm) {
-        val master = worker("SwarmMaster[0]") { swarm.master() }
+        val master = slavesLock.withLock {
+            val master = worker("SwarmMaster[0]") {
+                slavesLock.lock()
+                swarm.master()
+            }
 
-        repeat(size) {
-            worker("SwarmSlave[${it + 1}]") { swarm.slave() }
+            repeat(size) {
+                worker("SwarmSlave[${it + 1}]") { swarm.slave() }
+            }
+
+            master
         }
 
         while (master.isAlive)

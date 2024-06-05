@@ -14,4 +14,5 @@ dependencies {
     api("joda-time:joda-time:$jodaTimeVersion")
 
     testImplementation(group="com.github.oshi", name="oshi-core", version=oshiVersion)
+    testImplementation(kotlin("reflect"))
 }

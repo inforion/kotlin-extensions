@@ -1,12 +1,8 @@
-import org.junit.Test
-import ru.inforion.lab403.common.concurrent.collections.AppendOnlyArrayList
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.concurrent.collections.appendOnlyArrayListOf
 import ru.inforion.lab403.common.concurrent.collections.toAppendOnlyArrayListOf
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
-import kotlin.system.measureNanoTime
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 

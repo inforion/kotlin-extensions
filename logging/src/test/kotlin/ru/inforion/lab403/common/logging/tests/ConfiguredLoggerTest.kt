@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.logging.*
 import ru.inforion.lab403.common.logging.formatters.Absent
 import ru.inforion.lab403.common.logging.formatters.ColorMultiline

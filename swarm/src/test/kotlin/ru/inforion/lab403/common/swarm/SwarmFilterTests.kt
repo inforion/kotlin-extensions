@@ -1,9 +1,9 @@
 package ru.inforion.lab403.common.swarm
 
 
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import ru.inforion.lab403.common.logging.logger
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
@@ -15,7 +15,7 @@ internal fun sha256_filter_list(swarm: Swarm, size: Int, count: Int, prefix: Str
 
 
 @ExperimentalTime
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName::class)
 internal abstract class SwarmFilterTestsBase(private val threads: Int, private val size: Int, private val count: Int) {
     companion object {
         val log = logger()

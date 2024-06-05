@@ -1,6 +1,6 @@
 package ru.inforion.lab403.common.intervalmap
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 

@@ -1,17 +1,17 @@
 package ru.inforion.lab403.common.scripts
 
-import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
 import org.python.jsr223.PyScriptEngine
 import javax.script.Bindings
 import javax.script.Invocable
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
+import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
 abstract class AbstractScriptEngine<E : ScriptEngine>(private val engine: E) : ScriptEngine by engine {
     companion object {
         fun ScriptEngine.toPowered(): GenericScriptEngine = when (this) {
             is PyScriptEngine -> PythonScriptEngine(this)
-            is KotlinJsr223JvmLocalScriptEngine -> KotlinScriptEngine(this)
+            is KotlinJsr223ScriptEngineImpl -> KotlinScriptEngine(this)
             else -> throw NotImplementedError("Engine $this was not powered!")
         }
     }

@@ -1,13 +1,13 @@
 package ru.inforion.lab403.common.scripts
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
-import org.jetbrains.kotlin.utils.addToStdlib.cast
+import ru.inforion.lab403.common.extensions.cast
 import ru.inforion.lab403.common.extensions.isWindowsOperatingSystem
+import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
 class KotlinScriptEngine(
-    val engine: KotlinJsr223JvmLocalScriptEngine
-) : AbstractScriptEngine<KotlinJsr223JvmLocalScriptEngine>(engine) {
+    val engine: KotlinJsr223ScriptEngineImpl
+) : AbstractScriptEngine<KotlinJsr223ScriptEngineImpl>(engine) {
 
     init {
         // See https://stackoverflow.com/questions/61438356/runtime-compilation-of-kotlin-code-throws-runtimeexception-warn-failed-to-init

@@ -4,7 +4,6 @@ package ru.inforion.lab403.common.logging
 
 import ru.inforion.lab403.common.extensions.INT_MAX
 import ru.inforion.lab403.common.extensions.INT_MIN
-import ru.inforion.lab403.common.extensions.isWindowsOperatingSystem
 import ru.inforion.lab403.common.logging.misc.Colors
 import java.util.logging.Level
 

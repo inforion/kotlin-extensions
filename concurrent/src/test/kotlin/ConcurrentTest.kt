@@ -1,8 +1,8 @@
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.inforion.lab403.common.concurrent.collections.appendOnlyArrayListOf
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
 
 internal class ConcurrentTest {
     @Test fun concurrentAddTest() {
