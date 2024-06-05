@@ -1,8 +1,7 @@
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Before
-import org.junit.Test
-import ru.inforion.lab403.common.logging.FINEST
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
 import ru.inforion.lab403.common.logging.TRACE
 import ru.inforion.lab403.common.logging.logger
 import ru.inforion.lab403.common.logging.publishers.PrintStreamBeautyPublisher
@@ -25,7 +24,7 @@ class ThePublisher(name: String): PrintStreamBeautyPublisher(name, System.out, f
 
 class PublisherRecursionTest {
     val publisher = ThePublisher("Testing")
-    @Before
+    @BeforeEach
     fun initPublisher() {
         LoggerStorage.clearPublishers()
         LoggerStorage.addPublisher(LoggerStorage.ALL, publisher)

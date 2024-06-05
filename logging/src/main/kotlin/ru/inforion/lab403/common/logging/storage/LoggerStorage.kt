@@ -61,7 +61,7 @@ object LoggerStorage {
     }
 
     /**
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun takeRuntimeInfoWhile(name: String, callback: (LoggerConfigStringConverter.LoggerRuntimeInfo) -> Boolean) {
         val validatedName = validateLoggerName(name)
@@ -112,7 +112,7 @@ object LoggerStorage {
      *
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun getLevel(name: String) = mapOfLoggerRuntimeInfo[validateLoggerName(name)]?.level
 
@@ -121,7 +121,7 @@ object LoggerStorage {
      *
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun getPublishers(name: String) = mapOfLoggerRuntimeInfo[validateLoggerName(name)]?.publishers
 
@@ -131,7 +131,7 @@ object LoggerStorage {
      * @param publisher publisher to add
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun addPublisher(name: String, publisher: AbstractPublisher) {
         val validatedName = validateLoggerName(name)
@@ -148,7 +148,7 @@ object LoggerStorage {
      * @param publisher publisher to remove
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun removePublisher(name: String, publisher: AbstractPublisher? = null) {
         val validatedName = validateLoggerName(name)
@@ -163,7 +163,7 @@ object LoggerStorage {
     /**
      * Clear all publishers from loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun clearPublishers() {
         loggers.forEach {
@@ -176,7 +176,7 @@ object LoggerStorage {
     /**
      * Clear all loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun clearLoggers() {
         loggers.clear()
@@ -188,7 +188,7 @@ object LoggerStorage {
      * @param level new log level
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun setLevel(name: String, level: LogLevel) {
         val validatedName = validateLoggerName(name)
@@ -205,7 +205,7 @@ object LoggerStorage {
      * @param additivity new additivity
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun setAdditivity(name: String, additivity: Boolean) {
         val validatedName = validateLoggerName(name)
@@ -220,7 +220,7 @@ object LoggerStorage {
      *
      * @param name name of the logger or module/package with loggers
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun invalidateLoggersCacheByName(name: String) {
         loggers.filter { it.key.startsWith(name) }.map { it.value.invalidate() }
@@ -250,7 +250,7 @@ object LoggerStorage {
     /**
      * Returns all configs as String
      *
-     * @since 0.4.8
+     * @since 0.5.0
      */
     fun getLoggerConfigurationsString(): String = buildString {
         appendLine("Current Logger Configurations:")

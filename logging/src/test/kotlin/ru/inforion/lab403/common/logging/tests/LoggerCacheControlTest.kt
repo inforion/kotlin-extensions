@@ -1,7 +1,7 @@
 package ru.inforion.lab403.common.logging.tests
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
 import ru.inforion.lab403.common.logging.FINE
 import ru.inforion.lab403.common.logging.INFO
 import ru.inforion.lab403.common.logging.SEVERE
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 internal class LoggerCacheControlTest {
     private lateinit var publisher: TestMockPublisher
 
-    @Before
+    @BeforeEach
     fun initPublisher() {
         LoggerStorage.clearPublishers()
         publisher = TestMockPublisher("TestMockPublisher").also {

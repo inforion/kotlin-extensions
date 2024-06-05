@@ -66,7 +66,7 @@ subprojects
             }
 
             group = "com.github.inforion.common"
-            version = "0.4.8"
+            version = "0.5.0"
         }
 
         it.afterEvaluate {
